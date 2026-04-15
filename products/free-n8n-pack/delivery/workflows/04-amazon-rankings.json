@@ -1,0 +1,142 @@
+{
+  "name": "Amazon Rankings Scraper",
+  "nodes": [
+    {
+      "id": "11111111-1111-4111-8111-111111111111",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {}
+    },
+    {
+      "id": "22222222-2222-4222-8222-222222222222",
+      "name": "Define Markets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300],
+      "parameters": {
+        "jsCode": "// Amazon 3D Printing Filament Bestsellers — Markets Config\n// Fill in FILL_IN_URL placeholders with the correct Amazon bestsellers URLs before running.\n// Pattern: https://www.amazon.{domain}/Best-Sellers-.../zgbs/{dept}/{category-id}/\nconst markets = [\n  { market: 'US', column: 'B', url: 'https://www.amazon.com/Best-Sellers-Industrial-Scientific-3D-Printing-Filament/zgbs/industrial/6066129011/' },\n  { market: 'CA', column: 'C', url: 'FILL_IN_URL' },\n  { market: 'UK', column: 'F', url: 'FILL_IN_URL' },\n  { market: 'DE', column: 'G', url: 'FILL_IN_URL' },\n  { market: 'FR', column: 'H', url: 'FILL_IN_URL' },\n  { market: 'ES', column: 'I', url: 'FILL_IN_URL' },\n  { market: 'IT', column: 'J', url: 'FILL_IN_URL' },\n  { market: 'NL', column: 'K', url: 'FILL_IN_URL' },\n  { market: 'JP', column: 'S', url: 'FILL_IN_URL' },\n  { market: 'AU', column: 'U', url: 'FILL_IN_URL' }\n];\n\n// Filter out markets with placeholder URLs so partial runs work\nconst readyMarkets = markets.filter(m => !m.url.startsWith('FILL_IN'));\nconsole.log(`Running ${readyMarkets.length}/${markets.length} markets`);\n\nreturn readyMarkets.map(m => ({ json: m }));"
+      }
+    },
+    {
+      "id": "33333333-3333-4333-8333-333333333333",
+      "name": "Loop Over Markets",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [690, 300],
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      }
+    },
+    {
+      "id": "44444444-4444-4444-8444-444444444444",
+      "name": "Start Apify Run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [910, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.apify.com/v2/acts/junglee~amazon-bestsellers/runs?waitForFinish=300&token=' + $env.APIFY_TOKEN }}",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ categoryUrls: [$json.url], maxItemsPerStartUrl: 100, depthOfCrawl: 1, language: 'en', detailedInformation: false }) }}"
+      }
+    },
+    {
+      "id": "55555555-5555-4555-8555-555555555555",
+      "name": "Extract Dataset ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1130, 300],
+      "parameters": {
+        "jsCode": "const apifyResponse = $input.item.json;\nconst datasetId = apifyResponse.data && apifyResponse.data.defaultDatasetId;\nconst column = $('Loop Over Markets').item.json.column;\nconst market = $('Loop Over Markets').item.json.market;\n\nif (!datasetId) {\n  throw new Error(`No datasetId returned for market ${market}. Apify response: ${JSON.stringify(apifyResponse).slice(0, 200)}`);\n}\n\nconsole.log(`Market ${market}: datasetId = ${datasetId}`);\nreturn [{ json: { datasetId, column, market } }];"
+      }
+    },
+    {
+      "id": "66666666-6666-4666-8666-666666666666",
+      "name": "Fetch Dataset Items",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1350, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://api.apify.com/v2/datasets/' + $json.datasetId + '/items?limit=100&token=' + $env.APIFY_TOKEN }}"
+      }
+    },
+    {
+      "id": "77777777-7777-4777-8777-777777777777",
+      "name": "Process Brands",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1570, 300],
+      "parameters": {
+        "jsCode": "// Get column + market from upstream (before the HTTP request replaced the item)\nconst column = $('Extract Dataset ID').item.json.column;\nconst market = $('Extract Dataset ID').item.json.market;\n\n// n8n may return the dataset as multiple items (split) or as a single item (array)\nconst allItems = $input.all();\nlet brands;\nif (allItems.length > 1) {\n  // n8n split the JSON array into separate items\n  brands = allItems.map(item => item.json);\n} else {\n  // Whole response came as a single item\n  const data = allItems[0].json;\n  brands = Array.isArray(data) ? data : (data.items || []);\n}\n\nif (!brands.length) {\n  throw new Error(`No items returned from Apify dataset for market ${market}`);\n}\n\n// Sort by position (rank on page)\nbrands.sort((a, b) => (a.position || 999) - (b.position || 999));\n\n// Extract brand name: first word of product title\nconst brandList = brands.slice(0, 100).map(item => {\n  const name = item.name || item.title || '';\n  return name.trim().split(/\\s+/)[0] || 'UNKNOWN';\n});\n\n// Pad to exactly 100 rows\nwhile (brandList.length < 100) brandList.push('');\n\n// Format for Google Sheets API: array of single-element row arrays\nconst valuesForSheets = brandList.map(brand => [brand]);\n\nconsole.log(`Market ${market}: extracted ${brandList.filter(b => b).length} brands`);\nreturn [{ json: { column, market, values: valuesForSheets } }];"
+      }
+    },
+    {
+      "id": "88888888-8888-4888-8888-888888888888",
+      "name": "Write to Sheets",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1790, 300],
+      "parameters": {
+        "method": "PUT",
+        "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/14Rxe_CPlOhRQ14sHYxv6m5lpf4ZliHj8lzwrgZvralU/values/Amazon%20Rankings!' + $json.column + '4:' + $json.column + '103?valueInputOption=RAW' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ values: $json.values, majorDimension: 'ROWS' }) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [{ "node": "Define Markets", "type": "main", "index": 0 }]
+      ]
+    },
+    "Define Markets": {
+      "main": [
+        [{ "node": "Loop Over Markets", "type": "main", "index": 0 }]
+      ]
+    },
+    "Loop Over Markets": {
+      "main": [
+        [{ "node": "Start Apify Run", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Start Apify Run": {
+      "main": [
+        [{ "node": "Extract Dataset ID", "type": "main", "index": 0 }]
+      ]
+    },
+    "Extract Dataset ID": {
+      "main": [
+        [{ "node": "Fetch Dataset Items", "type": "main", "index": 0 }]
+      ]
+    },
+    "Fetch Dataset Items": {
+      "main": [
+        [{ "node": "Process Brands", "type": "main", "index": 0 }]
+      ]
+    },
+    "Process Brands": {
+      "main": [
+        [{ "node": "Write to Sheets", "type": "main", "index": 0 }]
+      ]
+    },
+    "Write to Sheets": {
+      "main": [
+        [{ "node": "Loop Over Markets", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null
+}

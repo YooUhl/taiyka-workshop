@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00A6FF"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </linearGradient>
+    <linearGradient id="robotBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#00E5FF"/>
+      <stop offset="100%" stop-color="#00A6FF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#00A6FF" stop-opacity="0.35"/>
+      <stop offset="60%" stop-color="#00A6FF" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#00A6FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="eyeGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="40%" stop-color="#00E5FF"/>
+      <stop offset="100%" stop-color="#00A6FF"/>
+    </radialGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="strongGlow">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="url(#bg)"/>
+  <rect width="1200" height="1200" fill="url(#glow)"/>
+
+  <!-- Top label -->
+  <text x="600" y="130" text-anchor="middle" fill="#00E5FF" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="600" letter-spacing="6" opacity="0.85">AI AGENT PLAYBOOK</text>
+
+  <!-- Robot / Agent icon -->
+  <g transform="translate(600, 450)" filter="url(#softGlow)">
+    <!-- Antenna -->
+    <line x1="0" y1="-200" x2="0" y2="-165" stroke="#00E5FF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="0" cy="-205" r="10" fill="url(#eyeGlow)"/>
+
+    <!-- Head -->
+    <rect x="-110" y="-165" width="220" height="170" rx="30" fill="url(#robotBody)" stroke="#FFFFFF" stroke-width="3" opacity="0.95"/>
+
+    <!-- Face screen -->
+    <rect x="-85" y="-135" width="170" height="100" rx="18" fill="#0A1628"/>
+
+    <!-- Eyes -->
+    <circle cx="-40" cy="-85" r="18" fill="url(#eyeGlow)" filter="url(#strongGlow)"/>
+    <circle cx="40" cy="-85" r="18" fill="url(#eyeGlow)" filter="url(#strongGlow)"/>
+
+    <!-- Mouth (smile) -->
+    <path d="M -30 -55 Q 0 -35, 30 -55" stroke="#00E5FF" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+    <!-- Side ears / audio -->
+    <rect x="-130" y="-110" width="20" height="60" rx="6" fill="#00A6FF"/>
+    <rect x="110" y="-110" width="20" height="60" rx="6" fill="#00A6FF"/>
+
+    <!-- Neck -->
+    <rect x="-25" y="-5" width="50" height="18" fill="#1A2A4A"/>
+
+    <!-- Body -->
+    <rect x="-130" y="15" width="260" height="150" rx="24" fill="url(#robotBody)" stroke="#FFFFFF" stroke-width="3" opacity="0.95"/>
+
+    <!-- Chest panel -->
+    <rect x="-70" y="40" width="140" height="90" rx="12" fill="#0A1628"/>
+
+    <!-- Chest LEDs -->
+    <circle cx="-35" cy="70" r="8" fill="#00E5FF"/>
+    <circle cx="0" cy="70" r="8" fill="#00A6FF"/>
+    <circle cx="35" cy="70" r="8" fill="#FFFFFF" opacity="0.8"/>
+
+    <!-- Activity bars (representing "reasoning") -->
+    <rect x="-50" y="95" width="10" height="20" rx="2" fill="#00E5FF"/>
+    <rect x="-30" y="100" width="10" height="15" rx="2" fill="#00E5FF" opacity="0.8"/>
+    <rect x="-10" y="88" width="10" height="27" rx="2" fill="#00E5FF"/>
+    <rect x="10" y="98" width="10" height="17" rx="2" fill="#00E5FF" opacity="0.8"/>
+    <rect x="30" y="92" width="10" height="23" rx="2" fill="#00E5FF"/>
+  </g>
+
+  <!-- Floating "tool" chips around robot -->
+  <g font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#E8F0FE">
+    <g transform="translate(170, 360)">
+      <rect width="150" height="44" rx="22" fill="#1A2A4A" stroke="#00A6FF" stroke-width="1.5"/>
+      <text x="75" y="29" text-anchor="middle">INPUT</text>
+    </g>
+    <g transform="translate(880, 360)">
+      <rect width="150" height="44" rx="22" fill="#1A2A4A" stroke="#00A6FF" stroke-width="1.5"/>
+      <text x="75" y="29" text-anchor="middle">OUTPUT</text>
+    </g>
+    <g transform="translate(160, 520)">
+      <rect width="170" height="44" rx="22" fill="#1A2A4A" stroke="#00E5FF" stroke-width="1.5"/>
+      <text x="85" y="29" text-anchor="middle">REASONING</text>
+    </g>
+    <g transform="translate(870, 520)">
+      <rect width="160" height="44" rx="22" fill="#1A2A4A" stroke="#00E5FF" stroke-width="1.5"/>
+      <text x="80" y="29" text-anchor="middle">TOOLS</text>
+    </g>
+  </g>
+
+  <!-- Connecting dashed lines -->
+  <g stroke="#00A6FF" stroke-width="2" stroke-dasharray="4 6" fill="none" opacity="0.45">
+    <path d="M 320 382 Q 430 382, 470 400"/>
+    <path d="M 880 382 Q 770 382, 730 400"/>
+    <path d="M 330 542 Q 420 542, 470 520"/>
+    <path d="M 870 542 Q 780 542, 730 520"/>
+  </g>
+
+  <!-- Subtitle line 1 -->
+  <text x="600" y="860" text-anchor="middle" fill="#FFFFFF" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="800">Build Your First AI Agent</text>
+
+  <!-- Subtitle line 2 -->
+  <text x="600" y="920" text-anchor="middle" fill="#8DA2C0" font-family="Inter, system-ui, sans-serif" font-size="30" font-weight="500">Playbook + 3 skills + 1 workflow n8n</text>
+
+  <!-- Divider -->
+  <rect x="500" y="960" width="200" height="3" fill="url(#accent)" rx="2"/>
+
+  <!-- Price badge -->
+  <g transform="translate(600, 1020)">
+    <rect x="-75" y="-26" width="150" height="52" rx="26" fill="url(#accent)"/>
+    <text x="0" y="9" text-anchor="middle" fill="#0A1628" font-family="Inter, system-ui, sans-serif" font-size="32" font-weight="900">29€</text>
+  </g>
+
+  <!-- Bottom brand -->
+  <g transform="translate(600, 1100)">
+    <circle cx="0" cy="0" r="18" fill="none" stroke="url(#accent)" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="5" fill="#00E5FF"/>
+    <text x="32" y="7" fill="#FFFFFF" font-family="Inter, system-ui, sans-serif" font-size="22" font-weight="700">TAIYKA</text>
+  </g>
+  <text x="600" y="1150" text-anchor="middle" fill="#8DA2C0" font-family="Inter, system-ui, sans-serif" font-size="16" font-weight="500">@manu_ai.to</text>
+</svg>

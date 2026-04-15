@@ -1,0 +1,52 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+web/.next/
+web/out/
+web/next-env.d.ts
+
+# production
+web/build/
+web/dist/
+
+# environment
+.env
+.env.local
+.env*.local
+web/.env.local
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# internal sources (never ship these — they may contain real credentials)
+products/*/source/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+*.swp
+
+# ZIP artifacts (regenerated on demand, not versioned)
+products/*/delivery/*.zip
+links.txt
+drive-upload-failed.log
+pdf-errors.log
+
+# Claude Code artifacts
+.claude/

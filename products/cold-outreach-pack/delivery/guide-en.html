@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cold Outreach Pack — Setup Guide — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Cold Outreach Pack — Setup Guide</h1>
+<blockquote>The exact system I use to pull leads from Google Maps, find their email, write an icebreaker with Claude, and send it all through Gmail. No fluff, no code. — Manu, founder of <a href="https://instagram.com/manu_ai.to">Taiyka</a></blockquote>
+<hr>
+<h2>What you're holding</h2>
+<p>4 n8n workflows that form <strong>one single pipeline</strong>:</p>
+<pre><code class="lang-">[Google Maps] → [Email Finder] → [AI Icebreaker] → [Gmail Send]
+  Workflow 1      Workflow 2       Workflow 3       Workflow 4</code></pre>
+<p>You run the first, a Google Sheet fills up with leads. The next 3 enrich that same sheet until the email gets sent.</p>
+<p>One database (your Google Sheet), 4 layers of enrichment.</p>
+<hr>
+<h2>Prerequisites</h2>
+<p><strong>Accounts you need (all have free tiers):</strong></p>
+<ul><li><strong>n8n</strong> — cloud or self-hosted, doesn't matter</li><li><strong>Google Cloud</strong> — for the Google Maps API key (enable "Places API")</li><li><strong>Hunter.io</strong> — 25 free searches / month</li><li><strong>Anthropic</strong> — Claude API key (a few bucks of credit cover 1000 icebreakers)</li><li><strong>Gmail</strong> — standard Google account, connected to n8n via OAuth</li></ul>
+<p><strong>Setup time:</strong> budget <strong>45 minutes</strong> the first time. After that it's 2 clicks.</p>
+<p><strong>Your Google Sheet:</strong> create one with these columns in this order:</p>
+<pre><code class="lang-">id | name | websiteUri | address | phone | rating | email | email_source | email_status |
+hunter_first_name | hunter_last_name | hunter_position | hunter_confidence |
+icebreaker | icebreaker_status | icebreaker_model |
+approved | sent_status | sent_at</code></pre>
+<p>The <code>id</code> column must be <strong>unique</strong> per row (a simple 1, 2, 3... sequence works). It's the key used for updates.</p>
+<hr>
+<h2>How to import a workflow</h2>
+<ol><li>Open n8n</li><li><strong>"+ Add workflow"</strong> → menu <strong>... → Import from File</strong></li><li>Pick the <code>.json</code></li><li>Connect the requested credentials (Google Sheets, Gmail, etc.)</li><li>Replace the <code>PASTE_YOUR_X_HERE</code> placeholders in the <strong>"Edit Fields"</strong> node at the top</li><li>Activate and run</li></ol>
+<hr>
+<h2>Workflow 1 — Google Maps Scraper</h2>
+<p><strong>File:</strong> <code>01-lead-google-maps.json</code> <strong>Difficulty:</strong> ⭐⭐ <strong>APIs:</strong> Google Maps API + Google Sheets</p>
+<h3>What it does</h3>
+<p>You give it a business type + a city (e.g. "barbershops in Toulon"), it pulls up to 100 leads with name, address, phone, website, average rating. Straight into your Google Sheet.</p>
+<h3>Setup</h3>
+<ol><li><a href="https://console.cloud.google.com">Create a Google Maps API key</a> → enable <strong>Places API</strong></li><li>In the <strong>"Edit Fields"</strong> node, replace:</li><li><code>PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE</code> → your key</li><li><code>PASTE_YOUR_GOOGLE_SHEET_ID_HERE</code> → your sheet ID (in the URL, the long string between <code>/d/</code> and <code>/edit</code>)</li><li>Tweak <code>query</code> (e.g. "dentists", "real estate agents") and <code>location</code> (e.g. "Austin, TX")</li><li>Connect your Google Sheets account</li><li>Run → leads land in the sheet</li></ol>
+<h3>Tip</h3>
+<p>Add a <strong>filter node</strong> after to keep only profiles with <code>rating &gt;= 4.0</code> if you want businesses that are actually running.</p>
+<hr>
+<h2>Workflow 2 — Email Finder</h2>
+<p><strong>File:</strong> <code>02-lead-email-finder.json</code> <strong>Difficulty:</strong> ⭐⭐ <strong>APIs:</strong> Hunter.io + Google Sheets</p>
+<h3>What it does</h3>
+<p>For each lead with a website but no email yet, it:</p>
+<ol><li><strong>Scrapes the website first</strong> for any email (free, silent)</li><li><strong>Falls back to Hunter.io</strong> if nothing found — prioritizes decision makers (owner, CEO, founder)</li><li><strong>Filters out generic emails</strong> (info@, contact@, noreply@... all auto-rejected)</li></ol>
+<p>You keep only real-person emails.</p>
+<h3>Setup</h3>
+<ol><li><a href="https://hunter.io">Create a free Hunter.io account</a> → copy your API key</li><li>In <strong>"Edit Fields"</strong>:</li><li><code>PASTE_YOUR_HUNTER_API_KEY_HERE</code> → your Hunter key</li><li><code>PASTE_YOUR_GOOGLE_SHEET_ID_HERE</code> → same sheet as Workflow 1</li><li>Run → the <code>email</code> column fills up</li></ol>
+<h3>Tip</h3>
+<p>Hunter's 25 free searches/month go fast. Website scraping is free and covers ~40-60% of cases — so order matters: <strong>scrape first, Hunter as backup</strong>. Already wired that way in the code.</p>
+<hr>
+<h2>Workflow 3 — AI Icebreaker (Claude)</h2>
+<p><strong>File:</strong> <code>03-icebreaker-claude.json</code> <strong>Difficulty:</strong> ⭐⭐⭐ <strong>APIs:</strong> Anthropic (Claude) + Google Sheets</p>
+<h3>What it does</h3>
+<p>For each lead with an email but no icebreaker yet, the workflow:</p>
+<ol><li>Reads the row (name, role, city, niche, website)</li><li>Sends it to <strong>Claude</strong> with a calibrated prompt: max 2 sentences, human tone, no corporate flattery</li><li>Writes the icebreaker into the <code>icebreaker</code> column of the sheet</li></ol>
+<p>The system prompt is deliberately strict: <strong>"Slightly imperfect English is fine — it signals a real human wrote it"</strong>. That's exactly the style I use in my own cold emails.</p>
+<h3>Setup</h3>
+<ol><li><a href="https://console.anthropic.com">Get your Anthropic key</a> → generate an API key</li><li>In <strong>"Edit Fields"</strong>:</li><li><code>PASTE_YOUR_ANTHROPIC_API_KEY_HERE</code> → your key</li><li><code>PASTE_YOUR_GOOGLE_SHEET_ID_HERE</code> → your sheet</li><li>Tweak <code>sender_first_name</code> and <code>sender_offer</code> (describe your offer in one line)</li><li>Run → the <code>icebreaker</code> column fills up</li></ol>
+<h3>Tip</h3>
+<p>Before sending, <strong>re-read the icebreakers in the sheet</strong>. Claude is good but not magic — some will be throwaway. Manually mark <code>approved = yes</code> on the ones you keep. That filter is already wired into Workflow 4.</p>
+<h3>Cost</h3>
+<p>~$0.003 per icebreaker with <code>claude-sonnet-4-5</code>. 1000 leads = $3. For massive volumes, switch to <code>claude-haiku-4-5</code> in the <code>claude_model</code> field (10x cheaper).</p>
+<hr>
+<h2>Workflow 4 — Gmail Send (with approval gate)</h2>
+<p><strong>File:</strong> <code>04-gmail-send.json</code> <strong>Difficulty:</strong> ⭐⭐⭐ <strong>APIs:</strong> Gmail (OAuth) + Google Sheets</p>
+<h3>What it does</h3>
+<p>For each lead that's <strong>approved</strong> (<code>approved = yes</code>) and <strong>not yet sent</strong> (<code>sent_status ≠ sent</code>), it:</p>
+<ol><li>Builds the email from templates (subject + body with <code>{{first_name}}</code>, <code>{{icebreaker}}</code>, <code>{{signature}}</code>)</li><li><strong>Dry-run mode by default</strong> — the email is sent to yourself with <code>[DRY RUN]</code> in the subject, so you can eyeball the rendering before hitting real prospects</li><li>When you flip <code>dry_run = false</code>, it sends for real and marks <code>sent_status = sent</code> + the date</li></ol>
+<h3>Setup</h3>
+<ol><li>Connect your Gmail account to n8n via OAuth (n8n walks you through)</li><li>In <strong>"Edit Fields"</strong>:</li><li><code>PASTE_YOUR_GOOGLE_SHEET_ID_HERE</code> → your sheet</li><li>Replace <code>PASTE_YOUR_EMAIL_HERE@example.com</code> in the <strong>Dry run</strong> node with your own email</li><li>Tweak <code>sender_signature</code>, <code>subject_template</code>, <code>body_template</code> for your offer</li><li><strong>Test in dry-run first</strong> (<code>dry_run = true</code>)</li><li>When everything looks clean → <code>dry_run = false</code> and re-run</li></ol>
+<h3>Approval workflow</h3>
+<p>In your Google Sheet, add a data validation on the <code>approved</code> column (list: <code>yes</code> / <code>no</code> / blank). You approve line by line what goes out. <strong>Never skip this step</strong> — one bad icebreaker sent to 100 prospects = 100 bad first impressions.</p>
+<h3>Deliverability tips</h3>
+<ul><li><strong>Start at 20-30 sends/day max</strong> the first 2 weeks (domain warmup)</li><li>Send between <strong>Tuesday and Thursday, 9-11am</strong> local prospect time</li><li>Leave 30-60 seconds between sends (add a <strong>Wait</strong> node if you want)</li><li>Use a separate sending domain if you scale (don't torch your main inbox)</li></ul>
+<hr>
+<h2>Full pipeline — execution order</h2>
+<pre><code class="lang-">1. Run Workflow 1 → 100 leads in the sheet
+2. Run Workflow 2 → ~40-60 emails found
+3. Run Workflow 3 → ~40-60 icebreakers drafted
+4. Review the sheet, set approved=yes on ~20-30 clean leads
+5. Run Workflow 4 in dry_run=true → check the mails in your own inbox
+6. Flip dry_run=false → emails fire at prospects</code></pre>
+<p>You can put each stage on a Schedule trigger (e.g. every 6h) later, but when you start <strong>keep everything manual</strong>. You want to see what's happening before you automate it.</p>
+<hr>
+<h2>Troubleshooting</h2>
+<p><strong>"Google Sheets: column not found"</strong> → Your sheet doesn't have all the expected columns. Double-check the Prerequisites column list (it's strict).</p>
+<p><strong>"Hunter: quota exceeded"</strong> → The 25 free searches are burned. Either upgrade (~$49/mo for 500), wait for next month, or swap to another tool (Apollo, Dropcontact, Findymail).</p>
+<p><strong>"Anthropic 401"</strong> → Your API key is either mispasted (invisible trailing spaces) or not active. Regenerate one.</p>
+<p><strong>Gmail "Insufficient permissions"</strong> → Re-authorize your Google account in n8n. OAuth scope "send email" must be checked.</p>
+<p><strong>All icebreakers feel flat</strong> → Edit the prompt in the <strong>"Build prompt"</strong> node (Workflow 3). Add 2-3 examples of icebreakers YOU'D want to receive in the <code>system</code> section. Claude follows concrete examples better than abstract rules.</p>
+<p><strong>Dry run doesn't send anything</strong> → Check that <code>dry_run = true</code> AND that you put your real email in <code>PASTE_YOUR_EMAIL_HERE@example.com</code> inside the Gmail Dry run node.</p>
+<hr>
+<h2>Going further</h2>
+<p>Natural extensions of the pack:</p>
+<ul><li><strong>Auto follow-up sequence</strong>: add a Workflow 5 that re-reads the sheet 3 days after send and fires a bump if <code>replied = no</code></li><li><strong>Reply detection</strong>: a Gmail trigger that flips <code>replied = yes</code> when a prospect replies → stops the sequence automatically</li><li><strong>LinkedIn enrichment</strong>: swap the Google Maps scrape for a LinkedIn Sales Navigator scrape (via Apify) if you target B2B tech</li><li><strong>A/B test on the icebreaker</strong>: generate 2 versions per prospect with 2 different prompts, send 50/50, measure reply rate</li></ul>
+<p>If you want all of this already wired + pro-grade prompts calibrated per niche → see below ⬇️</p>
+<hr>
+<h2>What's next</h2>
+<p>This pack gets you from zero to first cold email sent on autopilot. Ready to level up?</p>
+<ul><li>🤖 <strong>Build your first AI Agent end-to-end</strong> — an agent that qualifies leads, answers their questions, books meetings for you → <a href="https://taiyka.com/products/ai-agent-playbook">Build Your First AI Agent ($29)</a></li></ul>
+<ul><li>🚀 <strong>Join the Skool community</strong> — access to all my products, weekly lives, exclusive templates, direct Q&amp;A with me → <a href="https://taiyka.com/skool">Skool community</a></li></ul>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+<p>Stuck somewhere? Reply to the delivery email, I read everything.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

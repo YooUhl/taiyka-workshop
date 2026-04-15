@@ -1,0 +1,182 @@
+{
+  "name": "Competitor Intel — Instagram Collector",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Instagram — Daily Collector\n\n**Schedule:** 06:00 UTC daily\n**Source:** Apify `apify/instagram-profile-scraper` (~$0.003/profile)\n**Output:** Supabase `channel_metrics` + optional Google Sheet\n\n**Flow:**\n1. Fetch approved handles from Supabase (`platform=instagram`, `status=approved`)\n2. Loop per handle → Apify IG scraper\n3. Extract `followersCount`, `postsCount`\n4. Upsert into `channel_metrics` (one row per handle per day)\n\n**Before running:** replace `PASTE_YOUR_SUPABASE_URL_HERE`, `PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE`, and `PASTE_YOUR_APIFY_API_TOKEN_HERE`.",
+        "height": 340,
+        "width": 520,
+        "color": 4
+      },
+      "id": "ci-ig-0001-note",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [128, -40]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "0 6 * * *" }
+          ]
+        }
+      },
+      "id": "ci-ig-0002-cron",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [256, 352]
+    },
+    {
+      "parameters": {},
+      "id": "ci-ig-0003-manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [256, 528]
+    },
+    {
+      "parameters": {
+        "url": "https://PASTE_YOUR_SUPABASE_URL_HERE.supabase.co/rest/v1/competitor_handles?platform=eq.instagram&status=eq.approved&select=id,competitor_id,handle,competitors(name)",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Authorization", "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ci-ig-0004-fetch",
+      "name": "Fetch Approved Handles",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 352]
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nlet rows = [];\n\nif (allItems.length === 1 && Array.isArray(allItems[0].json)) {\n  rows = allItems[0].json;\n} else {\n  rows = allItems.map(i => i.json);\n}\n\nif (!rows.length) {\n  throw new Error('No approved Instagram handles found. Seed your competitor_handles table first.');\n}\n\nreturn rows.map(row => ({\n  json: {\n    handle_id: row.id,\n    competitor_id: row.competitor_id,\n    brand: row.competitors?.name || '',\n    handle: (row.handle || '').replace(/^@/, '')\n  }\n}));"
+      },
+      "id": "ci-ig-0005-split",
+      "name": "Split Into Handles",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [704, 352]
+    },
+    {
+      "parameters": { "options": {} },
+      "id": "ci-ig-0006-loop",
+      "name": "Loop Over Handles",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [912, 352]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=PASTE_YOUR_APIFY_API_TOKEN_HERE&waitSecs=60",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ usernames: [$json.handle] }) }}",
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "ci-ig-0007-apify",
+      "name": "Call Apify IG Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1136, 448]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const apifyResponse = $input.item.json;\nconst loopItem = $('Loop Over Handles').item.json;\nconst today = new Date().toISOString().split('T')[0];\n\nconst profile = Array.isArray(apifyResponse) ? apifyResponse[0] : apifyResponse;\n\nif (!profile || (!profile.followersCount && profile.followersCount !== 0)) {\n  console.log(`${loopItem.brand} (@${loopItem.handle}): no data, skipping`);\n  return [{ json: { skip: true, handle_id: loopItem.handle_id, brand: loopItem.brand } }];\n}\n\nreturn [{ json: {\n  skip: false,\n  handle_id: loopItem.handle_id,\n  competitor_id: loopItem.competitor_id,\n  brand: loopItem.brand,\n  handle: loopItem.handle,\n  date: today,\n  followers: profile.followersCount || 0,\n  total_posts: profile.postsCount || null,\n  total_views: null,\n  source: 'apify_instagram'\n}}];"
+      },
+      "id": "ci-ig-0008-build",
+      "name": "Build Metrics Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 448]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": false,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ci-ig-0009-if",
+      "name": "Profile Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1584, 448]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://PASTE_YOUR_SUPABASE_URL_HERE.supabase.co/rest/v1/channel_metrics?on_conflict=handle_id,date",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Authorization", "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "resolution=merge-duplicates, return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ handle_id: $json.handle_id, competitor_id: $json.competitor_id, platform: 'instagram', date: $json.date, followers: $json.followers, total_posts: $json.total_posts, total_views: $json.total_views, source: $json.source }]) }}",
+        "options": {}
+      },
+      "id": "ci-ig-0010-upsert",
+      "name": "Upsert to channel_metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1792, 352]
+    },
+    {
+      "parameters": { "amount": 3 },
+      "id": "ci-ig-0011-wait",
+      "name": "Wait 3s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2016, 448]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Fetch Approved Handles", "type": "main", "index": 0 }]] },
+    "Manual Trigger": { "main": [[{ "node": "Fetch Approved Handles", "type": "main", "index": 0 }]] },
+    "Fetch Approved Handles": { "main": [[{ "node": "Split Into Handles", "type": "main", "index": 0 }]] },
+    "Split Into Handles": { "main": [[{ "node": "Loop Over Handles", "type": "main", "index": 0 }]] },
+    "Loop Over Handles": { "main": [[], [{ "node": "Call Apify IG Scraper", "type": "main", "index": 0 }]] },
+    "Call Apify IG Scraper": { "main": [[{ "node": "Build Metrics Row", "type": "main", "index": 0 }]] },
+    "Build Metrics Row": { "main": [[{ "node": "Profile Found?", "type": "main", "index": 0 }]] },
+    "Profile Found?": { "main": [[{ "node": "Upsert to channel_metrics", "type": "main", "index": 0 }], [{ "node": "Wait 3s", "type": "main", "index": 0 }]] },
+    "Upsert to channel_metrics": { "main": [[{ "node": "Wait 3s", "type": "main", "index": 0 }]] },
+    "Wait 3s": { "main": [[{ "node": "Loop Over Handles", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris",
+    "executionTimeout": 300
+  },
+  "staticData": null,
+  "pinData": {},
+  "tags": []
+}

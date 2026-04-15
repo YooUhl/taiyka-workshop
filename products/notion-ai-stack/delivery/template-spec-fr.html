@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notion AI Stack — Spec complète du template — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Notion AI Stack — Spec complète du template</h1>
+<blockquote>Le dashboard Notion que j'ai construit pour mon propre business. Tu le recrées en 30 minutes à partir de cette spec. — Manu, <a href="https://instagram.com/manu_ai.to">Taiyka</a></blockquote>
+<hr>
+<h2>⚠️ À lire avant de commencer</h2>
+<p>Ce fichier n'est <strong>pas</strong> un template Notion à dupliquer en un clic — c'est le <strong>plan de construction exhaustif</strong> pour que tu bâtisses le dashboard toi-même (30 min) <strong>ou</strong> que tu le fasses faire par quelqu'un.</p>
+<p>Pourquoi ? Parce qu'un template Notion vraiment bien fait vit avec toi — tes databases, tes propriétés, tes vues doivent refléter <strong>ton</strong> business, pas le mien. Suivre cette spec à la lettre te donne le même résultat qu'un template premium, et tu sauras exactement ce qu'il y a dedans et pourquoi.</p>
+<hr>
+<h2>Vue d'ensemble du dashboard</h2>
+<pre><code class="lang-">┌────────────────────────────────────────────────────────────┐
+│              🚀 AI STACK — DASHBOARD SOLOPRENEUR            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│   📊 COMMAND CENTER (page d'accueil)                       │
+│   ├─ Cette semaine (tâches auto-filtrées)                  │
+│   ├─ Automation backlog (top 3)                            │
+│   ├─ Revenus du mois (manual entry rapide)                 │
+│   └─ Shortcuts (liens vers les 5 databases)                │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│   DATABASES                                                │
+│   ├─ 🧠 AI Tools (ton stack)                                │
+│   ├─ ⚡ Automation Backlog (workflows à construire)         │
+│   ├─ 📚 Prompt Library (liée au Prompt Pack 50)            │
+│   ├─ 🧑‍💼 Clients (CRM light)                               │
+│   └─ 📦 Projects (livrables, deadlines)                    │
+│                                                            │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│   📅 RITUELS                                                │
+│   ├─ Lundi — planning hebdo                                │
+│   ├─ Vendredi — rétro                                      │
+│   └─ 1er du mois — review stack                            │
+│                                                            │
+└────────────────────────────────────────────────────────────┘</code></pre>
+<hr>
+<h2>🚀 Quick build instructions (30 min chrono)</h2>
+<ol><li><strong>(5 min)</strong> Crée une page Notion vide → titre "AI Stack Dashboard"</li><li><strong>(15 min)</strong> Crée les 5 databases dans l'ordre ci-dessous (chacune en "Full page database")</li><li><strong>(5 min)</strong> Sur la page dashboard, ajoute 4 vues "Linked view of database" pour afficher les bonnes vues au bon endroit</li><li><strong>(5 min)</strong> Ajoute les blocs de contenu statiques (rituels, shortcuts, notes)</li></ol>
+<p>Les sections détaillées ci-dessous te donnent <strong>toutes les propriétés et toutes les vues</strong> pour chaque database.</p>
+<hr>
+<h1>Database 1 — 🧠 AI Tools</h1>
+<p><strong>Nom de la database :</strong> <code>AI Tools</code> <strong>Icône :</strong> 🧠 <strong>Rôle :</strong> tracker chaque outil IA de ton stack (payant/gratuit, coût, usage)</p>
+<h2>Propriétés</h2>
+<table><thead><tr><th>Nom</th><th>Type</th><th>Options / Format</th></tr></thead><tbody><tr><td><code>Name</code></td><td>Title</td><td>—</td></tr><tr><td><code>Category</code></td><td>Select</td><td>LLM · Automation · Scraping · Content · Analytics · Voice · Image · Video · Other</td></tr><tr><td><code>Status</code></td><td>Select</td><td>🟢 Active · 🟡 Testing · 🔴 Churned · ⚪ Watching</td></tr><tr><td><code>Monthly cost</code></td><td>Number</td><td>Format: Euro (€)</td></tr><tr><td><code>Plan</code></td><td>Select</td><td>Free · Starter · Pro · Enterprise · One-time</td></tr><tr><td><code>Use case</code></td><td>Text</td><td>1 ligne — ce que tu fais avec</td></tr><tr><td><code>Used by workflow</code></td><td>Relation → <code>Automation Backlog</code></td><td>Many-to-many</td></tr><tr><td><code>Used on project</code></td><td>Relation → <code>Projects</code></td><td>Many-to-many</td></tr><tr><td><code>Login URL</code></td><td>URL</td><td>—</td></tr><tr><td><code>API docs</code></td><td>URL</td><td>—</td></tr><tr><td><code>Added on</code></td><td>Date</td><td>—</td></tr><tr><td><code>Last reviewed</code></td><td>Date</td><td>—</td></tr><tr><td><code>Notes</code></td><td>Text</td><td>Longs commentaires</td></tr></tbody></table>
+<h2>Vues</h2>
+<h3>1. 🟢 Active stack (default)</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Status = 🟢 Active</code></li><li><strong>Sort :</strong> <code>Monthly cost</code> descending</li><li><strong>Shown properties :</strong> Name, Category, Monthly cost, Plan, Use case</li></ul>
+<h3>2. 💰 Cost by category</h3>
+<ul><li><strong>Type :</strong> Board</li><li><strong>Group by :</strong> <code>Category</code></li><li><strong>Filter :</strong> <code>Status ≠ 🔴 Churned</code></li><li><strong>Shown properties :</strong> Name, Monthly cost</li></ul>
+<h3>3. 🧪 Testing</h3>
+<ul><li><strong>Type :</strong> Gallery</li><li><strong>Filter :</strong> <code>Status = 🟡 Testing</code></li><li><strong>Shown properties :</strong> Name, Use case, Added on</li></ul>
+<h3>4. 📅 Review queue (à réévaluer chaque mois)</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Last reviewed &lt; il y a 30 jours</code> OU vide</li><li><strong>Sort :</strong> <code>Last reviewed</code> ascending</li><li><strong>Shown properties :</strong> Name, Status, Monthly cost, Last reviewed</li></ul>
+<hr>
+<h1>Database 2 — ⚡ Automation Backlog</h1>
+<p><strong>Nom de la database :</strong> <code>Automation Backlog</code> <strong>Icône :</strong> ⚡ <strong>Rôle :</strong> lister les workflows à construire, les prioriser, suivre leur état</p>
+<h2>Propriétés</h2>
+<table><thead><tr><th>Nom</th><th>Type</th><th>Options / Format</th></tr></thead><tbody><tr><td><code>Name</code></td><td>Title</td><td>—</td></tr><tr><td><code>Status</code></td><td>Select</td><td>💡 Idea · 📋 Planned · 🛠️ Building · 🧪 Testing · ✅ Live · 💀 Killed</td></tr><tr><td><code>Priority</code></td><td>Select</td><td>🔥 High · 🟡 Medium · 🟢 Low</td></tr><tr><td><code>Impact</code></td><td>Select</td><td>⚡⚡⚡ High · ⚡⚡ Medium · ⚡ Low</td></tr><tr><td><code>Effort</code></td><td>Select</td><td>S (1-2h) · M (half day) · L (1-3 days) · XL (1 week+)</td></tr><tr><td><code>Platform</code></td><td>Multi-select</td><td>n8n · Make · Zapier · Python · Custom · Claude Skill</td></tr><tr><td><code>Problem</code></td><td>Text</td><td>Quel problème ça résout en 1 ligne</td></tr><tr><td><code>Solution</code></td><td>Text</td><td>Comment ça marche en 1 paragraphe</td></tr><tr><td><code>Tools used</code></td><td>Relation → <code>AI Tools</code></td><td>Many-to-many</td></tr><tr><td><code>For project</code></td><td>Relation → <code>Projects</code></td><td>One-to-many</td></tr><tr><td><code>ROI estimate</code></td><td>Text</td><td>Ex: "gagne 2h/semaine" / "1000€/mois"</td></tr><tr><td><code>Started on</code></td><td>Date</td><td>—</td></tr><tr><td><code>Live since</code></td><td>Date</td><td>—</td></tr><tr><td><code>Runtime URL</code></td><td>URL</td><td>Lien vers n8n, Make, etc.</td></tr><tr><td><code>Notes</code></td><td>Text</td><td>—</td></tr></tbody></table>
+<h2>Vues</h2>
+<h3>1. 🔥 Top priorités (default)</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Status ≠ ✅ Live</code> AND <code>Status ≠ 💀 Killed</code></li><li><strong>Sort :</strong> <code>Priority</code> then <code>Impact</code> descending</li><li><strong>Shown properties :</strong> Name, Status, Priority, Impact, Effort, Platform</li></ul>
+<h3>2. 🛠️ En cours</h3>
+<ul><li><strong>Type :</strong> Board</li><li><strong>Group by :</strong> <code>Status</code></li><li><strong>Filter :</strong> <code>Status = 🛠️ Building</code> OR <code>Status = 🧪 Testing</code></li><li><strong>Shown properties :</strong> Name, Effort, Platform</li></ul>
+<h3>3. ✅ Live</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Status = ✅ Live</code></li><li><strong>Sort :</strong> <code>Live since</code> descending</li><li><strong>Shown properties :</strong> Name, Platform, ROI estimate, Runtime URL</li></ul>
+<h3>4. 💡 Idées à trier</h3>
+<ul><li><strong>Type :</strong> Gallery</li><li><strong>Filter :</strong> <code>Status = 💡 Idea</code></li><li><strong>Shown properties :</strong> Name, Problem, Impact</li></ul>
+<h3>5. 🎯 Matrice Impact × Effort</h3>
+<ul><li><strong>Type :</strong> Board</li><li><strong>Group by :</strong> <code>Impact</code></li><li><strong>Sub-group by :</strong> <code>Effort</code></li><li><strong>Filter :</strong> <code>Status = 💡 Idea</code> OR <code>Status = 📋 Planned</code></li></ul>
+<hr>
+<h1>Database 3 — 📚 Prompt Library</h1>
+<p><strong>Nom de la database :</strong> <code>Prompt Library</code> <strong>Icône :</strong> 📚 <strong>Rôle :</strong> bibliothèque de prompts (peut être peuplée via le Prompt Pack 50)</p>
+<h2>Propriétés</h2>
+<table><thead><tr><th>Nom</th><th>Type</th><th>Options / Format</th></tr></thead><tbody><tr><td><code>Title</code></td><td>Title</td><td>—</td></tr><tr><td><code>Category</code></td><td>Select</td><td>Content · Sales · Operations · Research · Customer Support · Internal</td></tr><tr><td><code>Use case</code></td><td>Text</td><td>1 ligne</td></tr><tr><td><code>Prompt</code></td><td>Text</td><td>Le prompt complet</td></tr><tr><td><code>Language</code></td><td>Select</td><td>FR · EN · Both</td></tr><tr><td><code>Favorite</code></td><td>Checkbox</td><td>—</td></tr><tr><td><code>Remixed</code></td><td>Checkbox</td><td>Coche si tu l'as modifié pour toi</td></tr><tr><td><code>Model best for</code></td><td>Multi-select</td><td>Claude · GPT · Gemini · Local · n8n node</td></tr><tr><td><code>Used by workflow</code></td><td>Relation → <code>Automation Backlog</code></td><td>Many-to-many</td></tr><tr><td><code>Last used</code></td><td>Date</td><td>—</td></tr><tr><td><code>Notes / variants</code></td><td>Text</td><td>—</td></tr></tbody></table>
+<h2>Vues</h2>
+<h3>1. 📋 Par catégorie (default)</h3>
+<ul><li><strong>Type :</strong> Gallery</li><li><strong>Group by :</strong> <code>Category</code></li><li><strong>Shown properties :</strong> Title, Use case, Favorite</li></ul>
+<h3>2. 🔥 Favoris</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Favorite = true</code></li><li><strong>Sort :</strong> <code>Last used</code> descending</li><li><strong>Shown properties :</strong> Title, Category, Language, Last used</li></ul>
+<h3>3. 🧪 Prompts remixés (mon gold)</h3>
+<ul><li><strong>Type :</strong> Gallery</li><li><strong>Filter :</strong> <code>Remixed = true</code></li><li><strong>Shown properties :</strong> Title, Category, Use case</li></ul>
+<h3>4. 🌍 Par langue</h3>
+<ul><li><strong>Type :</strong> Board</li><li><strong>Group by :</strong> <code>Language</code></li></ul>
+<hr>
+<h1>Database 4 — 🧑‍💼 Clients</h1>
+<p><strong>Nom de la database :</strong> <code>Clients</code> <strong>Icône :</strong> 🧑‍💼 <strong>Rôle :</strong> CRM light pour garder contexte sur chaque client</p>
+<h2>Propriétés</h2>
+<table><thead><tr><th>Nom</th><th>Type</th><th>Options / Format</th></tr></thead><tbody><tr><td><code>Name</code></td><td>Title</td><td>Client ou entreprise</td></tr><tr><td><code>Status</code></td><td>Select</td><td>👀 Prospect · 💬 In talks · ✍️ Proposal sent · 🟢 Active · ⏸️ Paused · 🔵 Past</td></tr><tr><td><code>Industry</code></td><td>Select</td><td>SaaS · E-commerce · Agency · Local biz · Creator · Other</td></tr><tr><td><code>Primary contact</code></td><td>Text</td><td>Prénom + nom</td></tr><tr><td><code>Email</code></td><td>Email</td><td>—</td></tr><tr><td><code>Language</code></td><td>Select</td><td>FR · EN · Other</td></tr><tr><td><code>Source</code></td><td>Select</td><td>Referral · Inbound · Outbound · Social · Event · Other</td></tr><tr><td><code>Projects</code></td><td>Relation → <code>Projects</code></td><td>One-to-many</td></tr><tr><td><code>Total invoiced</code></td><td>Rollup → <code>Projects.Price</code></td><td>Sum</td></tr><tr><td><code>First contact</code></td><td>Date</td><td>—</td></tr><tr><td><code>Last touch</code></td><td>Date</td><td>—</td></tr><tr><td><code>Next action</code></td><td>Text</td><td>Ex: "Relancer le 15"</td></tr><tr><td><code>Notes</code></td><td>Text</td><td>Contexte, preferences, watchouts</td></tr></tbody></table>
+<h2>Vues</h2>
+<h3>1. 🟢 Actifs (default)</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Status = 🟢 Active</code></li><li><strong>Sort :</strong> <code>Last touch</code> ascending</li><li><strong>Shown properties :</strong> Name, Industry, Primary contact, Last touch, Next action</li></ul>
+<h3>2. 🔥 Pipeline</h3>
+<ul><li><strong>Type :</strong> Board</li><li><strong>Group by :</strong> <code>Status</code></li><li><strong>Filter :</strong> <code>Status = 👀 Prospect</code> OR <code>Status = 💬 In talks</code> OR <code>Status = ✍️ Proposal sent</code></li><li><strong>Shown properties :</strong> Name, Industry, Next action</li></ul>
+<h3>3. 📅 À recontacter</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Last touch &lt; il y a 14 jours</code> AND <code>Status ≠ 🔵 Past</code></li><li><strong>Sort :</strong> <code>Last touch</code> ascending</li></ul>
+<h3>4. 💰 Top clients</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Sort :</strong> <code>Total invoiced</code> descending</li><li><strong>Shown properties :</strong> Name, Status, Total invoiced</li></ul>
+<hr>
+<h1>Database 5 — 📦 Projects</h1>
+<p><strong>Nom de la database :</strong> <code>Projects</code> <strong>Icône :</strong> 📦 <strong>Rôle :</strong> livrables, deadlines, prix par projet</p>
+<h2>Propriétés</h2>
+<table><thead><tr><th>Nom</th><th>Type</th><th>Options / Format</th></tr></thead><tbody><tr><td><code>Name</code></td><td>Title</td><td>—</td></tr><tr><td><code>Client</code></td><td>Relation → <code>Clients</code></td><td>One-to-one</td></tr><tr><td><code>Status</code></td><td>Select</td><td>📝 Scoping · 🛠️ In progress · 🧪 Review · ✅ Delivered · 💤 Paused · ❌ Cancelled</td></tr><tr><td><code>Type</code></td><td>Select</td><td>Automation · Consulting · Content · Build · Retainer · Training</td></tr><tr><td><code>Price</code></td><td>Number</td><td>Format: Euro (€)</td></tr><tr><td><code>Invoiced</code></td><td>Checkbox</td><td>—</td></tr><tr><td><code>Paid</code></td><td>Checkbox</td><td>—</td></tr><tr><td><code>Start date</code></td><td>Date</td><td>—</td></tr><tr><td><code>Deadline</code></td><td>Date</td><td>—</td></tr><tr><td><code>Tools used</code></td><td>Relation → <code>AI Tools</code></td><td>Many-to-many</td></tr><tr><td><code>Workflows built</code></td><td>Relation → <code>Automation Backlog</code></td><td>Many-to-many</td></tr><tr><td><code>Deliverables</code></td><td>Text</td><td>Liste à puces des livrables clés</td></tr><tr><td><code>Post-mortem notes</code></td><td>Text</td><td>Ce qui a marché / ce qu'il ne faut plus faire</td></tr></tbody></table>
+<h2>Vues</h2>
+<h3>1. 🛠️ En cours (default)</h3>
+<ul><li><strong>Type :</strong> Board</li><li><strong>Group by :</strong> <code>Status</code></li><li><strong>Filter :</strong> <code>Status ≠ ✅ Delivered</code> AND <code>Status ≠ ❌ Cancelled</code></li><li><strong>Shown properties :</strong> Name, Client, Price, Deadline</li></ul>
+<h3>2. 📅 Timeline</h3>
+<ul><li><strong>Type :</strong> Timeline</li><li><strong>Start :</strong> <code>Start date</code></li><li><strong>End :</strong> <code>Deadline</code></li><li><strong>Filter :</strong> <code>Status ≠ ❌ Cancelled</code></li></ul>
+<h3>3. 💰 Facturation</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Invoiced = false</code> OR <code>Paid = false</code></li><li><strong>Sort :</strong> <code>Deadline</code> ascending</li><li><strong>Shown properties :</strong> Name, Client, Price, Invoiced, Paid</li></ul>
+<h3>4. 🏁 Livrés ce trimestre</h3>
+<ul><li><strong>Type :</strong> Table</li><li><strong>Filter :</strong> <code>Status = ✅ Delivered</code> AND <code>Deadline</code> this quarter</li><li><strong>Sort :</strong> <code>Deadline</code> descending</li></ul>
+<hr>
+<h1>📊 Command Center (page d'accueil)</h1>
+<p>La page principale contient, dans l'ordre vertical :</p>
+<h2>Bloc 1 — Header</h2>
+<ul><li><strong>Callout</strong> 🚀 avec ta mission du trimestre (ex: "Q2 : atteindre 10k€/mois récurrent")</li></ul>
+<h2>Bloc 2 — Cette semaine</h2>
+<ul><li><strong>Linked view of <code>Projects</code></strong> — vue "Timeline" filtrée sur la semaine en cours</li><li>Largeur pleine page</li></ul>
+<h2>Bloc 3 — 2 colonnes côte à côte</h2>
+<p><strong>Colonne gauche :</strong></p>
+<ul><li>Titre : <code>⚡ Automations — top 3</code></li><li><strong>Linked view of <code>Automation Backlog</code></strong> — vue custom :</li><li>Filter : <code>Priority = 🔥 High</code> AND <code>Status ≠ ✅ Live</code></li><li>Limit : 3 items</li></ul>
+<p><strong>Colonne droite :</strong></p>
+<ul><li>Titre : <code>🧑‍💼 Clients à recontacter</code></li><li><strong>Linked view of <code>Clients</code></strong> — vue "À recontacter"</li><li>Limit : 5 items</li></ul>
+<h2>Bloc 4 — 2 colonnes côte à côte</h2>
+<p><strong>Colonne gauche :</strong></p>
+<ul><li>Titre : <code>🧠 Stack actif</code></li><li><strong>Linked view of <code>AI Tools</code></strong> — vue "🟢 Active stack"</li><li>Compact mode</li></ul>
+<p><strong>Colonne droite :</strong></p>
+<ul><li>Titre : <code>📚 Prompts favoris</code></li><li><strong>Linked view of <code>Prompt Library</code></strong> — vue "🔥 Favoris"</li><li>Limit : 5 items</li></ul>
+<h2>Bloc 5 — Rituels</h2>
+<ul><li><strong>Toggle list</strong> avec 3 entrées :</li><li><code>📅 Lundi — planning hebdo (15 min)</code> → checklist intégrée</li><li><code>📅 Vendredi — rétro (20 min)</code> → checklist intégrée</li><li><code>📅 1er du mois — review stack (30 min)</code> → checklist intégrée</li></ul>
+<p>Contenu des checklists : voir section <strong>Rituels</strong> ci-dessous.</p>
+<h2>Bloc 6 — Shortcuts</h2>
+<ul><li><strong>Columns 5</strong> avec 5 cards cliquables linkant vers chaque database : <code>🧠 AI Tools</code> · <code>⚡ Backlog</code> · <code>📚 Prompts</code> · <code>🧑‍💼 Clients</code> · <code>📦 Projects</code></li></ul>
+<hr>
+<h1>📅 Rituels — contenu des checklists</h1>
+<h2>Lundi (15 min) — planning hebdo</h2>
+<ul><li>[ ] Ouvrir <code>Projects → Timeline</code> et identifier les 3 deadlines de la semaine</li><li>[ ] Ouvrir <code>Clients → À recontacter</code> et lister les 3 messages prioritaires</li><li>[ ] Ouvrir <code>Automation Backlog → Top priorités</code> et choisir 1 chantier à pousser cette semaine</li><li>[ ] Bloquer les créneaux dans Google Calendar</li></ul>
+<h2>Vendredi (20 min) — rétro</h2>
+<ul><li>[ ] Marquer comme ✅ Delivered les projets livrés</li><li>[ ] Marquer comme <code>Paid = true</code> les projets payés</li><li>[ ] Ajouter un post-mortem court sur chaque projet livré (3 lignes max)</li><li>[ ] Noter dans <code>Prompt Library → Notes / variants</code> les prompts que tu as vraiment utilisés cette semaine</li></ul>
+<h2>1er du mois (30 min) — review stack</h2>
+<ul><li>[ ] Ouvrir <code>AI Tools → Review queue</code> et traiter chaque ligne : <code>Last reviewed = today</code></li><li>[ ] Identifier 1 outil à churner (si <code>Status = 🟡 Testing</code> et peu utilisé)</li><li>[ ] Calculer le coût total du stack actif → comparer au mois dernier</li><li>[ ] Publier 1 contenu sur ton stack actuel (transparence = contenu facile)</li></ul>
+<hr>
+<h1>🎯 Conseils d'usage</h1>
+<ul><li><strong>Ne multiplie pas les databases.</strong> 5 c'est le bon chiffre. Au-delà ça devient un cimetière.</li><li><strong>Les vues filtrées &gt; les databases en plus.</strong> Plutôt que créer une db "Leads", filtre <code>Clients</code> sur <code>Status = 👀 Prospect</code>.</li><li><strong>Rollups = ton ami.</strong> <code>Total invoiced</code> sur un client se calcule seul. Zero saisie double.</li><li><strong>Relations bidirectionnelles :</strong> vérifie que chaque relation apparaît aussi dans la db cible (ex: <code>Projects → Tools used</code> doit se voir depuis <code>AI Tools → Used on project</code>).</li><li><strong>Pour la mobilité :</strong> crée une vue "Quick capture" sur chaque db avec seulement <code>Name + Status + Notes</code> pour ajouter un item en 5 secondes depuis ton téléphone.</li></ul>
+<hr>
+<h1>🔌 Intégrations possibles (pour plus tard)</h1>
+<ul><li><strong>Automatisation n8n → Notion</strong> : créer un client à partir d'un formulaire Tally → Notion crée la ligne automatiquement</li><li><strong>Automatisation Stripe → Notion</strong> : quand un paiement arrive, <code>Paid = true</code> automatiquement</li><li><strong>Automatisation Claude → Notion</strong> : un agent qui lit ton Automation Backlog et propose les 3 top priorités chaque lundi matin</li></ul>
+<p>Toutes ces intégrations sont buildables avec n8n + API Notion. C'est exactement ce qu'on couvre dans le Tier 2.</p>
+<hr>
+<h2>C'est quoi la suite ?</h2>
+<ul><li>🤖 <strong>Brancher ton dashboard à n8n pour que tout se remplisse tout seul</strong> ? → <a href="https://taiyka.com/products/ai-agent-playbook">Build Your First AI Agent (29€)</a></li></ul>
+<ul><li>📊 <strong>Voir comment d'autres solopreneurs utilisent ce dashboard + partager tes propres setups</strong> ? → <a href="https://taiyka.com/skool">La communauté Skool</a></li></ul>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

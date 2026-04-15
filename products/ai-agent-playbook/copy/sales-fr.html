@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sales copy — AI Agent Playbook (FR) — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Sales copy — AI Agent Playbook (FR)</h1>
+<blockquote>Landing page (<code>/products/ai-agent-playbook</code>) + CTAs social. Prix : <strong>29€</strong>.</blockquote>
+<hr>
+<h2>H1 (hero)</h2>
+<p><strong>Construis ton premier agent IA — et vends-le.</strong> Le playbook complet + 3 skills + 1 workflow n8n. À toi pour 29€.</p>
+<h2>Sub-hero</h2>
+<p>6 chapitres pour passer de "j'ai joué avec ChatGPT" à "j'ai un agent IA en prod chez un client qui me paie 250€/mois en maintenance". Pas de théorie. Que des choses qu'on peut shipper.</p>
+<h2>Bullets de valeur (4)</h2>
+<ul><li>🤖 <strong>6 chapitres pour passer du concept au cash</strong> — concept, architecture, build, test, packaging, vente. Avec exemples concrets et pricing chiffré.</li><li>⚡ <strong>1 workflow n8n prêt à importer</strong> (<code>agent-starter.json</code>) — un agent réceptionniste fonctionnel en 30 min, basé sur Claude Sonnet 4.6</li><li>🎁 <strong>3 skills Claude bundlées</strong> — <code>agent-prompt-architect</code> (designer ton prompt), <code>n8n-builder</code> (générer des workflows), <code>content-creator</code> (poster ce que tu apprends)</li><li>💰 <strong>La méthode pricing complète</strong> — 3 modèles de facturation (forfait / forfait+mensualité / performance), avec montants chiffrés et conseils sur lequel choisir</li></ul>
+<h2>CTA principal</h2>
+<p><strong>Récupère le playbook — 29€ →</strong> <em>(bouton Gumroad)</em></p>
+<h2>CTA secondaire</h2>
+<p><em>Paiement sécurisé Gumroad. Tu reçois le ZIP + tous les fichiers en 30 secondes.</em></p>
+<hr>
+<h2>Section "c'est pour qui"</h2>
+<p><strong>C'est pour toi si :</strong></p>
+<ul><li>Tu sais utiliser ChatGPT mais tu n'as jamais buildé d'agent IA fonctionnel</li><li>Tu veux ajouter "agent IA" à ton offre freelance / agence (et facturer pour)</li><li>Tu connais un peu n8n (ou tu es prêt à apprendre — 1h max)</li><li>Tu en as marre des cours théoriques sur "le futur de l'IA"</li></ul>
+<p><strong>C'est PAS pour toi si :</strong></p>
+<ul><li>Tu veux apprendre Python et builder from scratch — ici on utilise n8n + Claude API direct</li><li>Tu cherches du low-level (LangChain, agents customs en code) — Skool community plus tard</li><li>Tu n'as jamais ouvert n8n de ta vie et tu refuses d'essayer</li></ul>
+<hr>
+<h2>Variantes courtes (stories / posts / DM)</h2>
+<h3>Variante 1 — Specificity</h3>
+<blockquote>Le playbook que j'aurais aimé avoir quand j'ai vendu mon premier agent IA. 6 chapitres + workflow + 3 skills. 29€. Lien bio.</blockquote>
+<h3>Variante 2 — Curiosity gap / Result</h3>
+<blockquote>J'ai signé mon premier client agent IA pour 2 500€ + 250€/mois récurrents. Je dis tout dans 6 chapitres. 29€. Lien bio.</blockquote>
+<h3>Variante 3 — Challenge</h3>
+<blockquote>Tu suis encore des cours "AI for Business" théoriques ? Voici un playbook qui te fait shipper un agent en 30 min. 29€.</blockquote>
+<h3>Variante 4 — Transparence</h3>
+<blockquote>Le système exact que j'utilise pour vendre des agents IA chez Taiyka. Workflow n8n + skills Claude + méthode pricing. 29€. Aucun truc planqué.</blockquote>
+<h3>Variante 5 — Hook problème</h3>
+<blockquote>Tout le monde parle d'agents IA. Personne ne dit comment les pricer ni où trouver des clients. Mon playbook répond aux deux. 29€.</blockquote>
+<hr>
+<h2>Email post-achat</h2>
+<p><strong>Subject :</strong> ✅ Ton AI Agent Playbook est prêt — premier agent en 30 min</p>
+<p><strong>Body :</strong></p>
+<p>Salut,</p>
+<p>Merci pour l'achat 🙏</p>
+<p>Tu télécharges le pack ici → [LIEN_ZIP]</p>
+<p>Dedans :</p>
+<ul><li><strong>Le playbook complet</strong> (<code>playbook-fr.md</code> + <code>playbook-en.md</code>) — 6 chapitres</li><li><strong>Le workflow n8n</strong> (<code>agent-starter.json</code>) — un agent réceptionniste prêt à importer</li><li><strong>3 skills Claude bundlées</strong> (<code>content-creator</code>, <code>n8n-builder</code>, <code>agent-prompt-architect</code>)</li><li><strong>Quick-start guide</strong> (<code>guide-fr.md</code> + <code>guide-en.md</code>) — la version "j'ai 30 min"</li></ul>
+<p><strong>Mon conseil pour démarrer :</strong></p>
+<ol><li>Si t'es pressé → lis le <code>guide-fr.md</code> (15 min de lecture). Tu auras un agent qui tourne en 30 min.</li><li>Si tu veux comprendre en profondeur → attaque le <code>playbook-fr.md</code> direct, chapitre 1. Compte 90 min de lecture pour les 6 chapitres.</li><li><strong>Important</strong> : ne saute PAS les chapitres 5 et 6 (packaging + vente). C'est là que se cache l'argent. Le build, c'est le plus facile.</li></ol>
+<p>Quand tu as ton premier agent qui tourne, <strong>DM-moi sur Insta</strong> (<a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a>) — j'aime voir ce que les gens construisent.</p>
+<p>Si tu bloques quelque part, réponds à ce mail. Je lis tout, je réponds vite.</p>
+<p>À toi de jouer 🚀</p>
+<p>— Manu</p>
+<p>PS : la <strong><a href="https://taiyka.com/skool">communauté Skool</a></strong> publie un nouvel agent par mois minimum (avec workflow + prompt + tools déjà câblés), des Q&amp;A live hebdo, et tu peux faire reviewer ton premier agent en direct par moi. Si tu veux accélérer après ce playbook, c'est par là.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

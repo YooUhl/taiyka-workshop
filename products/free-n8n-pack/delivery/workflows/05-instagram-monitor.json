@@ -1,0 +1,884 @@
+{
+  "updatedAt": "2026-04-08T19:43:17.943Z",
+  "createdAt": "2026-04-06T13:17:40.977Z",
+  "id": "fTCV4JzFH9iFK8WD",
+  "name": "Instagram — Daily Collector",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Instagram — Daily Collector\n\n**Schedule:** 06:00 UTC daily (08:00 Europe/Paris CEST)\n**Handles:** All Instagram handles with status=approved AND backfill data\n**Source:** Apify instagram-profile-scraper (~$0.003/profile)\n**Output:** channel_metrics + Master Sheet (one tab per handle)\n\n**Audit 2026-04-08:**\n- Switched empty schedule rule to explicit `0 6 * * *` (was never firing)\n- Added `status=eq.approved` filter on Fetch IG Handles\n- Normalized IF operator + Code node mode\n- Fixed mojibake em-dashes in jsCode\n",
+        "height": 140,
+        "width": 500,
+        "color": 4
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000001",
+      "name": "Daily IG Collector",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        208,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000002",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        256,
+        352
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ig08-0001-4f7a-8b1c-000000000003",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        256,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://YOUR-PROJECT-REF.supabase.co/rest/v1/handles?platform=eq.instagram&status=eq.approved&select=id,competitor_id,handle,competitors(name)&order=created_at.asc",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000004",
+      "name": "Fetch IG Handles",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        480,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nlet rows = [];\n\nif (allItems.length === 1 && Array.isArray(allItems[0].json)) {\n  rows = allItems[0].json;\n} else {\n  rows = allItems.map(i => i.json);\n}\n\nif (!rows.length) {\n  throw new Error('No Instagram handles found in Supabase.');\n}\n\nconst SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';\nconst SUPABASE_KEY = 'PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE';\n\nconst todo = [];\nlet skipped = 0;\n\nfor (const row of rows) {\n  let check = await this.helpers.httpRequest({\n    method: 'GET',\n    url: `${SUPABASE_URL}/rest/v1/channel_metrics?handle_id=eq.${row.id}&source=eq.socialblade_archive&select=handle_id&limit=1`,\n    headers: {\n      'apikey': SUPABASE_KEY,\n      'Authorization': `Bearer ${SUPABASE_KEY}`\n    }\n  });\n  if (typeof check === 'string') check = JSON.parse(check);\n  if (Array.isArray(check) && check.length > 0) {\n    todo.push(row);\n  } else {\n    skipped++;\n  }\n}\n\nconsole.log(`${rows.length} IG handles total, ${todo.length} have backfill data, ${skipped} skipped (no backfill)`);\n\nif (!todo.length) {\n  throw new Error('No Instagram handles with backfill data found. Run SocialBlade backfill (workflow 07) first.');\n}\n\nreturn todo.map(row => ({\n  json: {\n    handle_id: row.id,\n    competitor_id: row.competitor_id,\n    brand: row.competitors?.name || '',\n    handle: (row.handle || '').replace(/^@/, '')\n  }\n}));"
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000005",
+      "name": "Filter Backfilled Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000006",
+      "name": "Loop Over Channels",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        912,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=PASTE_YOUR_APIFY_API_TOKEN_HERE&waitSecs=60",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ usernames: [$json.handle] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000007",
+      "name": "Call Apify IG Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1136,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const apifyResponse = $input.item.json;\nconst loopItem = $('Loop Over Channels').item.json;\nconst today = new Date().toISOString().split('T')[0];\n\n// Apify returns an array — get first profile\nconst profile = Array.isArray(apifyResponse) ? apifyResponse[0] : apifyResponse;\n\nif (!profile || !profile.followersCount && profile.followersCount !== 0) {\n  console.log(`${loopItem.brand} (@${loopItem.handle}): Apify returned no data — skipping`);\n  return [{ json: { skip: true, handle_id: loopItem.handle_id, brand: loopItem.brand } }];\n}\n\nconsole.log(`${loopItem.brand} (@${loopItem.handle}): ${profile.followersCount} followers, ${profile.postsCount || 0} posts`);\n\nreturn [{ json: {\n  skip: false,\n  handle_id: loopItem.handle_id,\n  competitor_id: loopItem.competitor_id,\n  brand: loopItem.brand,\n  handle: loopItem.handle,\n  date: today,\n  followers: profile.followersCount || 0,\n  total_posts: profile.postsCount || null,\n  total_views: null,\n  source: 'apify_instagram'\n}}];",
+        "mode": "runOnceForEachItem"
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000008",
+      "name": "Build Metrics Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true
+          },
+          "conditions": [
+            {
+              "id": "1",
+              "leftValue": "={{ $json.skip }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000009",
+      "name": "Profile Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://YOUR-PROJECT-REF.supabase.co/rest/v1/channel_metrics?on_conflict=handle_id,date",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates, return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ handle_id: $json.handle_id, competitor_id: $json.competitor_id, date: $json.date, followers: $json.followers, total_posts: $json.total_posts, total_views: $json.total_views, source: $json.source }]) }}",
+        "options": {}
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000010",
+      "name": "Upsert to channel_metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        1792,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/10otVSFr4bp9rtxCpRZGY9Y-8aEqDBMMBn1nvZRq5HCw/values/' + encodeURIComponent(\"'\" + $('Loop Over Channels').item.json.brand + ' - @' + $('Loop Over Channels').item.json.handle + \"'\") + ':append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ values: [[$json.date, $json.followers, $json.total_posts, $json.source]] }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true
+            }
+          }
+        }
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000012",
+      "name": "Append to Master Sheet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        2016,
+        352
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5NoHQZnzP0hP7tkB",
+          "name": "Google Sheets Manu"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "id": "ig08-0001-4f7a-8b1c-000000000011",
+      "name": "Wait 3s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        448
+      ],
+      "webhookId": "a5cbc6f7-a4d7-4a76-bbac-d822049a6b6a"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch IG Handles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        []
+      ]
+    },
+    "Fetch IG Handles": {
+      "main": [
+        [
+          {
+            "node": "Filter Backfilled Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Backfilled Only": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Channels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Channels": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Call Apify IG Scraper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Apify IG Scraper": {
+      "main": [
+        [
+          {
+            "node": "Build Metrics Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Metrics Row": {
+      "main": [
+        [
+          {
+            "node": "Profile Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Profile Found?": {
+      "main": [
+        [
+          {
+            "node": "Upsert to channel_metrics",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 3s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert to channel_metrics": {
+      "main": [
+        [
+          {
+            "node": "Append to Master Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append to Master Sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait 3s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 3s": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Channels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "executionTimeout": 300,
+    "timezone": "Europe/Paris",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": {},
+  "versionId": "678d650d-dffa-44e4-b30f-f29d62477afe",
+  "activeVersionId": "678d650d-dffa-44e4-b30f-f29d62477afe",
+  "versionCounter": 29,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-06T13:17:40.979Z",
+      "createdAt": "2026-04-06T13:17:40.979Z",
+      "role": "workflow:owner",
+      "workflowId": "fTCV4JzFH9iFK8WD",
+      "projectId": "E451qDUr0UHQUBM7",
+      "project": {
+        "updatedAt": "2026-02-04T11:13:38.026Z",
+        "createdAt": "2026-02-04T11:11:10.743Z",
+        "id": "E451qDUr0UHQUBM7",
+        "name": "Your Name <your-email@example.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "8aea6a80-231a-439c-98d9-e9dc8360d799",
+        "projectRelations": [
+          {
+            "updatedAt": "2026-02-04T11:11:10.743Z",
+            "createdAt": "2026-02-04T11:11:10.743Z",
+            "userId": "8aea6a80-231a-439c-98d9-e9dc8360d799",
+            "projectId": "E451qDUr0UHQUBM7",
+            "user": {
+              "updatedAt": "2026-04-08T08:44:01.000Z",
+              "createdAt": "2026-02-04T11:11:10.366Z",
+              "id": "8aea6a80-231a-439c-98d9-e9dc8360d799",
+              "email": "your-email@example.com",
+              "firstName": "Your",
+              "lastName": "Name",
+              "personalizationAnswers": {
+                "version": "v4",
+                "personalization_survey_submitted_at": "2026-02-04T11:13:50.091Z",
+                "personalization_survey_n8n_version": "2.6.3",
+                "companySize": "20-99",
+                "companyType": "ecommerce",
+                "role": "business-owner",
+                "reportedSource": "google"
+              },
+              "settings": {
+                "userActivated": true,
+                "easyAIWorkflowOnboarded": true,
+                "firstSuccessfulWorkflowId": "RgoOhgw7iZvFllA5jFObe",
+                "userActivatedAt": 1774065600379,
+                "npsSurvey": {
+                  "responded": true,
+                  "lastShownAt": 1775033019683
+                }
+              },
+              "disabled": false,
+              "mfaEnabled": false,
+              "lastActiveAt": "2026-04-07",
+              "isPending": false
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-04-08T19:43:17.984Z",
+    "createdAt": "2026-04-08T19:43:17.984Z",
+    "versionId": "678d650d-dffa-44e4-b30f-f29d62477afe",
+    "workflowId": "fTCV4JzFH9iFK8WD",
+    "nodes": [
+      {
+        "parameters": {
+          "content": "## Instagram — Daily Collector\n\n**Schedule:** 06:00 UTC daily (08:00 Europe/Paris CEST)\n**Handles:** All Instagram handles with status=approved AND backfill data\n**Source:** Apify instagram-profile-scraper (~$0.003/profile)\n**Output:** channel_metrics + Master Sheet (one tab per handle)\n\n**Audit 2026-04-08:**\n- Switched empty schedule rule to explicit `0 6 * * *` (was never firing)\n- Added `status=eq.approved` filter on Fetch IG Handles\n- Normalized IF operator + Code node mode\n- Fixed mojibake em-dashes in jsCode\n",
+          "height": 140,
+          "width": 500,
+          "color": 4
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000001",
+        "name": "Daily IG Collector",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          208,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 6 * * *"
+              }
+            ]
+          }
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000002",
+        "name": "Schedule Trigger",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          256,
+          352
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "ig08-0001-4f7a-8b1c-000000000003",
+        "name": "Manual Trigger",
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          256,
+          528
+        ]
+      },
+      {
+        "parameters": {
+          "url": "https://YOUR-PROJECT-REF.supabase.co/rest/v1/handles?platform=eq.instagram&status=eq.approved&select=id,competitor_id,handle,competitors(name)&order=created_at.asc",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000004",
+        "name": "Fetch IG Handles",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          480,
+          352
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const allItems = $input.all();\nlet rows = [];\n\nif (allItems.length === 1 && Array.isArray(allItems[0].json)) {\n  rows = allItems[0].json;\n} else {\n  rows = allItems.map(i => i.json);\n}\n\nif (!rows.length) {\n  throw new Error('No Instagram handles found in Supabase.');\n}\n\nconst SUPABASE_URL = 'https://YOUR-PROJECT-REF.supabase.co';\nconst SUPABASE_KEY = 'PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE';\n\nconst todo = [];\nlet skipped = 0;\n\nfor (const row of rows) {\n  let check = await this.helpers.httpRequest({\n    method: 'GET',\n    url: `${SUPABASE_URL}/rest/v1/channel_metrics?handle_id=eq.${row.id}&source=eq.socialblade_archive&select=handle_id&limit=1`,\n    headers: {\n      'apikey': SUPABASE_KEY,\n      'Authorization': `Bearer ${SUPABASE_KEY}`\n    }\n  });\n  if (typeof check === 'string') check = JSON.parse(check);\n  if (Array.isArray(check) && check.length > 0) {\n    todo.push(row);\n  } else {\n    skipped++;\n  }\n}\n\nconsole.log(`${rows.length} IG handles total, ${todo.length} have backfill data, ${skipped} skipped (no backfill)`);\n\nif (!todo.length) {\n  throw new Error('No Instagram handles with backfill data found. Run SocialBlade backfill (workflow 07) first.');\n}\n\nreturn todo.map(row => ({\n  json: {\n    handle_id: row.id,\n    competitor_id: row.competitor_id,\n    brand: row.competitors?.name || '',\n    handle: (row.handle || '').replace(/^@/, '')\n  }\n}));"
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000005",
+        "name": "Filter Backfilled Only",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          704,
+          352
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000006",
+        "name": "Loop Over Channels",
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          912,
+          352
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.apify.com/v2/acts/apify~instagram-profile-scraper/run-sync-get-dataset-items?token=PASTE_YOUR_APIFY_API_TOKEN_HERE&waitSecs=60",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ usernames: [$json.handle] }) }}",
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true
+              }
+            }
+          }
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000007",
+        "name": "Call Apify IG Scraper",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          1136,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const apifyResponse = $input.item.json;\nconst loopItem = $('Loop Over Channels').item.json;\nconst today = new Date().toISOString().split('T')[0];\n\n// Apify returns an array — get first profile\nconst profile = Array.isArray(apifyResponse) ? apifyResponse[0] : apifyResponse;\n\nif (!profile || !profile.followersCount && profile.followersCount !== 0) {\n  console.log(`${loopItem.brand} (@${loopItem.handle}): Apify returned no data — skipping`);\n  return [{ json: { skip: true, handle_id: loopItem.handle_id, brand: loopItem.brand } }];\n}\n\nconsole.log(`${loopItem.brand} (@${loopItem.handle}): ${profile.followersCount} followers, ${profile.postsCount || 0} posts`);\n\nreturn [{ json: {\n  skip: false,\n  handle_id: loopItem.handle_id,\n  competitor_id: loopItem.competitor_id,\n  brand: loopItem.brand,\n  handle: loopItem.handle,\n  date: today,\n  followers: profile.followersCount || 0,\n  total_posts: profile.postsCount || null,\n  total_views: null,\n  source: 'apify_instagram'\n}}];",
+          "mode": "runOnceForEachItem"
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000008",
+        "name": "Build Metrics Row",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1360,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true
+            },
+            "conditions": [
+              {
+                "id": "1",
+                "leftValue": "={{ $json.skip }}",
+                "rightValue": false,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000009",
+        "name": "Profile Found?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1584,
+          448
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://YOUR-PROJECT-REF.supabase.co/rest/v1/channel_metrics?on_conflict=handle_id,date",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+              },
+              {
+                "name": "Authorization",
+                "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Prefer",
+                "value": "resolution=merge-duplicates, return=representation"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify([{ handle_id: $json.handle_id, competitor_id: $json.competitor_id, date: $json.date, followers: $json.followers, total_posts: $json.total_posts, total_views: $json.total_views, source: $json.source }]) }}",
+          "options": {}
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000010",
+        "name": "Upsert to channel_metrics",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          1792,
+          352
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "={{ 'https://sheets.googleapis.com/v4/spreadsheets/10otVSFr4bp9rtxCpRZGY9Y-8aEqDBMMBn1nvZRq5HCw/values/' + encodeURIComponent(\"'\" + $('Loop Over Channels').item.json.brand + ' - @' + $('Loop Over Channels').item.json.handle + \"'\") + ':append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS' }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleSheetsOAuth2Api",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ JSON.stringify({ values: [[$json.date, $json.followers, $json.total_posts, $json.source]] }) }}",
+          "options": {
+            "response": {
+              "response": {
+                "neverError": true
+              }
+            }
+          }
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000012",
+        "name": "Append to Master Sheet",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4,
+        "position": [
+          2016,
+          352
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "5NoHQZnzP0hP7tkB",
+            "name": "Google Sheets Manu"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "amount": 3
+        },
+        "id": "ig08-0001-4f7a-8b1c-000000000011",
+        "name": "Wait 3s",
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          2240,
+          448
+        ],
+        "webhookId": "a5cbc6f7-a4d7-4a76-bbac-d822049a6b6a"
+      }
+    ],
+    "connections": {
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "Fetch IG Handles",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Manual Trigger": {
+        "main": [
+          []
+        ]
+      },
+      "Fetch IG Handles": {
+        "main": [
+          [
+            {
+              "node": "Filter Backfilled Only",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter Backfilled Only": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Channels",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Channels": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Call Apify IG Scraper",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call Apify IG Scraper": {
+        "main": [
+          [
+            {
+              "node": "Build Metrics Row",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Metrics Row": {
+        "main": [
+          [
+            {
+              "node": "Profile Found?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Profile Found?": {
+        "main": [
+          [
+            {
+              "node": "Upsert to channel_metrics",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Wait 3s",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Upsert to channel_metrics": {
+        "main": [
+          [
+            {
+              "node": "Append to Master Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append to Master Sheet": {
+        "main": [
+          [
+            {
+              "node": "Wait 3s",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait 3s": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Channels",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Taiyka — manu_ai.to",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-04-08T19:43:18.399Z",
+        "id": 9,
+        "workflowId": "fTCV4JzFH9iFK8WD",
+        "versionId": "678d650d-dffa-44e4-b30f-f29d62477afe",
+        "event": "activated",
+        "userId": "8aea6a80-231a-439c-98d9-e9dc8360d799"
+      }
+    ]
+  }
+}

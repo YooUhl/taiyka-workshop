@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quick-start — Si tu n'as que 30 min — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Quick-start — Si tu n'as que 30 min</h1>
+<blockquote>Pour ceux qui veulent voir l'agent tourner avant de lire le playbook complet. Suis ces 6 étapes, tu auras un agent IA fonctionnel en 30 minutes.</blockquote>
+<hr>
+<h2>Ce dont tu as besoin</h2>
+<ul><li>Un compte n8n (cloud ou self-hosted) — la version cloud gratuite suffit</li><li>Une clé API Anthropic (<a href="https://console.anthropic.com">console.anthropic.com</a>) — 5€ de crédit suffit largement</li><li>30 minutes</li></ul>
+<hr>
+<h2>1. Importer le workflow (3 min)</h2>
+<ol><li>Ouvre ton n8n</li><li><strong>+ Add workflow</strong> → menu <strong>... → Import from File</strong></li><li>Choisis <code>delivery/workflow/agent-starter.json</code></li><li>Tu vois apparaître 6 nodes connectés</li></ol>
+<hr>
+<h2>2. Configurer (5 min)</h2>
+<p>Clique sur le node <strong>"Edit Fields (config)"</strong> et remplace :</p>
+<table><thead><tr><th>Champ</th><th>Valeur</th></tr></thead><tbody><tr><td><code>anthropic_api_key</code></td><td>Ta clé API Anthropic</td></tr><tr><td><code>business_name</code></td><td>Le nom de ton business</td></tr><tr><td><code>business_offer</code></td><td>Une phrase qui décrit ce que tu fais</td></tr></tbody></table>
+<p>Optionnel : change <code>agent_name</code> ("Aria" par défaut) et <code>claude_model</code> (<code>claude-sonnet-4-6</code> par défaut, basculable sur <code>claude-haiku-4-5</code> pour économiser).</p>
+<hr>
+<h2>3. Activer le workflow (1 min)</h2>
+<ol><li>Sauvegarde le workflow (Ctrl+S)</li><li>Active-le (toggle en haut à droite)</li><li>Clique sur le node <strong>"Webhook (incoming message)"</strong> → copie l'URL du webhook (deux versions s'affichent : "Test URL" pour les essais, "Production URL" pour la prod — utilise la Production)</li></ol>
+<hr>
+<h2>4. Tester (5 min)</h2>
+<p>Dans un terminal :</p>
+<pre><code class="lang-bash">curl -X POST "https://TON_N8N_URL/webhook/agent-starter" \
+  -H "Content-Type: application/json" \
+  -d '{"user_message": "Salut, vous proposez quoi ?", "user_name": "Marie"}'</code></pre>
+<p>Tu dois recevoir une réponse en JSON :</p>
+<pre><code class="lang-json">{
+  "reply": "Salut Marie ! On est [business_name]...",
+  "model": "claude-sonnet-4-6"
+}</code></pre>
+<p>🎉 Ton premier agent IA tourne.</p>
+<hr>
+<h2>5. Customiser le prompt (10 min)</h2>
+<p>Ouvre le node <strong>"Build prompt"</strong>. Le system prompt est en JavaScript dedans. C'est lui qui définit le comportement de l'agent.</p>
+<p><strong>Trois choses à changer pour ton cas :</strong></p>
+<ul><li><strong>Le <code># YOUR JOB</code></strong> — décris ce que ton agent doit faire pour ton business</li><li><strong>Les <code># RULES (NEVER, EVER)</code></strong> — ajoute les règles spécifiques (ex: "Ne jamais quoter de prix exact", "Ne jamais promettre de date de livraison")</li><li><strong>Le <code># TONE &amp; STYLE</code></strong> — adapte au ton de ton brand</li></ul>
+<p>Sauvegarde et relance le test. La réponse change immédiatement.</p>
+<hr>
+<h2>6. Brancher sur ton vrai canal (6 min)</h2>
+<p>Le webhook accepte n'importe quelle source. Quelques options rapides :</p>
+<ul><li><strong>Site web</strong> — ajoute un widget de chat (Tidio, Chatwoot, ou un input custom) qui POST sur l'URL du webhook</li><li><strong>Instagram / Messenger</strong> — connecte un node Meta Messenger en amont du Webhook (n8n a des nodes natifs)</li><li><strong>WhatsApp</strong> — via Twilio ou Meta WhatsApp Business</li><li><strong>Email</strong> — node Gmail Trigger en amont, qui POST sur le même endpoint</li></ul>
+<p>Pour la version "vraiment branchée sur Instagram", suis le <strong>Chapitre 3</strong> du playbook complet.</p>
+<hr>
+<h2>Tu veux plus ?</h2>
+<ul><li>Lis le <strong>playbook complet</strong> (<code>playbook-fr.md</code>) — 6 chapitres pour comprendre, packager et <strong>vendre</strong> ton agent</li><li>Bundle les 3 Claude skills (<code>delivery/skills/</code>) dans tes propres projets — <code>agent-prompt-architect</code> est ton meilleur ami pour designer le prompt</li><li>Rejoins la <strong><a href="https://taiyka.com/skool">communauté Skool</a></strong> pour les agents avancés (qui appellent des tools, qui mémoirent, qui se chaînent)</li></ul>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a></p>
+<p>Tu bloques ? Réponds à l'email de livraison.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

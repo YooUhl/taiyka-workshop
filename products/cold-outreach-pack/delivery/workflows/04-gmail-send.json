@@ -1,0 +1,265 @@
+{
+  "name": "Cold Outreach — Gmail Send (with approval)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "gs-node-01",
+      "name": "When clicking 'Execute workflow'"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "gs-cfg-01",
+              "name": "spreadsheet_id",
+              "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+              "type": "string"
+            },
+            {
+              "id": "gs-cfg-02",
+              "name": "sheet_id",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "gs-cfg-03",
+              "name": "sender_first_name",
+              "value": "Manu",
+              "type": "string"
+            },
+            {
+              "id": "gs-cfg-04",
+              "name": "sender_signature",
+              "value": "Manu\n@manu_ai.to",
+              "type": "string"
+            },
+            {
+              "id": "gs-cfg-05",
+              "name": "subject_template",
+              "value": "quick question, {{first_name}}",
+              "type": "string"
+            },
+            {
+              "id": "gs-cfg-06",
+              "name": "body_template",
+              "value": "Hello {{first_name}},\n\n{{icebreaker}}\n\nI can setup a smart Agent handling your leads in under 60 seconds — from welcome message to booked appointment.\n\nA demo video is ready whenever you have 64 seconds to spare.\n\n{{signature}}",
+              "type": "string"
+            },
+            {
+              "id": "gs-cfg-07",
+              "name": "dry_run",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0],
+      "id": "gs-node-02",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [440, 0],
+      "id": "gs-node-03",
+      "name": "Read leads from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PASTE_YOUR_GOOGLE_SHEETS_CRED_ID",
+          "name": "PASTE_YOUR_GOOGLE_SHEETS_CRED_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "typeValidation": "loose", "version": 3},
+          "conditions": [
+            {
+              "id": "gs-filter-01",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {"type": "string", "operation": "notEmpty", "singleValue": true}
+            },
+            {
+              "id": "gs-filter-02",
+              "leftValue": "={{ $json.icebreaker }}",
+              "rightValue": "",
+              "operator": {"type": "string", "operation": "notEmpty", "singleValue": true}
+            },
+            {
+              "id": "gs-filter-03",
+              "leftValue": "={{ $json.approved }}",
+              "rightValue": "yes",
+              "operator": {"type": "string", "operation": "equals", "singleValue": true}
+            },
+            {
+              "id": "gs-filter-04",
+              "leftValue": "={{ $json.sent_status }}",
+              "rightValue": "sent",
+              "operator": {"type": "string", "operation": "notEquals", "singleValue": true}
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [660, 0],
+      "id": "gs-node-04",
+      "name": "Approved & not sent yet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build subject + body from the templates using the lead fields.\nconst lead = $input.item.json;\nconst cfg = $('Edit Fields').first().json;\n\nconst firstName = lead.hunter_first_name || lead.first_name || 'there';\n\nfunction render(tpl) {\n  return tpl\n    .replace(/\\{\\{first_name\\}\\}/g, firstName)\n    .replace(/\\{\\{icebreaker\\}\\}/g, lead.icebreaker || '')\n    .replace(/\\{\\{signature\\}\\}/g, cfg.sender_signature || cfg.sender_first_name);\n}\n\nconst subject = render(cfg.subject_template);\nconst body = render(cfg.body_template);\n\nreturn [{\n  json: {\n    id: lead.id,\n    to_email: lead.email,\n    subject,\n    body,\n    dry_run: cfg.dry_run === true || cfg.dry_run === 'true'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0],
+      "id": "gs-node-05",
+      "name": "Render email"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": true, "typeValidation": "loose", "version": 3},
+          "conditions": [
+            {
+              "id": "gs-dry-01",
+              "leftValue": "={{ $json.dry_run }}",
+              "rightValue": true,
+              "operator": {"type": "boolean", "operation": "true", "singleValue": true}
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1100, 0],
+      "id": "gs-node-06",
+      "name": "Dry run?"
+    },
+    {
+      "parameters": {
+        "sendTo": "=PASTE_YOUR_EMAIL_HERE@example.com",
+        "subject": "=[DRY RUN] {{ $json.subject }}",
+        "emailType": "text",
+        "message": "=TO: {{ $json.to_email }}\n\n{{ $json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1320, -140],
+      "id": "gs-node-07",
+      "name": "Gmail — Dry run (to yourself)",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PASTE_YOUR_GMAIL_CRED_ID",
+          "name": "PASTE_YOUR_GMAIL_CRED_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.to_email }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1320, 140],
+      "id": "gs-node-08",
+      "name": "Gmail — Send to prospect",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PASTE_YOUR_GMAIL_CRED_ID",
+          "name": "PASTE_YOUR_GMAIL_CRED_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Render email').item.json.id }}",
+            "sent_status": "=sent",
+            "sent_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": ["id"],
+          "schema": [
+            {"id": "id", "displayName": "id", "type": "string", "canBeUsedToMatch": true, "defaultMatch": true, "display": true},
+            {"id": "sent_status", "displayName": "sent_status", "type": "string", "display": true},
+            {"id": "sent_at", "displayName": "sent_at", "type": "string", "display": true}
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [1540, 140],
+      "id": "gs-node-09",
+      "name": "Mark as sent",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PASTE_YOUR_GOOGLE_SHEETS_CRED_ID",
+          "name": "PASTE_YOUR_GOOGLE_SHEETS_CRED_NAME"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {"main": [[{"node": "Edit Fields", "type": "main", "index": 0}]]},
+    "Edit Fields": {"main": [[{"node": "Read leads from sheet", "type": "main", "index": 0}]]},
+    "Read leads from sheet": {"main": [[{"node": "Approved & not sent yet", "type": "main", "index": 0}]]},
+    "Approved & not sent yet": {"main": [[{"node": "Render email", "type": "main", "index": 0}]]},
+    "Render email": {"main": [[{"node": "Dry run?", "type": "main", "index": 0}]]},
+    "Dry run?": {"main": [
+      [{"node": "Gmail — Dry run (to yourself)", "type": "main", "index": 0}],
+      [{"node": "Gmail — Send to prospect", "type": "main", "index": 0}]
+    ]},
+    "Gmail — Send to prospect": {"main": [[{"node": "Mark as sent", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "staticData": null
+}

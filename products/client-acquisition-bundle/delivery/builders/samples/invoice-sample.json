@@ -1,0 +1,21 @@
+{
+  "language": "english",
+  "invoice_number": "INV-001",
+  "invoice_date": "01/04/2026",
+  "service_date": "28/03/2026",
+  "due_date": "01/05/2026",
+  "your_name": "YOUR_BUSINESS_NAME",
+  "your_address": "YOUR_ADDRESS_HERE",
+  "your_email": "you@example.com",
+  "your_business_number": "YOUR_BUSINESS_NUMBER",
+  "client_name": "Jane Doe",
+  "client_address": "456 Oak Ave, City, Country",
+  "client_email": "jane@acme.com",
+  "line_items": [
+    {"description": "AI Reception Agent build", "amount": 2500.00},
+    {"description": "Strategy session (2h)", "amount": 500.00}
+  ],
+  "payment_link": "https://buy.stripe.com/your-stripe-link-here",
+  "notes": "Project: Acme — AI Reception Agent",
+  "legal_mention": "Adapt the legal mention to your tax status and jurisdiction."
+}

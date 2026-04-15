@@ -1,0 +1,238 @@
+{
+  "name": "Cold Outreach — AI Icebreaker (Claude)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "id": "ib-node-01",
+      "name": "When clicking 'Execute workflow'"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ib-cfg-01",
+              "name": "anthropic_api_key",
+              "value": "PASTE_YOUR_ANTHROPIC_API_KEY_HERE",
+              "type": "string"
+            },
+            {
+              "id": "ib-cfg-02",
+              "name": "spreadsheet_id",
+              "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+              "type": "string"
+            },
+            {
+              "id": "ib-cfg-03",
+              "name": "sheet_id",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "ib-cfg-04",
+              "name": "sender_first_name",
+              "value": "Manu",
+              "type": "string"
+            },
+            {
+              "id": "ib-cfg-05",
+              "name": "sender_offer",
+              "value": "a smart Agent handling your leads in under 60 seconds — from welcome message to booked appointment",
+              "type": "string"
+            },
+            {
+              "id": "ib-cfg-06",
+              "name": "claude_model",
+              "value": "claude-sonnet-4-5",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0],
+      "id": "ib-node-02",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [440, 0],
+      "id": "ib-node-03",
+      "name": "Read leads from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PASTE_YOUR_GOOGLE_SHEETS_CRED_ID",
+          "name": "PASTE_YOUR_GOOGLE_SHEETS_CRED_NAME"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ib-filter-01",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ib-filter-02",
+              "leftValue": "={{ $json.icebreaker }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [660, 0],
+      "id": "ib-node-04",
+      "name": "Has email, no icebreaker yet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// Build the prompt for Claude from the lead row\n// ============================================================\nconst lead = $input.item.json;\nconst cfg = $('Edit Fields').first().json;\n\nconst firstName = lead.hunter_first_name || lead.first_name || 'there';\nconst company = lead.company_name || lead.name || lead.brand || '';\nconst city = lead.city || lead.location || '';\nconst website = lead.websiteUri || lead.website || '';\nconst position = lead.hunter_position || lead.role || '';\nconst niche = lead.category || lead.industry || lead.query || 'local business';\n\nconst system = `You write short, human cold-email icebreakers. Rules:\n- Max 2 sentences, under 35 words total.\n- Specific and grounded in a real detail about the prospect (city, niche, role).\n- No flattery, no \"I hope this finds you well\", no corporate tone.\n- Slightly imperfect English is fine — it signals a real human wrote it.\n- End with a natural lead-in to the offer (do NOT pitch the offer yet — just hook).\n- Output ONLY the icebreaker text. No quotes, no preamble.`;\n\nconst user = `Write a cold-email icebreaker addressed to ${firstName}.\n\nProspect details:\n- Name: ${firstName}\n- Company: ${company}\n- Role: ${position || 'owner/decision maker'}\n- City: ${city}\n- Niche: ${niche}\n- Website: ${website}\n\nSender context (do not mention directly, use only as a grounding):\n- Sender: ${cfg.sender_first_name}\n- What they offer: ${cfg.sender_offer}\n\nOutput: the 1-2 sentence icebreaker, nothing else.`;\n\nreturn [{\n  json: {\n    ...lead,\n    _claude_system: system,\n    _claude_user: user\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0],
+      "id": "ib-node-05",
+      "name": "Build prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "={{ $('Edit Fields').first().json.anthropic_api_key }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{ $('Edit Fields').first().json.claude_model }}\",\n  \"max_tokens\": 300,\n  \"system\": {{ JSON.stringify($json._claude_system) }},\n  \"messages\": [\n    { \"role\": \"user\", \"content\": {{ JSON.stringify($json._claude_user) }} }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0],
+      "id": "ib-node-06",
+      "name": "Call Claude"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the icebreaker text from Claude's response and merge back with the lead.\nconst response = $input.item.json;\nconst icebreaker = (response?.content?.[0]?.text || '').trim();\n\n// The lead data was carried in the previous node — pull it from 'Build prompt'.\nconst lead = $('Build prompt').item.json;\n\nreturn [{\n  json: {\n    id: lead.id,\n    email: lead.email,\n    first_name: lead.hunter_first_name || lead.first_name || '',\n    company: lead.company_name || lead.name || '',\n    icebreaker: icebreaker,\n    icebreaker_status: icebreaker ? 'drafted' : 'error',\n    icebreaker_model: $('Edit Fields').first().json.claude_model\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0],
+      "id": "ib-node-07",
+      "name": "Parse response"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "icebreaker": "={{ $json.icebreaker }}",
+            "icebreaker_status": "={{ $json.icebreaker_status }}",
+            "icebreaker_model": "={{ $json.icebreaker_model }}"
+          },
+          "matchingColumns": ["id"],
+          "schema": [
+            {"id": "id", "displayName": "id", "type": "string", "canBeUsedToMatch": true, "defaultMatch": true, "display": true},
+            {"id": "icebreaker", "displayName": "icebreaker", "type": "string", "display": true},
+            {"id": "icebreaker_status", "displayName": "icebreaker_status", "type": "string", "display": true},
+            {"id": "icebreaker_model", "displayName": "icebreaker_model", "type": "string", "display": true}
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [1540, 0],
+      "id": "ib-node-08",
+      "name": "Update row with icebreaker",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PASTE_YOUR_GOOGLE_SHEETS_CRED_ID",
+          "name": "PASTE_YOUR_GOOGLE_SHEETS_CRED_NAME"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {"main": [[{"node": "Edit Fields", "type": "main", "index": 0}]]},
+    "Edit Fields": {"main": [[{"node": "Read leads from sheet", "type": "main", "index": 0}]]},
+    "Read leads from sheet": {"main": [[{"node": "Has email, no icebreaker yet", "type": "main", "index": 0}]]},
+    "Has email, no icebreaker yet": {"main": [[{"node": "Build prompt", "type": "main", "index": 0}]]},
+    "Build prompt": {"main": [[{"node": "Call Claude", "type": "main", "index": 0}]]},
+    "Call Claude": {"main": [[{"node": "Parse response", "type": "main", "index": 0}]]},
+    "Parse response": {"main": [[{"node": "Update row with icebreaker", "type": "main", "index": 0}]]}
+  },
+  "settings": {"executionOrder": "v1"},
+  "staticData": null
+}

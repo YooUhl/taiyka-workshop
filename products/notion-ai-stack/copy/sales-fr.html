@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sales copy — Notion AI Stack (FR) — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Sales copy — Notion AI Stack (FR)</h1>
+<blockquote>Pour la landing page (<code>/products/notion-ai-stack</code>) ET les CTAs sociaux.</blockquote>
+<hr>
+<h2>H1 (hero)</h2>
+<p><strong>Le dashboard Notion qui fait tourner mon business.</strong> 15€. À toi de le construire.</p>
+<h2>Sub-hero</h2>
+<p>5 databases, un command center, 3 rituels hebdo — la même setup que j'utilise pour suivre mon stack IA, mes clients, mes automations et mes prompts. Pas un template à 1 clic : la spec complète pour le bâtir en 30 min (ou la filer à ton assistant).</p>
+<h2>Note de transparence (à mettre en évidence sur la page)</h2>
+<p><strong>⚠️ Ce que tu reçois :</strong> la spec exhaustive + le guide d'usage + le schéma JSON de chaque database. <strong>Ce que tu ne reçois pas (pour l'instant) :</strong> un lien Notion dupliquable en 1 clic — je te le donnerai gratuitement dès qu'il sera en ligne (garde ton email de commande). <em>Pourquoi ? Parce qu'un bon template Notion doit vivre avec toi. Avec la spec tu comprends ce que tu construis — tu peux l'adapter, le faire évoluer, le filer à un designer.</em></p>
+<h2>Bullets de valeur (3 max)</h2>
+<ul><li>🧠 <strong>5 databases pensées ensemble</strong> : AI Tools, Automation Backlog, Prompt Library, Clients, Projects — toutes reliées</li><li>📊 <strong>Un Command Center</strong> qui te montre cette semaine, tes top 3 automations et les clients à relancer — sans cliquer</li><li>📅 <strong>3 rituels de 15-30 min</strong> (lundi / vendredi / 1er du mois) qui empêchent le dashboard de mourir</li></ul>
+<h2>CTA principal</h2>
+<p><strong>Récupère la spec — 15€ →</strong> <em>(Gumroad)</em></p>
+<h2>CTA secondaire</h2>
+<p><em>Mise à jour à vie. Le template Notion dupliquable arrive gratuitement quand il est prêt.</em></p>
+<hr>
+<h2>Variantes courtes (stories / posts / DMs)</h2>
+<h3>Variante 1 — Curiosity gap</h3>
+<blockquote>J'ai fini par tout regrouper dans Notion. 5 databases, un command center. 15€.</blockquote>
+<h3>Variante 2 — Challenge</h3>
+<blockquote>Tu switches entre Google Sheets, Trello et Notion pour suivre ton business ? J'ai arrêté. Voici comment.</blockquote>
+<h3>Variante 3 — Specificity</h3>
+<blockquote>5 databases, 18 propriétés, 4 vues par db, 3 rituels hebdo. 30 min pour tout monter. 15€.</blockquote>
+<h3>Variante 4 — Transparent pitch</h3>
+<blockquote>C'est pas un template à 1 clic. C'est la spec exacte de mon setup. Tu bâtis en 30 min. 15€.</blockquote>
+<hr>
+<h2>Email post-achat</h2>
+<p><strong>Subject:</strong> 📐 Ton plan de construction (Notion AI Stack)</p>
+<p><strong>Body:</strong> Salut,</p>
+<p>Voilà ton pack. Tu télécharges ici → [LIEN_ZIP]</p>
+<p>Dedans :</p>
+<ul><li><code>template-spec-fr.md</code> — la spec complète + les quick build instructions</li><li><code>databases-schema.md</code> — toutes les propriétés en JSON</li><li><code>guide-fr.md</code> — onboarding + rituels + idées d'intégration</li><li>Versions EN incluses</li></ul>
+<p><strong>Mon conseil :</strong> bloque <strong>30 min ce soir</strong> pour créer la db <code>AI Tools</code> uniquement. Tu vois déjà la valeur (tu vas réaliser combien tu dépenses vraiment). Le reste peut attendre demain.</p>
+<p>Une fois que tu as tout monté, réponds à ce mail avec un screenshot de ton dashboard — je partage les meilleurs setups dans mes stories (avec ta perm évidemment).</p>
+<p>Et si tu veux brancher tout ça à n8n pour que ça se remplisse tout seul, c'est exactement ce qu'on fait dans le Tier 2 (→ [LIEN]).</p>
+<p>À toi de jouer 🚀</p>
+<p>— Manu <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a></p>
+<p>PS : dès que le lien Notion dupliquable est en ligne, je te l'envoie à cette adresse. Zéro effort de ton côté.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

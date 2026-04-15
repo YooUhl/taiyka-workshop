@@ -1,0 +1,2765 @@
+{
+  "name": "Lead Machine",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "76556f6c-5d15-4333-9e4c-de1453badbab",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13e9a5a9-0371-4ce9-bc25-742272789e44",
+              "name": "g_maps_apiKey",
+              "value": "PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE",
+              "type": "string"
+            },
+            {
+              "id": "7f9d9c98-dfd3-4a55-8cf1-dad8acda3906",
+              "name": "query",
+              "value": "barbershops",
+              "type": "string"
+            },
+            {
+              "id": "212d4cf2-248f-4995-9ca2-6e1d474991c2",
+              "name": "location",
+              "value": "Toulon, France",
+              "type": "string"
+            },
+            {
+              "id": "5905fa12-99ec-4806-afd6-4ce0ef42f564",
+              "name": "radius",
+              "value": "1000",
+              "type": "string"
+            },
+            {
+              "id": "42d11354-1d35-4519-9d41-97f86c568bcb",
+              "name": "spreadsheet_id",
+              "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+              "type": "string"
+            },
+            {
+              "id": "b29bce21-bb85-43d0-8796-aa314ae80093",
+              "name": "sheet_id",
+              "value": "0",
+              "type": "string"
+            },
+            {
+              "id": "3f6f4f5a-4393-4270-a04a-86161b5f5954",
+              "name": "max_items",
+              "value": 100,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "4538fe1d-464f-42fc-8076-7b715933e541",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://maps.googleapis.com/maps/api/geocode/json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "address",
+              "value": "={{ $('Edit Fields').item.json.location }}"
+            },
+            {
+              "name": "key",
+              "value": "={{ $('Edit Fields').item.json.g_maps_apiKey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "9844a6c0-a233-4698-ad17-bc135a91dc05",
+      "name": "Get coordinates"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "={{ $('Edit Fields').item.json.g_maps_apiKey }}"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "=places.displayName,places.id,nextPageToken,places.websiteUri,places.priceLevel,places.internationalPhoneNumber,places.nationalPhoneNumber,places.currentOpeningHours,places.formattedAddress,places.rating,places.userRatingCount,"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"textQuery\": \"{{ $('Edit Fields').item.json.query }}\",\n  \"pageSize\": 4,\n  \"locationBias\": {\n    \"circle\": {\n      \"center\": {\n        \"latitude\": {{ $('Get coordinates').item.json.results[0].geometry.location.lat }},\n        \"longitude\": {{ $('Get coordinates').item.json.results[0].geometry.location.lng }}\n      },\n      \"radius\": {{ $('Edit Fields').item.json.radius }}\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "65b71354-b351-4882-99d6-257e83cd90dd",
+      "name": "Get places"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "places",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        880,
+        0
+      ],
+      "id": "8da10871-9f0c-40da-92dc-cb77b3e176f2",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').item.json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').item.json.sheet_id }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "nationalPhoneNumber": "={{ $json.nationalPhoneNumber }}",
+            "internationalPhoneNumber": "=\"{{ $json.internationalPhoneNumber }}\"",
+            "websiteUri": "={{ $json.websiteUri }}",
+            "displayName_text": "={{ $json.displayName.text }}",
+            "formattedAddress": "={{ $json.formattedAddress }}",
+            "rating": "={{ $json.rating }}",
+            "userRatingCount": "={{ $json.userRatingCount }}",
+            "opening hours": "={{ $json.currentOpeningHours.weekdayDescriptions }}",
+            "query": "={{ $('Edit Fields').item.json.query }}",
+            "location": "={{ $('Edit Fields').item.json.location }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nationalPhoneNumber",
+              "displayName": "nationalPhoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "internationalPhoneNumber",
+              "displayName": "internationalPhoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "formattedAddress",
+              "displayName": "formattedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rating",
+              "displayName": "rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "websiteUri",
+              "displayName": "websiteUri",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "userRatingCount",
+              "displayName": "userRatingCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "displayName_text",
+              "displayName": "displayName_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "opening hours",
+              "displayName": "opening hours",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1088,
+        0
+      ],
+      "id": "e0059853-1f56-4ce8-8b1b-a32832b829cf",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RDndDAXOLm7Sv3Xw",
+          "name": "n8ngcs_connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "displayName.text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1296,
+        0
+      ],
+      "id": "29f4cff0-9d45-4700-9bf8-0aae420fdc9d",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "berccbZOg5HKeVWv",
+          "mode": "list",
+          "cachedResultName": "leads-var",
+          "cachedResultUrl": "/projects/kmCRCNXr0RCMRxj6/datatables/berccbZOg5HKeVWv"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NextPageToken": "={{ $('Get places').item.json.nextPageToken }}"
+          },
+          "matchingColumns": [
+            "NextPageToken"
+          ],
+          "schema": [
+            {
+              "id": "NextPageToken",
+              "displayName": "NextPageToken",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        0
+      ],
+      "id": "ee70b1ac-6740-4037-9be8-62d156ce971b",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01e0127d-f2cf-47ab-8a4e-38f4246e0ab6",
+              "leftValue": "={{ $json.NextPageToken }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1712,
+        0
+      ],
+      "id": "9ea88d23-431f-4a96-aa27-e7a663e468d5",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        336,
+        240
+      ],
+      "id": "6fa875cb-8200-4ae5-80cd-5c7bc7e78dce",
+      "name": "Wait",
+      "webhookId": "774ddea3-6d54-4c2c-a99e-b52ddf3ef966"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "berccbZOg5HKeVWv",
+          "mode": "list",
+          "cachedResultName": "leads-var",
+          "cachedResultUrl": "/projects/kmCRCNXr0RCMRxj6/datatables/berccbZOg5HKeVWv"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Insert row').item.json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        544,
+        240
+      ],
+      "id": "2e2c8df6-a85c-43a7-b9ac-fcf969390b4d",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "places",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        992,
+        240
+      ],
+      "id": "10cac5f2-7a9b-4fb3-bf11-7db9da7804c8",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').item.json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').item.json.sheet_id }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "nationalPhoneNumber": "={{ $json.nationalPhoneNumber }}",
+            "internationalPhoneNumber": "=\"{{ $json.internationalPhoneNumber }}\"",
+            "websiteUri": "={{ $json.websiteUri }}",
+            "displayName_text": "={{ $json.displayName.text }}",
+            "formattedAddress": "={{ $json.formattedAddress }}",
+            "rating": "={{ $json.rating }}",
+            "userRatingCount": "={{ $json.userRatingCount }}",
+            "opening hours": "={{ $json.currentOpeningHours.weekdayDescriptions }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nationalPhoneNumber",
+              "displayName": "nationalPhoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "internationalPhoneNumber",
+              "displayName": "internationalPhoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "formattedAddress",
+              "displayName": "formattedAddress",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rating",
+              "displayName": "rating",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "websiteUri",
+              "displayName": "websiteUri",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "userRatingCount",
+              "displayName": "userRatingCount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "displayName_text",
+              "displayName": "displayName_text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "opening hours",
+              "displayName": "opening hours",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1216,
+        240
+      ],
+      "id": "2083eaac-f93e-4534-aeae-ac3ffbba43e0",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RDndDAXOLm7Sv3Xw",
+          "name": "n8ngcs_connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "displayName.text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        240
+      ],
+      "id": "1ed8a2e9-3037-419f-b175-40baf34f38a4",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "berccbZOg5HKeVWv",
+          "mode": "list",
+          "cachedResultName": "leads-var",
+          "cachedResultUrl": "/projects/kmCRCNXr0RCMRxj6/datatables/berccbZOg5HKeVWv"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyValue": "={{ $('Insert row').item.json.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NextPageToken": "={{ $('Get places2').item.json.nextPageToken }}"
+          },
+          "matchingColumns": [
+            "NextPageToken"
+          ],
+          "schema": [
+            {
+              "id": "NextPageToken",
+              "displayName": "NextPageToken",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        240
+      ],
+      "id": "4f43d805-2101-4e2a-8459-51a0ce7f69c2",
+      "name": "Update row(s)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4a25751a-6179-4b1b-a00b-b99148774838",
+              "leftValue": "={{ $json.NextPageToken }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        240
+      ],
+      "id": "f178cae8-45a2-4bfb-825a-5a559a62c1ed",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').item.json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').item.json.sheet_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1216,
+        528
+      ],
+      "id": "10113192-2cde-4d54-8b28-703be442731d",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RDndDAXOLm7Sv3Xw",
+          "name": "n8ngcs_connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "displayName"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        528
+      ],
+      "id": "e27d271d-3a95-457f-b70b-1fab704dac5d",
+      "name": "Aggregate2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "50829981-355d-469d-a8f4-aa46e280bcc0",
+              "name": "num_business",
+              "value": "={{ $json.displayName.length }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1680,
+        528
+      ],
+      "id": "94fee409-7a9d-45fb-bdc4-85ab4c15ab4c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "414d0e68-9aa2-4091-999b-f42654af46f2",
+              "leftValue": "={{ $json.num_business }}",
+              "rightValue": "={{ $('Edit Fields').item.json.max_items }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        528
+      ],
+      "id": "a3073a5c-ff3c-4894-9125-1b4aebe06850",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://places.googleapis.com/v1/places:searchText",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Goog-Api-Key",
+              "value": "={{ $('Edit Fields').item.json.g_maps_apiKey }}"
+            },
+            {
+              "name": "X-Goog-FieldMask",
+              "value": "=places.displayName,places.id,nextPageToken,places.websiteUri,places.priceLevel,places.internationalPhoneNumber,places.nationalPhoneNumber,places.currentOpeningHours,places.formattedAddress,places.rating,places.userRatingCount,"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"textQuery\": \"{{ $('Edit Fields').item.json.query }}\",\n  \"pageSize\": 4,\n  \"pageToken\": \"{{ $json.NextPageToken }}\",\n  \"locationBias\": {\n    \"circle\": {\n      \"center\": {\n        \"latitude\": {{ $('Get coordinates').item.json.results[0].geometry.location.lat }},\n        \"longitude\": {{ $('Get coordinates').item.json.results[0].geometry.location.lng }}\n      },\n      \"radius\": {{ $('Edit Fields').item.json.radius }}\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        768,
+        240
+      ],
+      "id": "f8eb5951-b3ac-45c1-a2c1-d6f56a80d4b4",
+      "name": "Get places2"
+    }
+  ],
+  "pinData": {
+    "When clicking ‘Execute workflow’": [
+      {
+        "json": {},
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Edit Fields": [
+      {
+        "json": {
+          "g_maps_apiKey": "PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE",
+          "query": "barbershops",
+          "location": "Toulon, France",
+          "radius": "1000",
+          "spreadsheet_id": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+          "sheet_id": "441862038",
+          "max_items": 100
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get coordinates": [
+      {
+        "json": {
+          "results": [
+            {
+              "address_components": [
+                {
+                  "long_name": "Toulon",
+                  "short_name": "Toulon",
+                  "types": [
+                    "locality",
+                    "political"
+                  ]
+                },
+                {
+                  "long_name": "Var",
+                  "short_name": "Var",
+                  "types": [
+                    "administrative_area_level_2",
+                    "political"
+                  ]
+                },
+                {
+                  "long_name": "Provence-Alpes-Côte d'Azur",
+                  "short_name": "Provence-Alpes-Côte d'Azur",
+                  "types": [
+                    "administrative_area_level_1",
+                    "political"
+                  ]
+                },
+                {
+                  "long_name": "France",
+                  "short_name": "FR",
+                  "types": [
+                    "country",
+                    "political"
+                  ]
+                }
+              ],
+              "formatted_address": "Toulon, France",
+              "geometry": {
+                "bounds": {
+                  "northeast": {
+                    "lat": 43.1716755,
+                    "lng": 5.987390299999999
+                  },
+                  "southwest": {
+                    "lat": 43.1010466,
+                    "lng": 5.8794882
+                  }
+                },
+                "location": {
+                  "lat": 43.1256814,
+                  "lng": 5.9284944
+                },
+                "location_type": "APPROXIMATE",
+                "viewport": {
+                  "northeast": {
+                    "lat": 43.1716755,
+                    "lng": 5.987390299999999
+                  },
+                  "southwest": {
+                    "lat": 43.1010466,
+                    "lng": 5.8794882
+                  }
+                }
+              },
+              "place_id": "ChIJ_bI1ewIbyRIRMMiP_aUZCAQ",
+              "types": [
+                "locality",
+                "political"
+              ]
+            }
+          ],
+          "status": "OK"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get places": [
+      {
+        "json": {
+          "places": [
+            {
+              "id": "ChIJsZU-f3UbyRIRJcAM3yBhn4E",
+              "nationalPhoneNumber": "09 53 06 38 87",
+              "internationalPhoneNumber": "+33 9 53 06 38 87",
+              "formattedAddress": "343 Av. de la Victoire du 8 Mai 1945, 83000 Toulon, France",
+              "rating": 4.8,
+              "websiteUri": "https://www.planity.com/captain-barber-83000-toulon",
+              "userRatingCount": 309,
+              "displayName": {
+                "text": "Captain Barber",
+                "languageCode": "fr"
+              },
+              "currentOpeningHours": {
+                "openNow": true,
+                "periods": [
+                  {
+                    "open": {
+                      "day": 0,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 8
+                      }
+                    },
+                    "close": {
+                      "day": 0,
+                      "hour": 17,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 8
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 1,
+                      "hour": 11,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 9
+                      }
+                    },
+                    "close": {
+                      "day": 1,
+                      "hour": 19,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 9
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 2,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    },
+                    "close": {
+                      "day": 2,
+                      "hour": 19,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 3,
+                      "hour": 9,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    },
+                    "close": {
+                      "day": 3,
+                      "hour": 19,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 4,
+                      "hour": 9,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    },
+                    "close": {
+                      "day": 4,
+                      "hour": 19,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 5,
+                      "hour": 9,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    },
+                    "close": {
+                      "day": 5,
+                      "hour": 19,
+                      "minute": 30,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 6,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 7
+                      }
+                    },
+                    "close": {
+                      "day": 6,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 7
+                      }
+                    }
+                  }
+                ],
+                "weekdayDescriptions": [
+                  "Monday: 11:00 AM – 7:30 PM",
+                  "Tuesday: 10:00 AM – 7:30 PM",
+                  "Wednesday: 9:30 AM – 7:30 PM",
+                  "Thursday: 9:30 AM – 7:30 PM",
+                  "Friday: 9:30 AM – 7:30 PM",
+                  "Saturday: 10:00 AM – 7:00 PM",
+                  "Sunday: 10:00 AM – 5:00 PM"
+                ],
+                "nextCloseTime": "2026-02-04T18:30:00Z"
+              }
+            },
+            {
+              "id": "ChIJ137pJCUbyRIRQOqI4IVRjIk",
+              "nationalPhoneNumber": "06 66 40 60 49",
+              "internationalPhoneNumber": "+33 6 66 40 60 49",
+              "formattedAddress": "10 Rue d'Antrechaus, 83000 Toulon, France",
+              "rating": 4.9,
+              "websiteUri": "https://www.planity.com/vintage-barber-50s-83000-toulon",
+              "userRatingCount": 450,
+              "displayName": {
+                "text": "Vintage barber 50's",
+                "languageCode": "fr"
+              },
+              "currentOpeningHours": {
+                "openNow": true,
+                "periods": [
+                  {
+                    "open": {
+                      "day": 0,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 8
+                      }
+                    },
+                    "close": {
+                      "day": 0,
+                      "hour": 16,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 8
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 1,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 9
+                      }
+                    },
+                    "close": {
+                      "day": 1,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 9
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 2,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    },
+                    "close": {
+                      "day": 2,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 3,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    },
+                    "close": {
+                      "day": 3,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 4,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    },
+                    "close": {
+                      "day": 4,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 5,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    },
+                    "close": {
+                      "day": 5,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 6,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 7
+                      }
+                    },
+                    "close": {
+                      "day": 6,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 7
+                      }
+                    }
+                  }
+                ],
+                "weekdayDescriptions": [
+                  "Monday: 9:00 AM – 7:00 PM",
+                  "Tuesday: 9:00 AM – 7:00 PM",
+                  "Wednesday: 9:00 AM – 7:00 PM",
+                  "Thursday: 9:00 AM – 7:00 PM",
+                  "Friday: 9:00 AM – 7:00 PM",
+                  "Saturday: 9:00 AM – 7:00 PM",
+                  "Sunday: 10:00 AM – 4:00 PM"
+                ],
+                "nextCloseTime": "2026-02-04T18:00:00Z"
+              }
+            },
+            {
+              "id": "ChIJ29ph4xEbyRIRpUgPv9NMnkQ",
+              "nationalPhoneNumber": "04 94 27 02 65",
+              "internationalPhoneNumber": "+33 4 94 27 02 65",
+              "formattedAddress": "10 Rue Anatole France, 83000 Toulon, France",
+              "rating": 4.7,
+              "websiteUri": "http://www.barbclub.fr/",
+              "userRatingCount": 391,
+              "displayName": {
+                "text": "BarbClub - Toulon",
+                "languageCode": "fr"
+              },
+              "currentOpeningHours": {
+                "openNow": true,
+                "periods": [
+                  {
+                    "open": {
+                      "day": 2,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    },
+                    "close": {
+                      "day": 2,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 3,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    },
+                    "close": {
+                      "day": 3,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 4,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    },
+                    "close": {
+                      "day": 4,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 5,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    },
+                    "close": {
+                      "day": 5,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 6,
+                      "hour": 9,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 7
+                      }
+                    },
+                    "close": {
+                      "day": 6,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 7
+                      }
+                    }
+                  }
+                ],
+                "weekdayDescriptions": [
+                  "Monday: Closed",
+                  "Tuesday: 9:00 AM – 7:00 PM",
+                  "Wednesday: 9:00 AM – 7:00 PM",
+                  "Thursday: 9:00 AM – 7:00 PM",
+                  "Friday: 9:00 AM – 7:00 PM",
+                  "Saturday: 9:00 AM – 7:00 PM",
+                  "Sunday: Closed"
+                ],
+                "nextCloseTime": "2026-02-04T18:00:00Z"
+              }
+            },
+            {
+              "id": "ChIJHciU8BwbyRIRSq9UkaEwU4A",
+              "nationalPhoneNumber": "04 83 99 00 16",
+              "internationalPhoneNumber": "+33 4 83 99 00 16",
+              "formattedAddress": "6 Rue de Pomet, 83000 Toulon, France",
+              "rating": 4.9,
+              "websiteUri": "https://www.planity.com/rockn-barber-83000-toulon",
+              "userRatingCount": 153,
+              "displayName": {
+                "text": "Rock'N Barber",
+                "languageCode": "fr"
+              },
+              "currentOpeningHours": {
+                "openNow": true,
+                "periods": [
+                  {
+                    "open": {
+                      "day": 2,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    },
+                    "close": {
+                      "day": 2,
+                      "hour": 13,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 2,
+                      "hour": 14,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    },
+                    "close": {
+                      "day": 2,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 10
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 3,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    },
+                    "close": {
+                      "day": 3,
+                      "hour": 13,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 3,
+                      "hour": 14,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    },
+                    "close": {
+                      "day": 3,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 4
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 4,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    },
+                    "close": {
+                      "day": 4,
+                      "hour": 13,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 4,
+                      "hour": 14,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    },
+                    "close": {
+                      "day": 4,
+                      "hour": 19,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 5
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 5,
+                      "hour": 10,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    },
+                    "close": {
+                      "day": 5,
+                      "hour": 15,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    }
+                  },
+                  {
+                    "open": {
+                      "day": 5,
+                      "hour": 16,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    },
+                    "close": {
+                      "day": 5,
+                      "hour": 20,
+                      "minute": 0,
+                      "date": {
+                        "year": 2026,
+                        "month": 2,
+                        "day": 6
+                      }
+                    }
+                  }
+                ],
+                "weekdayDescriptions": [
+                  "Monday: Closed",
+                  "Tuesday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+                  "Wednesday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+                  "Thursday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+                  "Friday: 10:00 AM – 3:00 PM, 4:00 – 8:00 PM",
+                  "Saturday: Closed",
+                  "Sunday: Closed"
+                ],
+                "nextCloseTime": "2026-02-04T18:00:00Z"
+              }
+            }
+          ],
+          "nextPageToken": "AcnlKN0Uma8uKQYrH7ogOMAkxUR6oPhgK_9tzzcySuzWD1Msw0Jh1Sb4AW34_EJvekRs9UDqo3FWNM3kbl-_sS1r3XnrNKHNebq6BulNrIlA0yPC0HH3903CxLNM6nwpsct4JRlOB0f8jN8sP0HTRurK4_HRsBvTwDiDjO3TGId3zFonNo8q13foOMCWJeAN1z8jRRi19GPCrujDg9UOPHaSqWH1HF6bCBelOA"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Split Out": [
+      {
+        "json": {
+          "id": "ChIJsZU-f3UbyRIRJcAM3yBhn4E",
+          "nationalPhoneNumber": "09 53 06 38 87",
+          "internationalPhoneNumber": "+33 9 53 06 38 87",
+          "formattedAddress": "343 Av. de la Victoire du 8 Mai 1945, 83000 Toulon, France",
+          "rating": 4.8,
+          "websiteUri": "https://www.planity.com/captain-barber-83000-toulon",
+          "userRatingCount": 309,
+          "displayName": {
+            "text": "Captain Barber",
+            "languageCode": "fr"
+          },
+          "currentOpeningHours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 8
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 17,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 8
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 11,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 9
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 9
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 30,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 7
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 7
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "Monday: 11:00 AM – 7:30 PM",
+              "Tuesday: 10:00 AM – 7:30 PM",
+              "Wednesday: 9:30 AM – 7:30 PM",
+              "Thursday: 9:30 AM – 7:30 PM",
+              "Friday: 9:30 AM – 7:30 PM",
+              "Saturday: 10:00 AM – 7:00 PM",
+              "Sunday: 10:00 AM – 5:00 PM"
+            ],
+            "nextCloseTime": "2026-02-04T18:30:00Z"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "id": "ChIJ137pJCUbyRIRQOqI4IVRjIk",
+          "nationalPhoneNumber": "06 66 40 60 49",
+          "internationalPhoneNumber": "+33 6 66 40 60 49",
+          "formattedAddress": "10 Rue d'Antrechaus, 83000 Toulon, France",
+          "rating": 4.9,
+          "websiteUri": "https://www.planity.com/vintage-barber-50s-83000-toulon",
+          "userRatingCount": 450,
+          "displayName": {
+            "text": "Vintage barber 50's",
+            "languageCode": "fr"
+          },
+          "currentOpeningHours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 0,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 8
+                  }
+                },
+                "close": {
+                  "day": 0,
+                  "hour": 16,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 8
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 1,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 9
+                  }
+                },
+                "close": {
+                  "day": 1,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 9
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 7
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 7
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "Monday: 9:00 AM – 7:00 PM",
+              "Tuesday: 9:00 AM – 7:00 PM",
+              "Wednesday: 9:00 AM – 7:00 PM",
+              "Thursday: 9:00 AM – 7:00 PM",
+              "Friday: 9:00 AM – 7:00 PM",
+              "Saturday: 9:00 AM – 7:00 PM",
+              "Sunday: 10:00 AM – 4:00 PM"
+            ],
+            "nextCloseTime": "2026-02-04T18:00:00Z"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "id": "ChIJ29ph4xEbyRIRpUgPv9NMnkQ",
+          "nationalPhoneNumber": "04 94 27 02 65",
+          "internationalPhoneNumber": "+33 4 94 27 02 65",
+          "formattedAddress": "10 Rue Anatole France, 83000 Toulon, France",
+          "rating": 4.7,
+          "websiteUri": "http://www.barbclub.fr/",
+          "userRatingCount": 391,
+          "displayName": {
+            "text": "BarbClub - Toulon",
+            "languageCode": "fr"
+          },
+          "currentOpeningHours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 6,
+                  "hour": 9,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 7
+                  }
+                },
+                "close": {
+                  "day": 6,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 7
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "Monday: Closed",
+              "Tuesday: 9:00 AM – 7:00 PM",
+              "Wednesday: 9:00 AM – 7:00 PM",
+              "Thursday: 9:00 AM – 7:00 PM",
+              "Friday: 9:00 AM – 7:00 PM",
+              "Saturday: 9:00 AM – 7:00 PM",
+              "Sunday: Closed"
+            ],
+            "nextCloseTime": "2026-02-04T18:00:00Z"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "id": "ChIJHciU8BwbyRIRSq9UkaEwU4A",
+          "nationalPhoneNumber": "04 83 99 00 16",
+          "internationalPhoneNumber": "+33 4 83 99 00 16",
+          "formattedAddress": "6 Rue de Pomet, 83000 Toulon, France",
+          "rating": 4.9,
+          "websiteUri": "https://www.planity.com/rockn-barber-83000-toulon",
+          "userRatingCount": 153,
+          "displayName": {
+            "text": "Rock'N Barber",
+            "languageCode": "fr"
+          },
+          "currentOpeningHours": {
+            "openNow": true,
+            "periods": [
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 2,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                },
+                "close": {
+                  "day": 2,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 10
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 3,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                },
+                "close": {
+                  "day": 3,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 4
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 13,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 4,
+                  "hour": 14,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                },
+                "close": {
+                  "day": 4,
+                  "hour": 19,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 5
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 10,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 15,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                }
+              },
+              {
+                "open": {
+                  "day": 5,
+                  "hour": 16,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                },
+                "close": {
+                  "day": 5,
+                  "hour": 20,
+                  "minute": 0,
+                  "date": {
+                    "year": 2026,
+                    "month": 2,
+                    "day": 6
+                  }
+                }
+              }
+            ],
+            "weekdayDescriptions": [
+              "Monday: Closed",
+              "Tuesday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+              "Wednesday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+              "Thursday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+              "Friday: 10:00 AM – 3:00 PM, 4:00 – 8:00 PM",
+              "Saturday: Closed",
+              "Sunday: Closed"
+            ],
+            "nextCloseTime": "2026-02-04T18:00:00Z"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Append row in sheet": [
+      {
+        "json": {
+          "id": "ChIJsZU-f3UbyRIRJcAM3yBhn4E",
+          "nationalPhoneNumber": "09 53 06 38 87",
+          "internationalPhoneNumber": "\"+33 9 53 06 38 87\"",
+          "websiteUri": "https://www.planity.com/captain-barber-83000-toulon",
+          "displayName_text": "Captain Barber",
+          "formattedAddress": "343 Av. de la Victoire du 8 Mai 1945, 83000 Toulon, France",
+          "rating": 4.8,
+          "userRatingCount": 309,
+          "opening hours": [
+            "Monday: 11:00 AM – 7:30 PM",
+            "Tuesday: 10:00 AM – 7:30 PM",
+            "Wednesday: 9:30 AM – 7:30 PM",
+            "Thursday: 9:30 AM – 7:30 PM",
+            "Friday: 9:30 AM – 7:30 PM",
+            "Saturday: 10:00 AM – 7:00 PM",
+            "Sunday: 10:00 AM – 5:00 PM"
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "id": "ChIJ137pJCUbyRIRQOqI4IVRjIk",
+          "nationalPhoneNumber": "06 66 40 60 49",
+          "internationalPhoneNumber": "\"+33 6 66 40 60 49\"",
+          "websiteUri": "https://www.planity.com/vintage-barber-50s-83000-toulon",
+          "displayName_text": "Vintage barber 50's",
+          "formattedAddress": "10 Rue d'Antrechaus, 83000 Toulon, France",
+          "rating": 4.9,
+          "userRatingCount": 450,
+          "opening hours": [
+            "Monday: 9:00 AM – 7:00 PM",
+            "Tuesday: 9:00 AM – 7:00 PM",
+            "Wednesday: 9:00 AM – 7:00 PM",
+            "Thursday: 9:00 AM – 7:00 PM",
+            "Friday: 9:00 AM – 7:00 PM",
+            "Saturday: 9:00 AM – 7:00 PM",
+            "Sunday: 10:00 AM – 4:00 PM"
+          ]
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "id": "ChIJ29ph4xEbyRIRpUgPv9NMnkQ",
+          "nationalPhoneNumber": "04 94 27 02 65",
+          "internationalPhoneNumber": "\"+33 4 94 27 02 65\"",
+          "websiteUri": "http://www.barbclub.fr/",
+          "displayName_text": "BarbClub - Toulon",
+          "formattedAddress": "10 Rue Anatole France, 83000 Toulon, France",
+          "rating": 4.7,
+          "userRatingCount": 391,
+          "opening hours": [
+            "Monday: Closed",
+            "Tuesday: 9:00 AM – 7:00 PM",
+            "Wednesday: 9:00 AM – 7:00 PM",
+            "Thursday: 9:00 AM – 7:00 PM",
+            "Friday: 9:00 AM – 7:00 PM",
+            "Saturday: 9:00 AM – 7:00 PM",
+            "Sunday: Closed"
+          ]
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "id": "ChIJHciU8BwbyRIRSq9UkaEwU4A",
+          "nationalPhoneNumber": "04 83 99 00 16",
+          "internationalPhoneNumber": "\"+33 4 83 99 00 16\"",
+          "websiteUri": "https://www.planity.com/rockn-barber-83000-toulon",
+          "displayName_text": "Rock'N Barber",
+          "formattedAddress": "6 Rue de Pomet, 83000 Toulon, France",
+          "rating": 4.9,
+          "userRatingCount": 153,
+          "opening hours": [
+            "Monday: Closed",
+            "Tuesday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+            "Wednesday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+            "Thursday: 10:00 AM – 1:00 PM, 2:00 – 7:00 PM",
+            "Friday: 10:00 AM – 3:00 PM, 4:00 – 8:00 PM",
+            "Saturday: Closed",
+            "Sunday: Closed"
+          ]
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      }
+    ],
+    "Aggregate": [
+      {
+        "json": {
+          "text": []
+        },
+        "pairedItem": [
+          {
+            "item": 0
+          },
+          {
+            "item": 1
+          },
+          {
+            "item": 2
+          },
+          {
+            "item": 3
+          }
+        ]
+      }
+    ],
+    "Insert row": [
+      {
+        "json": {
+          "NextPageToken": "AcnlKN0Uma8uKQYrH7ogOMAkxUR6oPhgK_9tzzcySuzWD1Msw0Jh1Sb4AW34_EJvekRs9UDqo3FWNM3kbl-_sS1r3XnrNKHNebq6BulNrIlA0yPC0HH3903CxLNM6nwpsct4JRlOB0f8jN8sP0HTRurK4_HRsBvTwDiDjO3TGId3zFonNo8q13foOMCWJeAN1z8jRRi19GPCrujDg9UOPHaSqWH1HF6bCBelOA",
+          "id": 18,
+          "createdAt": "2026-02-04T13:22:59.039Z",
+          "updatedAt": "2026-02-04T13:22:59.039Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get coordinates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get coordinates": {
+      "main": [
+        [
+          {
+            "node": "Get places",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get places": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Get places2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Update row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row(s)": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Aggregate2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get places2": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8299028f-ede6-4d7b-80e0-646a419e5cc3",
+  "meta": {
+    "instanceId": "48864a3c36289eded9158c138de95113f6aab36d6d01dd48a59268182b80989d"
+  },
+  "id": "RyC6C5Gr0pEbcUGQDcv1P",
+  "tags": []
+}

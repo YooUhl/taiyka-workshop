@@ -1,0 +1,43 @@
+{
+  "language": "english",
+  "contract_number": "CTR-001",
+  "date": "01/04/2026",
+  "your_name": "YOUR_BUSINESS_NAME",
+  "your_address": "YOUR_ADDRESS_HERE",
+  "your_email": "you@example.com",
+  "your_business_number": "YOUR_BUSINESS_NUMBER",
+  "client_name": "Jane Doe",
+  "client_company": "Acme Corp",
+  "client_address": "456 Oak Ave, City, Country",
+  "client_email": "jane@acme.com",
+  "sections": [
+    {
+      "title": "1. PARTIES",
+      "content": "This Agreement is entered into between, on the one hand, YOUR_BUSINESS_NAME, sole trader registered under business number YOUR_BUSINESS_NUMBER, with registered office at YOUR_ADDRESS_HERE, email: you@example.com, hereinafter referred to as the Service Provider, and, on the other hand, Jane Doe, legal representative of Acme Corp, with registered office at 456 Oak Ave, City, Country, email: jane@acme.com, hereinafter referred to as the Client."
+    },
+    {
+      "title": "2. OBJECT AND SCOPE OF SERVICES",
+      "content": "The Service Provider agrees to design, develop and deploy a custom AI Reception Agent for the Client, hereinafter referred to as the Solution. The Solution is a conversational system that handles incoming messages across email and social channels, qualifies leads through a structured flow, and notifies the Client when a qualified lead is ready to be contacted."
+    },
+    {
+      "title": "3. DELIVERABLES",
+      "content": "The Service Provider will deliver the following items to the Client:\n- A configured AI Reception Agent connected to the Client's channels\n- A custom knowledge base built around the Client's offer and FAQs\n- A lead qualification flow with structured handoff\n- A live notification system for every qualified lead\n- Complete written documentation of the setup\n\nAny work beyond the above scope will be subject to a separate written agreement and additional fees."
+    },
+    {
+      "title": "4. TIMELINE AND ACCEPTANCE PROCEDURE",
+      "content": "Work begins upon receipt of the deposit defined in Article 5. Delivery will occur no later than two (2) weeks after the start date. From the delivery date, the Client has seven (7) calendar days to notify the Service Provider in writing of any non-conformities. In the absence of written notification within this period, the deliverables shall be deemed accepted and the balance becomes due."
+    },
+    {
+      "title": "5. PRICE AND PAYMENT TERMS",
+      "content": "The total price for the services is three thousand euros (EUR 3,000), payable as follows:\n- Deposit: fifty percent (50%) of the total amount, i.e. one thousand five hundred euros (EUR 1,500), due upon signature of this Agreement.\n- Balance: fifty percent (50%) of the total amount, i.e. one thousand five hundred euros (EUR 1,500), due upon delivery and acceptance.\n\nThe Service Provider's tax status applies as indicated in the invoice."
+    },
+    {
+      "title": "6. WARRANTY",
+      "content": "The Service Provider warrants for thirty (30) calendar days from acceptance, the correction at no additional cost of bugs and non-conformities affecting the original deliverables. This warranty does not cover new feature requests, changes in the Client's environment, or failures of third-party services used by the Solution."
+    },
+    {
+      "title": "7. APPLICABLE LAW",
+      "content": "This Agreement is governed by the law of YOUR_JURISDICTION. Any dispute shall, in the absence of an amicable resolution, be submitted to the competent courts of YOUR_JURISDICTION_CITY."
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "name": "Taiyka — Lead Magnet Delivery (free n8n pack)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "leadmagnet-n8n-pack",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "lm-001",
+      "name": "Webhook (Email Capture)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "v-1",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "v-2",
+              "name": "name",
+              "value": "={{ $json.body.name || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "v-3",
+              "name": "lang",
+              "value": "={{ ($json.body.lang || 'fr').toLowerCase() }}",
+              "type": "string"
+            },
+            {
+              "id": "v-4",
+              "name": "source",
+              "value": "={{ $json.body.source || 'unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "v-5",
+              "name": "captured_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "lm-002",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_YOUR_LEADS_SHEET_ID_HERE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "captured_at": "={{ $json.captured_at }}",
+            "email": "={{ $json.email }}",
+            "name": "={{ $json.name }}",
+            "lang": "={{ $json.lang }}",
+            "source": "={{ $json.source }}",
+            "product": "free-n8n-pack"
+          }
+        },
+        "options": {}
+      },
+      "id": "lm-003",
+      "name": "Save Lead to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [680, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "c-lang-fr",
+              "leftValue": "={{ $('Normalize Input').item.json.lang }}",
+              "rightValue": "fr",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "lm-004",
+      "name": "Lang FR?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalize Input').item.json.email }}",
+        "subject": "📦 Tes 5 workflows n8n (à importer maintenant)",
+        "emailType": "html",
+        "message": "<p>Salut{{ $('Normalize Input').item.json.name ? ' ' + $('Normalize Input').item.json.name : '' }},</p><p>Voilà le pack. Tu télécharges ici → <a href=\"PASTE_YOUR_FR_ZIP_LINK_HERE\">Télécharger les 5 workflows + le guide PDF</a></p><p>Dedans tu trouves :</p><ul><li>5 workflows <code>.json</code> à importer dans n8n</li><li>Un guide PDF qui explique chaque workflow et son setup</li></ul><p><strong>Mon conseil :</strong> commence par le <strong>#1 (AI News Digest)</strong>. C'est le plus simple à mettre en place — 10 minutes max — et tu vois tout de suite la puissance de n8n.</p><p>Quand tu auras testé, dis-moi lequel tu préfères en répondant à ce mail. Je lis tout.</p><p>À toi de jouer 🚀</p><p>— Manu<br><a href=\"https://instagram.com/manu_ai.to\">@manu_ai.to</a></p><p style=\"color:#888;font-size:13px;margin-top:24px\">PS : si tu veux aller plus loin, j'ai un pack complet de cold outreach automatisé à 19€ → <a href=\"PASTE_TIER1_LINK_HERE\">voir ici</a></p>",
+        "options": {}
+      },
+      "id": "lm-005",
+      "name": "Send FR Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1140, 280],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalize Input').item.json.email }}",
+        "subject": "📦 Your 5 n8n workflows (import now)",
+        "emailType": "html",
+        "message": "<p>Hey{{ $('Normalize Input').item.json.name ? ' ' + $('Normalize Input').item.json.name : '' }},</p><p>Here's the pack. Download here → <a href=\"PASTE_YOUR_EN_ZIP_LINK_HERE\">Download the 5 workflows + PDF guide</a></p><p>Inside:</p><ul><li>5 <code>.json</code> workflows to import into n8n</li><li>A PDF guide explaining each workflow and its setup</li></ul><p><strong>My tip:</strong> start with <strong>#1 (AI News Digest)</strong>. It's the simplest to set up — 10 min max — and you'll instantly feel the power of n8n.</p><p>Once you've tested, hit reply and tell me which one's your favorite. I read everything.</p><p>Go play 🚀</p><p>— Manu<br><a href=\"https://instagram.com/manu_ai.to\">@manu_ai.to</a></p><p style=\"color:#888;font-size:13px;margin-top:24px\">PS: If you want to go further, I have a complete cold outreach pack for €19 → <a href=\"PASTE_TIER1_LINK_HERE\">see here</a></p>",
+        "options": {}
+      },
+      "id": "lm-006",
+      "name": "Send EN Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1140, 520],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"ok\", \"message\": \"Lead captured, email sent.\" }",
+        "options": {}
+      },
+      "id": "lm-007",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1380, 400]
+    }
+  ],
+  "connections": {
+    "Webhook (Email Capture)": { "main": [[{ "node": "Normalize Input", "type": "main", "index": 0 }]] },
+    "Normalize Input": { "main": [[{ "node": "Save Lead to Sheet", "type": "main", "index": 0 }]] },
+    "Save Lead to Sheet": { "main": [[{ "node": "Lang FR?", "type": "main", "index": 0 }]] },
+    "Lang FR?": {
+      "main": [
+        [{ "node": "Send FR Email", "type": "main", "index": 0 }],
+        [{ "node": "Send EN Email", "type": "main", "index": 0 }]
+      ]
+    },
+    "Send FR Email": { "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]] },
+    "Send EN Email": { "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "lead-magnet" }, { "name": "taiyka" }]
+}

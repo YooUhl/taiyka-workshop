@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Claude Code Starter Pack — 3 skills pour démarrer — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Claude Code Starter Pack — 3 skills pour démarrer</h1>
+<blockquote>Le pack que j'aurais aimé avoir quand j'ai découvert Claude Code. — Manu, fondateur de <a href="https://instagram.com/manu_ai.to">Taiyka</a></blockquote>
+<hr>
+<h2>C'est quoi Claude Code ?</h2>
+<p>Claude Code, c'est Claude (l'IA d'Anthropic) qui tourne directement dans ton terminal et qui peut <strong>lire tes fichiers, écrire du code, lancer des commandes et exécuter des "skills"</strong>.</p>
+<p>Pense-le comme un assistant ultra-puissant qui vit dans ton ordi : tu lui parles, il agit. Pas de copier-coller depuis ChatGPT, pas de context perdu entre deux conversations.</p>
+<p>Un <strong>skill</strong>, c'est juste un fichier <code>.md</code> qui dit à Claude <em>"voici comment tu dois faire X quand on te demande X"</em>. Tu en installes un, et à partir de ce moment, dès que tu déclenches le bon mot-clé, Claude suit la procédure que tu lui as donnée.</p>
+<p>Ce pack contient <strong>3 skills prêts à l'emploi</strong> + ce guide pour les installer en 30 minutes.</p>
+<hr>
+<h2>Avant de commencer</h2>
+<p><strong>Tu as besoin de :</strong></p>
+<ul><li>Un compte <a href="https://console.anthropic.com">Anthropic</a> (pour la clé API) OU un abonnement Claude.ai Pro/Max (qui inclut Claude Code)</li><li>Node.js v18+ installé sur ta machine</li><li>Un terminal (Windows : PowerShell ou Git Bash / Mac : Terminal)</li><li>30 minutes</li></ul>
+<hr>
+<h2>Étape 1 — Installer Claude Code</h2>
+<h3>Sur Windows ou Mac</h3>
+<p>Ouvre ton terminal et tape :</p>
+<pre><code class="lang-bash">npm install -g @anthropic-ai/claude-code</code></pre>
+<p>Vérifie l'install :</p>
+<pre><code class="lang-bash">claude --version</code></pre>
+<p>Si tu vois un numéro de version, c'est bon.</p>
+<h3>Authentifier ton compte</h3>
+<p>Lance :</p>
+<pre><code class="lang-bash">claude</code></pre>
+<p>Au premier lancement, Claude Code t'ouvre une page web pour te connecter (soit avec ta clé API, soit avec ton compte Claude.ai).</p>
+<p>C'est tout. Tu peux maintenant lui parler dans le terminal.</p>
+<hr>
+<h2>Étape 2 — Où mettre les skills</h2>
+<p>Les skills vivent dans un dossier spécial sur ton ordi. Claude Code les lit automatiquement.</p>
+<h3>Sur Mac / Linux</h3>
+<pre><code class="lang-">~/.claude/skills/</code></pre>
+<h3>Sur Windows</h3>
+<pre><code class="lang-">C:\Users\TON_NOM\.claude\skills\</code></pre>
+<p>Si le dossier <code>skills</code> n'existe pas, <strong>crée-le</strong>.</p>
+<p>Ensuite, <strong>copie les 3 fichiers <code>.md</code> du dossier <code>skills/</code> du pack</strong> dans ce dossier. Tu devrais te retrouver avec :</p>
+<pre><code class="lang-">~/.claude/skills/
+├── content-creator.md
+├── morning-planner.md
+└── excalidraw-diagram.md</code></pre>
+<p>C'est tout. Pas de redémarrage, pas de config.</p>
+<hr>
+<h2>Étape 3 — Comment déclencher un skill</h2>
+<p>Lance Claude Code dans n'importe quel dossier :</p>
+<pre><code class="lang-bash">claude</code></pre>
+<p>Puis tape une demande qui matche la <strong>description</strong> du skill. Claude détecte automatiquement quel skill utiliser.</p>
+<h3>Exemples</h3>
+<p><strong>Pour content-creator :</strong></p>
+<blockquote>"Aide-moi à écrire un script de Reels sur l'automatisation"</blockquote>
+<p><strong>Pour morning-planner :</strong></p>
+<blockquote>"Planifie ma journée"</blockquote>
+<p><strong>Pour excalidraw-diagram :</strong></p>
+<blockquote>"Fais-moi un diagramme du flow d'inscription utilisateur"</blockquote>
+<p>Claude reconnaît l'intention, charge le skill correspondant, et suit la procédure étape par étape.</p>
+<hr>
+<h2>Les 3 skills du pack</h2>
+<h3>1. content-creator</h3>
+<p>Génère des scripts de Reels/TikTok, des captions Instagram, des carrousels, ou 10 idées de contenu quand tu sèches. Pose 3 questions sur ton niche/audience/ton, puis sort du contenu prêt à publier.</p>
+<h3>2. morning-planner</h3>
+<p>Rituel matinal de planification. Lit ton Google Calendar (si MCP connecté), te demande tes tâches, applique la logique 80/20 pour identifier les 3 tâches qui comptent vraiment, et te construit un emploi du temps réaliste.</p>
+<h3>3. excalidraw-diagram</h3>
+<p>Génère des diagrammes éditables Excalidraw à partir d'une simple description. Architecture, flows, comparaisons, timelines — tout y passe. Sortie en <code>.excalidraw</code> que tu ouvres sur excalidraw.com pour éditer.</p>
+<hr>
+<h2>Troubleshooting</h2>
+<p><strong>"claude: command not found"</strong> → Node.js n'est pas installé ou pas dans ton PATH. Installe Node depuis <a href="https://nodejs.org">nodejs.org</a>, redémarre ton terminal.</p>
+<p><strong>Le skill ne se déclenche pas</strong> → Vérifie que le fichier <code>.md</code> est bien dans <code>~/.claude/skills/</code> (Mac) ou <code>C:\Users\TON_NOM\.claude\skills\</code> (Windows). Vérifie aussi que la <strong>description</strong> du skill matche ta demande — si ta phrase est trop vague, Claude ne sait pas quel skill activer.</p>
+<p><strong>Claude répond mais n'utilise pas le skill</strong> → Sois explicite : "Utilise le skill morning-planner pour planifier ma journée."</p>
+<p><strong>morning-planner n'écrit pas dans Google Calendar</strong> → Normal : tu n'as pas le MCP Google Calendar connecté. Le skill marche quand même et te sort le planning en markdown que tu peux copier manuellement. Pour aller plus loin, ajoute le MCP Google Calendar (doc Anthropic).</p>
+<hr>
+<h2>Pour aller plus loin</h2>
+<p>Tu veux :</p>
+<ul><li><strong>Apprendre à construire ton premier agent IA de A à Z</strong> ? → <a href="https://taiyka.com/products/ai-agent-playbook">Build Your First AI Agent (29€)</a></li></ul>
+<ul><li><strong>Rejoindre une communauté de Solopreneurs IA + accès à tous mes nouveaux skills, workflows et produits</strong> ? → <a href="https://taiyka.com/skool">La communauté Skool</a></li></ul>
+<ul><li><strong>Voir comment je construis mes propres skills</strong> ? → Suis-moi sur <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a>, je publie tout en open source.</li></ul>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

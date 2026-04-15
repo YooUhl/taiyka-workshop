@@ -1,0 +1,236 @@
+{
+  "name": "Morgans — World AI News",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 5 * * *" }]
+        }
+      },
+      "id": "node-001",
+      "name": "Schedule — 5h Daily",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [200, 560]
+    },
+    {
+      "parameters": { "url": "https://techcrunch.com/category/artificial-intelligence/feed/" },
+      "id": "node-002",
+      "name": "RSS TechCrunch",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 100],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://venturebeat.com/feed/" },
+      "id": "node-003",
+      "name": "RSS VentureBeat",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 220],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://artificialintelligence-news.com/feed/" },
+      "id": "node-004",
+      "name": "RSS AI News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 340],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://www.technologyreview.com/feed/" },
+      "id": "node-005",
+      "name": "RSS MIT Tech Review",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 460],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://feeds.reuters.com/reuters/technologyNews" },
+      "id": "node-006",
+      "name": "RSS Reuters Tech",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 580],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://www.cnbc.com/id/100727362/device/rss/rss.html" },
+      "id": "node-007",
+      "name": "RSS CNBC Tech",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 700],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://news.google.com/rss/search?q=company+replaced+employees+AI+layoffs&hl=en-US&gl=US&ceid=US:en" },
+      "id": "node-013",
+      "name": "Google News — AI Layoffs",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 820],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://news.google.com/rss/search?q=%22replaced+by+AI%22+OR+%22AI+saves%22+company+million&hl=en-US&gl=US&ceid=US:en" },
+      "id": "node-014",
+      "name": "Google News — AI Cost Savings",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 940],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "url": "https://news.google.com/rss/search?q=AI+workforce+automation+jobs+billion&hl=en-US&gl=US&ceid=US:en" },
+      "id": "node-015",
+      "name": "Google News — AI Workforce",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [440, 1060],
+      "continueOnFail": true
+    },
+    {
+      "parameters": { "mode": "append" },
+      "id": "node-008",
+      "name": "Merge All Feeds",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [700, 560]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Collect all articles from all RSS feeds and build Claude request\nconst allItems = $input.all();\n\n// Detect source from article link domain\nconst getSource = (link) => {\n  try {\n    const hostname = new URL(link).hostname.replace('www.', '');\n    const map = {\n      'techcrunch.com': 'TechCrunch',\n      'venturebeat.com': 'VentureBeat',\n      'artificialintelligence-news.com': 'AI News',\n      'technologyreview.com': 'MIT Tech Review',\n      'reuters.com': 'Reuters',\n      'cnbc.com': 'CNBC',\n      'news.google.com': 'Google News',\n    };\n    return map[hostname] || hostname;\n  } catch { return 'Unknown'; }\n};\n\nconst articles = allItems\n  .map(item => ({\n    title: String(item.json.title || '').trim(),\n    link: String(item.json.link || '').trim(),\n    description: String(item.json.contentSnippet || item.json.content || '')\n      .replace(/<[^>]*>/g, '').slice(0, 400).trim(),\n    source: getSource(String(item.json.link || '')),\n    pubDate: String(item.json.pubDate || item.json.isoDate || ''),\n  }))\n  .filter(a => a.title && a.link)\n  // Keep only articles from the last 3 days\n  .filter(a => {\n    if (!a.pubDate) return false;\n    const pub = new Date(a.pubDate);\n    const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);\n    return pub >= cutoff;\n  })\n  // Remove duplicates by title\n  .filter((a, i, arr) => arr.findIndex(b => b.title === a.title) === i)\n  .slice(0, 60);\n\nconsole.log(`Articles after date filter (last 3 days): ${articles.length}`);\n\nif (articles.length === 0) {\n  throw new Error('No articles found from any feed. Check individual RSS nodes for errors.');\n}\n\nconst prompt = `Tu es un curateur d'actualités IA pour un créateur de contenu francophone (@manu_ai.to) qui fait des vidéos pour des entrepreneurs sur l'IA et l'automatisation.\n\nVoici une liste d'articles récents. Sélectionne les meilleurs et classe-les dans ces 4 catégories :\n\n1. CASE_STUDY — Entreprises qui ont remplacé des employés par l'IA, réduit leurs coûts, automatisé des processus avec des chiffres concrets (nb d'employés, montants économisés, %). PRIORITÉ ABSOLUE — si tu en trouves, ils vont en premier.\n2. OUTIL — Lancement ou mise à jour majeure d'un outil / modèle IA avec un impact business clair.\n3. DEBAT — Sujets de société, régulation, débats autour de l'IA (remplacement des emplois, éthique, futur du travail).\n4. NEWS — Autres actualités IA intéressantes qui ne rentrent pas dans les catégories ci-dessus.\n\nRègles de sélection :\n- Sélectionne max 5 articles par catégorie (moins si pas assez de bons articles)\n- CASE_STUDY : inclure uniquement si tu as des chiffres précis ou un nom d'entreprise identifiable\n- Ignore les articles vagues, les opinions sans faits, les rumeurs non sourcées\n- Pour chaque article, écris un résumé en français de 2-3 lignes\n- Pour chaque CASE_STUDY, ajoute un champ \"angle_video\" : une phrase courte suggérant l'angle de réaction pour Manu (ex: \"Comment [Entreprise X] a économisé Y millions en automatisant Z — et ce que ça dit du marché\")\n\nRéponds UNIQUEMENT avec du JSON valide, sans markdown, sans code block :\n{\n  \"case_studies\": [{\"title\": \"...\", \"source\": \"...\", \"link\": \"...\", \"summary_fr\": \"...\", \"angle_video\": \"...\"}],\n  \"outils\": [{\"title\": \"...\", \"source\": \"...\", \"link\": \"...\", \"summary_fr\": \"...\"}],\n  \"debats\": [{\"title\": \"...\", \"source\": \"...\", \"link\": \"...\", \"summary_fr\": \"...\"}],\n  \"news\": [{\"title\": \"...\", \"source\": \"...\", \"link\": \"...\", \"summary_fr\": \"...\"}]\n}\n\nArticles disponibles :\n${JSON.stringify(articles)}`;\n\nconst body = JSON.stringify({\n  model: 'claude-sonnet-4-6',\n  max_tokens: 8192,\n  messages: [{ role: 'user', content: prompt }]\n});\n\nreturn [{ json: { body } }];"
+      },
+      "id": "node-009",
+      "name": "Aggregate & Build Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ $json.body }}"
+      },
+      "id": "node-010",
+      "name": "Call Claude API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1160, 560]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude response and build categorized HTML email\nconst responseText = $json.content[0].text;\n\n// Try multiple strategies to extract valid JSON\nlet digest;\nconst strategies = [\n  () => {\n    const clean = responseText.replace(/```json?\\n?/g, '').replace(/```/g, '').trim();\n    return JSON.parse(clean);\n  },\n  () => {\n    const start = responseText.indexOf('{');\n    const end = responseText.lastIndexOf('}');\n    if (start === -1 || end === -1) throw new Error('No JSON braces found');\n    return JSON.parse(responseText.slice(start, end + 1));\n  },\n];\n\nfor (const strategy of strategies) {\n  try { digest = strategy(); break; } catch (e) { continue; }\n}\n\nif (!digest) {\n  throw new Error(`JSON parse failed. Claude response: ${responseText.slice(0, 400)}`);\n}\n\nconst today = new Date().toLocaleDateString('fr-FR', {\n  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'\n});\n\n// Helper: render a standard article card\nconst articleCard = (a, i) => `\n  <div style=\"margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid #e5e7eb;\">\n    <div style=\"font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;\">${a.source}</div>\n    <h3 style=\"margin:0 0 6px 0;font-size:15px;font-weight:600;line-height:1.4;\">\n      <a href=\"${a.link}\" style=\"color:#111827;text-decoration:none;\">${i + 1}. ${a.title}</a>\n    </h3>\n    <p style=\"margin:0;color:#4b5563;font-size:13px;line-height:1.7;\">${a.summary_fr}</p>\n    <a href=\"${a.link}\" style=\"display:inline-block;margin-top:6px;font-size:12px;color:#7c3aed;text-decoration:none;\">Lire l'article →</a>\n  </div>\n`;\n\n// Helper: render a case study card (has angle_video)\nconst caseStudyCard = (a, i) => `\n  <div style=\"margin-bottom:20px;padding:16px;background:#fefce8;border:1px solid #fde047;border-radius:8px;\">\n    <div style=\"font-size:11px;color:#92400e;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;\">${a.source}</div>\n    <h3 style=\"margin:0 0 6px 0;font-size:15px;font-weight:600;line-height:1.4;\">\n      <a href=\"${a.link}\" style=\"color:#111827;text-decoration:none;\">${i + 1}. ${a.title}</a>\n    </h3>\n    <p style=\"margin:0 0 8px 0;color:#4b5563;font-size:13px;line-height:1.7;\">${a.summary_fr}</p>\n    ${a.angle_video ? `<div style=\"background:#fff;border-left:3px solid #f59e0b;padding:8px 12px;border-radius:0 4px 4px 0;\">\n      <span style=\"font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;\">Angle vidéo →</span>\n      <p style=\"margin:2px 0 0;font-size:13px;color:#1c1917;font-style:italic;\">${a.angle_video}</p>\n    </div>` : ''}\n    <a href=\"${a.link}\" style=\"display:inline-block;margin-top:8px;font-size:12px;color:#7c3aed;text-decoration:none;\">Lire l'article →</a>\n  </div>\n`;\n\n// Build each section (skip if empty)\nconst sections = [];\n\nif (digest.case_studies && digest.case_studies.length > 0) {\n  sections.push(`\n    <div style=\"margin-bottom:36px;\">\n      <h2 style=\"margin:0 0 16px 0;font-size:18px;font-weight:800;padding:10px 14px;background:#fde047;border-radius:6px;display:inline-block;\">🏢 Case Studies Business</h2>\n      <p style=\"margin:0 0 16px 0;font-size:12px;color:#6b7280;\">Entreprises + chiffres concrets — idéal pour des vidéos de réaction</p>\n      ${digest.case_studies.map((a, i) => caseStudyCard(a, i)).join('')}\n    </div>\n  `);\n}\n\nif (digest.outils && digest.outils.length > 0) {\n  sections.push(`\n    <div style=\"margin-bottom:36px;\">\n      <h2 style=\"margin:0 0 16px 0;font-size:18px;font-weight:800;padding:10px 14px;background:#dbeafe;border-radius:6px;display:inline-block;\">🚀 Nouveaux Outils & Modèles</h2>\n      ${digest.outils.map((a, i) => articleCard(a, i)).join('')}\n    </div>\n  `);\n}\n\nif (digest.debats && digest.debats.length > 0) {\n  sections.push(`\n    <div style=\"margin-bottom:36px;\">\n      <h2 style=\"margin:0 0 16px 0;font-size:18px;font-weight:800;padding:10px 14px;background:#fce7f3;border-radius:6px;display:inline-block;\">💬 Débats & Tendances</h2>\n      ${digest.debats.map((a, i) => articleCard(a, i)).join('')}\n    </div>\n  `);\n}\n\nif (digest.news && digest.news.length > 0) {\n  sections.push(`\n    <div style=\"margin-bottom:36px;\">\n      <h2 style=\"margin:0 0 16px 0;font-size:18px;font-weight:800;padding:10px 14px;background:#f3f4f6;border-radius:6px;display:inline-block;\">📰 News Générales</h2>\n      ${digest.news.map((a, i) => articleCard(a, i)).join('')}\n    </div>\n  `);\n}\n\nconst caseStudyCount = (digest.case_studies || []).length;\nconst subjectPrefix = caseStudyCount > 0 ? `🏢 ${caseStudyCount} case study · ` : '';\n\nconst html = `<!DOCTYPE html>\n<html><head><meta charset=\"UTF-8\"></head>\n<body style=\"font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:640px;margin:0 auto;padding:32px 24px;background:#fff;color:#111827;\">\n  <div style=\"border-bottom:3px solid #111827;padding-bottom:20px;margin-bottom:36px;\">\n    <h1 style=\"margin:0;font-size:28px;font-weight:800;letter-spacing:-0.02em;\">Morgans Report</h1>\n    <p style=\"margin:6px 0 0;color:#6b7280;font-size:14px;\">${today}</p>\n  </div>\n  ${sections.join('')}\n  <div style=\"margin-top:36px;padding-top:16px;border-top:1px solid #e5e7eb;font-size:11px;color:#9ca3af;text-align:center;\">\n    Généré automatiquement à 5h &bull; TechCrunch &middot; VentureBeat &middot; Reuters &middot; CNBC &middot; MIT Tech Review &middot; AI News &middot; Google News\n  </div>\n</body></html>`;\n\nreturn [{ json: { html, subject: `${subjectPrefix}Morgans Report — ${today}` } }];"
+      },
+      "id": "node-011",
+      "name": "Format Email HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1380, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://html2pdf.it/api/v1/generate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ html: $json.html }) }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "pdf_report"
+            }
+          }
+        }
+      },
+      "id": "node-016",
+      "name": "Generate PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, 560],
+      "continueOnFail": false
+    },
+    {
+      "parameters": {
+        "sendTo": "PASTE_YOUR_EMAIL_HERE@example.com",
+        "subject": "={{ $('Format Email HTML').first().json.subject }}",
+        "emailType": "html",
+        "message": "={{ $('Format Email HTML').first().json.html }}",
+        "options": {
+          "attachments": "pdf_report"
+        }
+      },
+      "id": "node-012",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1820, 560],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule — 5h Daily": {
+      "main": [[
+        { "node": "RSS TechCrunch", "type": "main", "index": 0 },
+        { "node": "RSS VentureBeat", "type": "main", "index": 0 },
+        { "node": "RSS AI News", "type": "main", "index": 0 },
+        { "node": "RSS MIT Tech Review", "type": "main", "index": 0 },
+        { "node": "RSS Reuters Tech", "type": "main", "index": 0 },
+        { "node": "RSS CNBC Tech", "type": "main", "index": 0 },
+        { "node": "Google News — AI Layoffs", "type": "main", "index": 0 },
+        { "node": "Google News — AI Cost Savings", "type": "main", "index": 0 },
+        { "node": "Google News — AI Workforce", "type": "main", "index": 0 }
+      ]]
+    },
+    "RSS TechCrunch": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 0 }]] },
+    "RSS VentureBeat": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 1 }]] },
+    "RSS AI News": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 2 }]] },
+    "RSS MIT Tech Review": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 3 }]] },
+    "RSS Reuters Tech": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 4 }]] },
+    "RSS CNBC Tech": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 5 }]] },
+    "Google News — AI Layoffs": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 6 }]] },
+    "Google News — AI Cost Savings": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 7 }]] },
+    "Google News — AI Workforce": { "main": [[{ "node": "Merge All Feeds", "type": "main", "index": 8 }]] },
+    "Merge All Feeds": { "main": [[{ "node": "Aggregate & Build Request", "type": "main", "index": 0 }]] },
+    "Aggregate & Build Request": { "main": [[{ "node": "Call Claude API", "type": "main", "index": 0 }]] },
+    "Call Claude API": { "main": [[{ "node": "Format Email HTML", "type": "main", "index": 0 }]] },
+    "Format Email HTML": { "main": [[{ "node": "Generate PDF", "type": "main", "index": 0 }]] },
+    "Generate PDF": { "main": [[{ "node": "Send Email", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "active": false,
+  "tags": [{ "name": "content-creator" }]
+}

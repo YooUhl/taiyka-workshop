@@ -1,0 +1,321 @@
+{
+  "name": "Lead Machine — Email Finder",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ef-node-01",
+      "name": "When clicking 'Execute workflow'"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ef-cfg-01",
+              "name": "hunter_api_key",
+              "value": "PASTE_YOUR_HUNTER_API_KEY_HERE",
+              "type": "string"
+            },
+            {
+              "id": "ef-cfg-02",
+              "name": "spreadsheet_id",
+              "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+              "type": "string"
+            },
+            {
+              "id": "ef-cfg-03",
+              "name": "sheet_id",
+              "value": "0",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "id": "ef-node-02",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        440,
+        0
+      ],
+      "id": "ef-node-03",
+      "name": "Read leads from sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RDndDAXOLm7Sv3Xw",
+          "name": "n8ngcs_connection"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ef-filter-01",
+              "leftValue": "={{ $json.websiteUri }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "ef-filter-02",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "ef-node-04",
+      "name": "Has website, no email yet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// CONFIGURATION\n// ============================================================\nconst GENERIC_PREFIXES = [\n  'info', 'contact', 'support', 'hello', 'admin',\n  'noreply', 'no-reply', 'service', 'aide', 'accueil',\n  'bonjour', 'webmaster', 'postmaster', 'mail', 'email',\n  'team', 'equipe', 'office', 'bureau', 'devis',\n  'reservation', 'booking', 'rdv', 'commande', 'order',\n  'newsletter', 'commercial', 'vente', 'sales'\n];\n\nconst DECISION_MAKER_TITLES = [\n  'owner', 'founder', 'ceo', 'gérant', 'gérante',\n  'directeur', 'directrice', 'director', 'president',\n  'président', 'présidente', 'manager', 'patron',\n  'patrone', 'associate', 'partner', 'associé'\n];\n\n// ============================================================\n// INPUT\n// ============================================================\nconst lead = $input.item.json;\nconst hunterApiKey = $('Edit Fields').first().json.hunter_api_key;\n\n// ============================================================\n// STEP 0 — Extract clean domain from websiteUri\n// ============================================================\nlet domain = '';\ntry {\n  const url = new URL(lead.websiteUri);\n  domain = url.hostname.replace(/^www\\./, '');\n} catch (e) {\n  domain = lead.websiteUri\n    .replace(/^https?:\\/\\/(www\\.)?/, '')\n    .split('/')[0];\n}\n\n// ============================================================\n// HELPERS\n// ============================================================\nfunction isValidEmail(email) {\n  const prefix = email.split('@')[0].toLowerCase();\n  return !GENERIC_PREFIXES.includes(prefix);\n}\n\nfunction filterEmails(rawList, domain) {\n  const domainRoot = domain.split('.')[0].toLowerCase();\n  return [...new Set(rawList.map(e => e.toLowerCase()))].filter(email => {\n    const emailDomain = email.split('@')[1]?.toLowerCase() || '';\n    // Keep only emails on the same domain + not generic\n    return isValidEmail(email) && emailDomain.includes(domainRoot);\n  });\n}\n\n// ============================================================\n// STEP 1 — Scrape the website for emails (free)\n// ============================================================\nlet email = '';\nlet emailSource = '';\nlet emailStatus = 'not_found';\nlet hunterFirstName = '';\nlet hunterLastName = '';\nlet hunterPosition = '';\nlet hunterConfidence = 0;\n\ntry {\n  const response = await $helpers.httpRequest({\n    method: 'GET',\n    url: lead.websiteUri,\n    returnFullResponse: true,\n    timeout: 10000\n  });\n\n  const html = response.body || '';\n\n  // Find all email patterns in the HTML\n  const emailRegex = /[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}/g;\n  const rawEmails = html.match(emailRegex) || [];\n\n  const validEmails = filterEmails(rawEmails, domain);\n\n  if (validEmails.length > 0) {\n    email = validEmails[0];\n    emailSource = 'website';\n    emailStatus = 'found';\n  }\n} catch (e) {\n  // Website unreachable — will fall through to Hunter.io\n}\n\n// ============================================================\n// STEP 2 — Hunter.io fallback (only if website scrape found nothing)\n// ============================================================\nconst hunterKeyIsSet = hunterApiKey && hunterApiKey !== 'PASTE_YOUR_HUNTER_API_KEY_HERE';\n\nif (!email && hunterKeyIsSet && domain) {\n  try {\n    const hunterResponse = await $helpers.httpRequest({\n      method: 'GET',\n      url: 'https://api.hunter.io/v2/domain-search',\n      qs: {\n        domain: domain,\n        api_key: hunterApiKey,\n        type: 'personal'\n      }\n    });\n\n    const emails = hunterResponse?.data?.emails || [];\n\n    // Priority: decision makers first\n    let best = null;\n    for (const candidate of emails) {\n      const position = (candidate.position || '').toLowerCase();\n      if (DECISION_MAKER_TITLES.some(t => position.includes(t))) {\n        best = candidate;\n        break;\n      }\n    }\n\n    // Fallback: highest confidence score\n    if (!best && emails.length > 0) {\n      best = [...emails].sort((a, b) => (b.confidence || 0) - (a.confidence || 0))[0];\n    }\n\n    if (best) {\n      email = best.value || '';\n      emailSource = 'hunter';\n      emailStatus = 'found';\n      hunterFirstName = best.first_name || '';\n      hunterLastName = best.last_name || '';\n      hunterPosition = best.position || '';\n      hunterConfidence = best.confidence || 0;\n    }\n  } catch (e) {\n    // Hunter.io call failed (quota, network, etc.)\n    emailStatus = 'hunter_error';\n  }\n}\n\n// ============================================================\n// OUTPUT — Spread original lead data + enrichment\n// ============================================================\nreturn [{\n  json: {\n    ...lead,\n    domain,\n    email,\n    email_source: emailSource,\n    email_status: emailStatus,\n    hunter_first_name: hunterFirstName,\n    hunter_last_name: hunterLastName,\n    hunter_position: hunterPosition,\n    hunter_confidence: hunterConfidence\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ],
+      "id": "ef-node-05",
+      "name": "Find Email (website + Hunter fallback)"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.spreadsheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Edit Fields').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "email": "={{ $json.email }}",
+            "email_source": "={{ $json.email_source }}",
+            "email_status": "={{ $json.email_status }}",
+            "hunter_first_name": "={{ $json.hunter_first_name }}",
+            "hunter_last_name": "={{ $json.hunter_last_name }}",
+            "hunter_position": "={{ $json.hunter_position }}",
+            "hunter_confidence": "={{ $json.hunter_confidence }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "email_source",
+              "displayName": "email_source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "email_status",
+              "displayName": "email_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hunter_first_name",
+              "displayName": "hunter_first_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hunter_last_name",
+              "displayName": "hunter_last_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hunter_position",
+              "displayName": "hunter_position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hunter_confidence",
+              "displayName": "hunter_confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "ef-node-06",
+      "name": "Update row with email",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "RDndDAXOLm7Sv3Xw",
+          "name": "n8ngcs_connection"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking 'Execute workflow'": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Read leads from sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read leads from sheet": {
+      "main": [
+        [
+          {
+            "node": "Has website, no email yet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has website, no email yet": {
+      "main": [
+        [
+          {
+            "node": "Find Email (website + Hunter fallback)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Email (website + Hunter fallback)": {
+      "main": [
+        [
+          {
+            "node": "Update row with email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null
+}

@@ -1,0 +1,154 @@
+{
+  "name": "Competitor Intel — YouTube Collector",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## YouTube — Daily Collector\n\n**Schedule:** 06:30 UTC daily\n**Source:** YouTube Data API v3 (free, 10k quota/day)\n**Output:** Supabase `channel_metrics`\n\n**Flow:**\n1. Fetch approved YouTube handles from Supabase (store `channel_id` in `metadata`)\n2. Loop per channel → YouTube `channels.list?part=statistics`\n3. Extract subscriber/video/view counts\n4. Upsert into `channel_metrics`\n\n**Before running:** replace `PASTE_YOUR_YOUTUBE_API_KEY_HERE` + Supabase placeholders.",
+        "height": 340,
+        "width": 520,
+        "color": 4
+      },
+      "id": "ci-yt-0001-note",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [128, -40]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "30 6 * * *" }
+          ]
+        }
+      },
+      "id": "ci-yt-0002-cron",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [256, 400]
+    },
+    {
+      "parameters": {},
+      "id": "ci-yt-0003-manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [256, 560]
+    },
+    {
+      "parameters": {
+        "url": "https://PASTE_YOUR_SUPABASE_URL_HERE.supabase.co/rest/v1/competitor_handles?platform=eq.youtube&status=eq.approved&select=id,competitor_id,handle,metadata,competitors(name)",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Authorization", "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ci-yt-0004-fetch",
+      "name": "Fetch Approved Handles",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nlet rows = allItems.length === 1 && Array.isArray(allItems[0].json) ? allItems[0].json : allItems.map(i => i.json);\n\nif (!rows.length) {\n  throw new Error('No approved YouTube handles found.');\n}\n\nreturn rows.map(row => ({\n  json: {\n    handle_id: row.id,\n    competitor_id: row.competitor_id,\n    channel_id: row.metadata?.channel_id || '',\n    brand: row.competitors?.name || '',\n    handle: row.handle || ''\n  }\n}));"
+      },
+      "id": "ci-yt-0005-split",
+      "name": "Split Into Channels",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [704, 400]
+    },
+    {
+      "parameters": { "options": {} },
+      "id": "ci-yt-0006-loop",
+      "name": "Loop Over Channels",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [928, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://www.googleapis.com/youtube/v3/channels?part=statistics&id=' + ($json.channel_id || '') + '&key=PASTE_YOUR_YOUTUBE_API_KEY_HERE' }}",
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "ci-yt-0007-api",
+      "name": "Fetch YouTube Stats",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1152, 400]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const ytResponse = $input.item.json;\nconst loopItem = $('Loop Over Channels').item.json;\nconst channel = ytResponse.items?.[0];\nconst today = new Date().toISOString().split('T')[0];\n\nif (!channel) {\n  return { json: { skip: true, handle_id: loopItem.handle_id, brand: loopItem.brand } };\n}\n\nconst stats = channel.statistics || {};\nreturn { json: {\n  skip: false,\n  handle_id: loopItem.handle_id,\n  competitor_id: loopItem.competitor_id,\n  brand: loopItem.brand,\n  handle: loopItem.handle,\n  date: today,\n  followers: parseInt(stats.subscriberCount) || 0,\n  total_posts: parseInt(stats.videoCount) || 0,\n  total_views: parseInt(stats.viewCount) || 0,\n  source: 'youtube_api'\n}};"
+      },
+      "id": "ci-yt-0008-build",
+      "name": "Build Metrics Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1376, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            { "id": "1", "leftValue": "={{ $json.skip }}", "rightValue": false, "operator": { "type": "boolean", "operation": "equals" } }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ci-yt-0009-if",
+      "name": "Channel Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1600, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://PASTE_YOUR_SUPABASE_URL_HERE.supabase.co/rest/v1/channel_metrics?on_conflict=handle_id,date",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Authorization", "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "resolution=merge-duplicates, return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ handle_id: $json.handle_id, competitor_id: $json.competitor_id, platform: 'youtube', date: $json.date, followers: $json.followers, total_posts: $json.total_posts, total_views: $json.total_views, source: $json.source }]) }}",
+        "options": {}
+      },
+      "id": "ci-yt-0010-upsert",
+      "name": "Upsert to channel_metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1824, 400]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Fetch Approved Handles", "type": "main", "index": 0 }]] },
+    "Manual Trigger": { "main": [[{ "node": "Fetch Approved Handles", "type": "main", "index": 0 }]] },
+    "Fetch Approved Handles": { "main": [[{ "node": "Split Into Channels", "type": "main", "index": 0 }]] },
+    "Split Into Channels": { "main": [[{ "node": "Loop Over Channels", "type": "main", "index": 0 }]] },
+    "Loop Over Channels": { "main": [[], [{ "node": "Fetch YouTube Stats", "type": "main", "index": 0 }]] },
+    "Fetch YouTube Stats": { "main": [[{ "node": "Build Metrics Row", "type": "main", "index": 0 }]] },
+    "Build Metrics Row": { "main": [[{ "node": "Channel Found?", "type": "main", "index": 0 }]] },
+    "Channel Found?": { "main": [[{ "node": "Upsert to channel_metrics", "type": "main", "index": 0 }], [{ "node": "Loop Over Channels", "type": "main", "index": 0 }]] },
+    "Upsert to channel_metrics": { "main": [[{ "node": "Loop Over Channels", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Europe/Paris", "executionTimeout": 300 },
+  "staticData": null,
+  "pinData": {},
+  "tags": []
+}

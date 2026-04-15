@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide d'utilisation — 50 Prompts pour Automatiser ton Business — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Guide d'utilisation — 50 Prompts pour Automatiser ton Business</h1>
+<blockquote>Le pack que j'utilise tous les jours dans mes propres workflows. — Manu, <a href="https://instagram.com/manu_ai.to">Taiyka</a></blockquote>
+<hr>
+<h2>Ce que tu as dans le pack</h2>
+<ul><li><strong><code>prompts-fr.md</code></strong> — les 50 prompts en français, organisés par catégorie</li><li><strong><code>prompts-en.md</code></strong> — la version anglaise (utile si tu travailles avec des clients EN)</li><li><strong><code>prompts.csv</code></strong> — fichier prêt à importer dans Notion (FR + EN dans les mêmes lignes)</li><li><strong>Ce guide</strong> — comment utiliser, importer, et remixer</li></ul>
+<hr>
+<h2>Les 5 catégories</h2>
+<ol><li><strong>Contenu</strong> — hooks, scripts, captions, carousels (10 prompts)</li><li><strong>Ventes</strong> — cold emails, DMs, pitches, suivis (10 prompts)</li><li><strong>Opérations</strong> — SOPs, audits workflow, planning (10 prompts)</li><li><strong>Recherche</strong> — synthèses, veille, personas, comparatifs (10 prompts)</li><li><strong>Support client</strong> — réponses, FAQ, onboarding, refunds (10 prompts)</li></ol>
+<hr>
+<h2>Comment utiliser un prompt</h2>
+<ol><li><strong>Copie le prompt</strong> depuis le <code>.md</code> ou le <code>.csv</code></li><li><strong>Remplace les <code>{variables}</code></strong> entre accolades par tes infos</li><li><strong>Colle dans ton outil</strong> : Claude, ChatGPT, Gemini, ou un node n8n</li><li><strong>Ajuste le résultat</strong> avec le "Tweak this" en bas de chaque prompt</li></ol>
+<p><strong>Petit tip :</strong> pour les prompts longs, garde une version épurée pour mobile et la version complète pour les sessions de travail au calme.</p>
+<hr>
+<h2>Importer le CSV dans Notion</h2>
+<ol><li>Crée une nouvelle page dans Notion → <strong>Import</strong> → <strong>CSV</strong></li><li>Sélectionne <code>prompts.csv</code></li><li>Notion crée automatiquement une database avec les colonnes : <code>title_fr</code>, <code>title_en</code>, <code>category</code>, <code>prompt_fr</code>, <code>prompt_en</code></li><li>Optionnel : passe la propriété <code>category</code> en <strong>Select</strong> pour filtrer plus facilement</li></ol>
+<p><strong>Vues utiles à créer :</strong></p>
+<ul><li>📋 <strong>Liste par catégorie</strong> — vue Gallery groupée par <code>category</code></li><li>🔥 <strong>Mes favoris</strong> — ajoute une propriété Checkbox "Favori" puis vue filtrée</li><li>🌍 <strong>FR uniquement / EN uniquement</strong> — selon ce que tu utilises le plus</li></ul>
+<hr>
+<h2>Importer dans Claude Projects ou ChatGPT (mémoire)</h2>
+<p>Tu peux uploader le <code>.md</code> directement comme fichier de référence dans :</p>
+<ul><li><strong>Claude Projects</strong> (Knowledge files)</li><li><strong>ChatGPT Custom GPT</strong> (Knowledge)</li><li><strong>Gemini Gems</strong> (Instructions ou fichiers attachés)</li></ul>
+<p>Ensuite tu demandes : <em>"Utilise le prompt #12 pour cette situation : [contexte]"</em> — l'IA va piocher direct dans le pack.</p>
+<hr>
+<h2>Comment remixer un prompt</h2>
+<p>Les prompts sont des <strong>bases</strong>, pas des dogmes. Voici 3 façons de les adapter :</p>
+<h3>1. Change le ton</h3>
+<p>Remplace "voix confiante directe ‘tu’" par ce que tu veux (formel, humoristique, B2B corporate, etc.).</p>
+<h3>2. Change la langue de sortie</h3>
+<p>Tous les prompts sont neutres sur la langue de sortie. Ajoute juste "Réponds en {langue}" à la fin.</p>
+<h3>3. Combine deux prompts</h3>
+<p>Exemple : prompt #2 (script Reel) + prompt #7 (storytelling client) = un script Reel basé sur un projet client anonymisé.</p>
+<hr>
+<h2>Conseils pour rendre tes prompts encore meilleurs</h2>
+<ul><li><strong>Plus tu donnes de contexte, meilleur c'est.</strong> Ajoute toujours : ton secteur, ton audience, des exemples concrets.</li><li><strong>Mets des contre-exemples.</strong> Dis "JAMAIS X" est aussi puissant que "fais Y".</li><li><strong>Demande plusieurs variantes.</strong> "Génère 3 versions" force le modèle à explorer plus large.</li><li><strong>Garde un fichier ‘mes meilleurs prompts à moi’</strong> où tu copies les versions que tu as remixées et qui marchent vraiment pour toi.</li></ul>
+<hr>
+<h2>Rituel hebdo recommandé</h2>
+<p>Bloque <strong>30 minutes le dimanche soir</strong> pour :</p>
+<ol><li>Choisir 3 prompts que tu vas utiliser cette semaine</li><li>Les remixer avec ton contexte (entreprise, client, projet en cours)</li><li>Les sauvegarder dans tes "favoris"</li></ol>
+<p>En 4 semaines, tu auras un arsenal de 12 prompts ultra calibrés à TOI.</p>
+<hr>
+<h2>C'est quoi la suite ?</h2>
+<p>Tu veux passer à l'étape supérieure ?</p>
+<ul><li>🤖 <strong>Construire ton premier vrai agent IA</strong> (Claude + n8n, de A à Z) ? → <a href="https://taiyka.com/products/ai-agent-playbook">Build Your First AI Agent (29€)</a></li></ul>
+<ul><li>📊 <strong>Une bibliothèque vivante de prompts + workflows + templates dans une vraie communauté</strong> ? → <a href="https://taiyka.com/skool">La communauté Skool</a></li></ul>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

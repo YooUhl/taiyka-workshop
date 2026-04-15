@@ -1,0 +1,160 @@
+{
+  "name": "Competitor Intel — LinkedIn Collector",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## LinkedIn — Daily Collector\n\n**Schedule:** 07:30 UTC daily\n**Source:** Apify `harvestapi/linkedin-company` (~$0.008/profile)\n**Output:** Supabase `channel_metrics`\n\n**Flow:**\n1. Fetch approved LinkedIn handles (store the full company URL in `metadata.url`)\n2. Loop per handle → Apify LinkedIn company scraper\n3. Extract `followerCount` + `employeeCount`\n4. Upsert into `channel_metrics`",
+        "height": 320,
+        "width": 520,
+        "color": 4
+      },
+      "id": "ci-li-0001-note",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [128, -40]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "30 7 * * *" }] }
+      },
+      "id": "ci-li-0002-cron",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [256, 304]
+    },
+    {
+      "parameters": {},
+      "id": "ci-li-0003-manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [256, 480]
+    },
+    {
+      "parameters": {
+        "url": "https://PASTE_YOUR_SUPABASE_URL_HERE.supabase.co/rest/v1/competitor_handles?platform=eq.linkedin&status=eq.approved&select=id,competitor_id,handle,metadata,competitors(name)",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Authorization", "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" }
+          ]
+        },
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "ci-li-0004-fetch",
+      "name": "Fetch Approved Handles",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 304]
+    },
+    {
+      "parameters": {
+        "jsCode": "const allItems = $input.all();\nlet rows = allItems.length === 1 && Array.isArray(allItems[0].json) ? allItems[0].json : allItems.map(i => i.json);\n\nif (!rows.length) {\n  throw new Error('No approved LinkedIn handles found.');\n}\n\nreturn rows.map(row => ({\n  json: {\n    handle_id: row.id,\n    competitor_id: row.competitor_id,\n    brand: row.competitors?.name || '',\n    handle: row.handle,\n    linkedin_url: row.metadata?.url || `https://www.linkedin.com/company/${row.handle}/`\n  }\n}));"
+      },
+      "id": "ci-li-0005-split",
+      "name": "Split Into Handles",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [704, 304]
+    },
+    {
+      "parameters": { "options": {} },
+      "id": "ci-li-0006-loop",
+      "name": "Loop Over Handles",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [912, 304]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/harvestapi~linkedin-company/run-sync-get-dataset-items?token=PASTE_YOUR_APIFY_API_TOKEN_HERE&waitSecs=120",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ companies: [$json.linkedin_url] }) }}",
+        "options": { "response": { "response": { "neverError": true } }, "timeout": 120000 }
+      },
+      "id": "ci-li-0007-apify",
+      "name": "Call Apify LinkedIn Scraper",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1136, 304]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const apifyResponse = $input.item.json;\nconst loopItem = $('Loop Over Handles').item.json;\nconst today = new Date().toISOString().split('T')[0];\n\nconst profile = Array.isArray(apifyResponse) ? apifyResponse[0] : apifyResponse;\n\nif (!profile || !profile.universalName) {\n  return { json: { skip: true, handle_id: loopItem.handle_id, brand: loopItem.brand } };\n}\n\nreturn { json: {\n  skip: false,\n  handle_id: loopItem.handle_id,\n  competitor_id: loopItem.competitor_id,\n  brand: loopItem.brand,\n  handle: loopItem.handle,\n  date: today,\n  followers: profile.followerCount || 0,\n  employee_count: profile.employeeCount || null,\n  total_posts: null,\n  total_views: null,\n  source: 'apify_linkedin'\n}};"
+      },
+      "id": "ci-li-0008-build",
+      "name": "Build Metrics Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 304]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true },
+          "conditions": [
+            { "id": "1", "leftValue": "={{ $json.skip }}", "rightValue": false, "operator": { "type": "boolean", "operation": "equals" } }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ci-li-0009-if",
+      "name": "Profile Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1584, 304]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://PASTE_YOUR_SUPABASE_URL_HERE.supabase.co/rest/v1/channel_metrics?on_conflict=handle_id,date",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Authorization", "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "resolution=merge-duplicates, return=representation" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ handle_id: $json.handle_id, competitor_id: $json.competitor_id, platform: 'linkedin', date: $json.date, followers: $json.followers, total_posts: $json.total_posts, total_views: $json.total_views, employee_count: $json.employee_count, source: $json.source }]) }}",
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "ci-li-0010-upsert",
+      "name": "Upsert to channel_metrics",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1792, 208]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Fetch Approved Handles", "type": "main", "index": 0 }]] },
+    "Manual Trigger": { "main": [[{ "node": "Fetch Approved Handles", "type": "main", "index": 0 }]] },
+    "Fetch Approved Handles": { "main": [[{ "node": "Split Into Handles", "type": "main", "index": 0 }]] },
+    "Split Into Handles": { "main": [[{ "node": "Loop Over Handles", "type": "main", "index": 0 }]] },
+    "Loop Over Handles": { "main": [[], [{ "node": "Call Apify LinkedIn Scraper", "type": "main", "index": 0 }]] },
+    "Call Apify LinkedIn Scraper": { "main": [[{ "node": "Build Metrics Row", "type": "main", "index": 0 }]] },
+    "Build Metrics Row": { "main": [[{ "node": "Profile Found?", "type": "main", "index": 0 }]] },
+    "Profile Found?": { "main": [[{ "node": "Upsert to channel_metrics", "type": "main", "index": 0 }], [{ "node": "Loop Over Handles", "type": "main", "index": 0 }]] },
+    "Upsert to channel_metrics": { "main": [[{ "node": "Loop Over Handles", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Europe/Paris", "executionTimeout": 300 },
+  "staticData": null,
+  "pinData": {},
+  "tags": []
+}

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sales copy — Claude Code Starter Pack (FR) — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Sales copy — Claude Code Starter Pack (FR)</h1>
+<blockquote>Pour la landing page (<code>/products/free-claude-starter</code>) ET les CTAs sur les réseaux sociaux.</blockquote>
+<hr>
+<h2>H1 (hero)</h2>
+<p><strong>3 skills Claude Code que j'utilise tous les jours.</strong> Gratuits. À toi.</p>
+<h2>Sub-hero</h2>
+<p>Pas de cours de 3h. Pas de "introduction à l'IA". Juste 3 fichiers <code>.md</code> que tu copies dans ton dossier Claude et qui transforment ton terminal en assistant ultra-puissant en 30 minutes.</p>
+<h2>Bullets de valeur (3 max — ce qu'il y a dans le pack)</h2>
+<ul><li>Un skill <strong>content-creator</strong> qui te sort scripts Reels, captions Insta et carrousels à la chaîne</li><li>Un skill <strong>morning-planner</strong> qui planifie ta journée en mode 80/20 (lit ton Google Cal, identifie tes 3 priorités, te construit le planning)</li><li>Un skill <strong>excalidraw-diagram</strong> qui transforme une phrase en diagramme éditable propre</li></ul>
+<h2>CTA principal</h2>
+<p><strong>Récupère le pack →</strong> <em>(formulaire email)</em></p>
+<h2>CTA secondaire (sous le formulaire)</h2>
+<p><em>Tu reçois le ZIP en moins de 2 minutes. Pas de spam, jamais.</em></p>
+<hr>
+<h2>Variantes courtes (pour stories / posts / DM réponses)</h2>
+<h3>Variante 1 — Curiosity gap</h3>
+<blockquote>3 skills Claude Code qui font tourner mon business. Je les donne. Lien dans la bio.</blockquote>
+<h3>Variante 2 — Challenge</h3>
+<blockquote>Tu utilises encore Claude.ai dans le navigateur ? Tu rates 80% de ce qu'il sait faire. 3 skills offerts pour passer à la vitesse supérieure.</blockquote>
+<h3>Variante 3 — Specificity</h3>
+<blockquote>3 skills Claude Code (.md) + un guide de 6 pages pour les installer en 30 min. Gratuit. Lien dans ma bio.</blockquote>
+<h3>Variante 4 — Journey / proof</h3>
+<blockquote>J'ai mis 8 mois à comprendre comment exploiter Claude Code à fond. Tu démarres en 30 minutes. Gratuit.</blockquote>
+<hr>
+<h2>Email de livraison (subject + body)</h2>
+<p><strong>Subject:</strong> Tes 3 skills Claude Code (à installer maintenant)</p>
+<p><strong>Body:</strong> Salut,</p>
+<p>Voilà le pack. Tu télécharges ici → [LIEN_ZIP]</p>
+<p>Dedans tu trouves :</p>
+<ul><li>3 skills <code>.md</code> à copier dans ton dossier Claude (<code>~/.claude/skills/</code>)</li><li>Un guide bilingue qui explique l'installation, le déclenchement, et comment aller plus loin</li></ul>
+<p><strong>Mon conseil :</strong> commence par <strong>morning-planner</strong>. C'est le plus rapide à tester (juste "planifie ma journée" dans Claude Code) et tu sens tout de suite le potentiel.</p>
+<p>Quand tu auras testé, dis-moi lequel tu préfères en répondant à ce mail. Je lis tout.</p>
+<p>À toi de jouer.</p>
+<p>— Manu <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a></p>
+<p>PS : si tu veux apprendre à construire ton premier agent IA complet (pas juste un skill), j'ai un playbook à 29€ → [LIEN]</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

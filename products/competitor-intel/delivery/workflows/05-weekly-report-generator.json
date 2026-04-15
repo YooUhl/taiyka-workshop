@@ -1,0 +1,135 @@
+{
+  "name": "Competitor Intel — Weekly Report Generator",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Weekly Report — Claude Analysis\n\n**Schedule:** Mondays 08:00 UTC\n**Source:** Supabase `channel_metrics` (last 7 + previous 7 days)\n**Output:** Strategic report emailed via Gmail\n\n**Flow:**\n1. Fetch last 14 days of metrics from Supabase\n2. Build per-competitor deltas (this week vs last week)\n3. Send to Claude with the analysis prompt\n4. Parse markdown report → email via Gmail\n\n**Before running:** replace `PASTE_YOUR_ANTHROPIC_API_KEY_HERE`, Supabase placeholders, and set your Gmail credential in the last node.",
+        "height": 360,
+        "width": 540,
+        "color": 4
+      },
+      "id": "ci-rp-0001-note",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [128, -40]
+    },
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 8 * * 1" }] }
+      },
+      "id": "ci-rp-0002-cron",
+      "name": "Schedule Trigger (Mon 08:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [256, 352]
+    },
+    {
+      "parameters": {},
+      "id": "ci-rp-0003-manual",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [256, 528]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://PASTE_YOUR_SUPABASE_URL_HERE.supabase.co/rest/v1/channel_metrics?date=gte.' + new Date(Date.now() - 14*86400000).toISOString().split('T')[0] + '&select=*,competitor_handles(handle,platform,competitors(name))&order=date.asc' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" },
+            { "name": "Authorization", "value": "Bearer PASTE_YOUR_SUPABASE_SERVICE_ROLE_KEY_HERE" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ci-rp-0004-fetch",
+      "name": "Fetch Last 14 Days",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [480, 352]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate weekly deltas per competitor × platform\nconst rows = $input.first().json;\nif (!Array.isArray(rows) || !rows.length) {\n  throw new Error('No metrics found in last 14 days. Run collectors first.');\n}\n\nconst now = new Date();\nconst today = new Date(now.toISOString().split('T')[0]);\nconst sevenDaysAgo = new Date(today.getTime() - 7*86400000);\nconst fourteenDaysAgo = new Date(today.getTime() - 14*86400000);\n\nconst byKey = {};\nfor (const r of rows) {\n  const brand = r.competitor_handles?.competitors?.name || 'Unknown';\n  const platform = r.competitor_handles?.platform || r.platform;\n  const handle = r.competitor_handles?.handle || '';\n  const k = `${brand}||${platform}||${handle}`;\n  if (!byKey[k]) byKey[k] = { brand, platform, handle, points: [] };\n  byKey[k].points.push({ date: r.date, followers: r.followers, total_posts: r.total_posts, total_views: r.total_views });\n}\n\nconst deltas = [];\nfor (const k of Object.keys(byKey)) {\n  const g = byKey[k];\n  const thisWeek = g.points.filter(p => new Date(p.date) > sevenDaysAgo);\n  const lastWeek = g.points.filter(p => new Date(p.date) > fourteenDaysAgo && new Date(p.date) <= sevenDaysAgo);\n  if (!thisWeek.length || !lastWeek.length) continue;\n  const latest = thisWeek[thisWeek.length - 1];\n  const prior = lastWeek[lastWeek.length - 1];\n  deltas.push({\n    brand: g.brand,\n    platform: g.platform,\n    handle: g.handle,\n    followers_now: latest.followers,\n    followers_delta: (latest.followers || 0) - (prior.followers || 0),\n    posts_delta: (latest.total_posts || 0) - (prior.total_posts || 0),\n    views_delta: (latest.total_views || 0) - (prior.total_views || 0)\n  });\n}\n\nreturn [{ json: { week_ending: today.toISOString().split('T')[0], deltas } }];"
+      },
+      "id": "ci-rp-0005-agg",
+      "name": "Compute Weekly Deltas",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [704, 352]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\n\nconst systemPrompt = `You are a senior competitive intelligence analyst. Your client tracks competitors across social platforms and relies on you to surface what matters each week. Be sharp, concise, and actionable. Never invent numbers. Base every claim on the data provided. Write in the same language as the user's request.`;\n\nconst userPrompt = `Here is this week's competitor data (week ending ${data.week_ending}).\n\nFor each competitor × platform row you have:\n- followers_now: current follower count\n- followers_delta: change vs last week\n- posts_delta: new posts this week\n- views_delta: view gains this week (when available)\n\nData:\n\\n\\n${JSON.stringify(data.deltas, null, 2)}\n\\n\\nProduce a strategic weekly report with these sections:\n\n1. **Executive summary** — 3 bullet points, max 1 line each. What mattered this week.\n2. **Top movers** — the 3 biggest follower-delta winners and losers (name, platform, delta, hypothesis).\n3. **Content cadence signal** — who posted the most / the least this week. What it suggests about their strategy.\n4. **Platform-by-platform insights** — 1 paragraph per platform covered. Focus on trends, not raw numbers.\n5. **Actionable recommendations** — 3 bullets the client should do this week based on what you observed.\n\nKeep the whole report under 600 words. Use markdown.`;\n\nreturn [{ json: { system: systemPrompt, user: userPrompt, week_ending: data.week_ending } }];"
+      },
+      "id": "ci-rp-0006-prompt",
+      "name": "Build Claude Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [912, 352]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "PASTE_YOUR_ANTHROPIC_API_KEY_HERE" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 2000, system: $json.system, messages: [{ role: 'user', content: $json.user }] }) }}",
+        "options": { "response": { "response": { "neverError": true } } }
+      },
+      "id": "ci-rp-0007-claude",
+      "name": "Call Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [1136, 352]
+    },
+    {
+      "parameters": {
+        "jsCode": "const resp = $input.first().json;\nconst reportMd = resp.content?.[0]?.text || 'No report generated.';\nconst weekEnding = $('Build Claude Prompt').item.json.week_ending;\n\nreturn [{ json: {\n  subject: `Competitor Intel — Weekly Report (week ending ${weekEnding})`,\n  body_markdown: reportMd,\n  body_html: reportMd.replace(/\\n\\n/g, '<br><br>').replace(/\\n/g, '<br>').replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n}}];"
+      },
+      "id": "ci-rp-0008-parse",
+      "name": "Format Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1360, 352]
+    },
+    {
+      "parameters": {
+        "sendTo": "PASTE_YOUR_RECIPIENT_EMAIL_HERE",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.body_html }}",
+        "options": {}
+      },
+      "id": "ci-rp-0009-gmail",
+      "name": "Send via Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1584, 352]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (Mon 08:00)": { "main": [[{ "node": "Fetch Last 14 Days", "type": "main", "index": 0 }]] },
+    "Manual Trigger": { "main": [[{ "node": "Fetch Last 14 Days", "type": "main", "index": 0 }]] },
+    "Fetch Last 14 Days": { "main": [[{ "node": "Compute Weekly Deltas", "type": "main", "index": 0 }]] },
+    "Compute Weekly Deltas": { "main": [[{ "node": "Build Claude Prompt", "type": "main", "index": 0 }]] },
+    "Build Claude Prompt": { "main": [[{ "node": "Call Claude", "type": "main", "index": 0 }]] },
+    "Call Claude": { "main": [[{ "node": "Format Email", "type": "main", "index": 0 }]] },
+    "Format Email": { "main": [[{ "node": "Send via Gmail", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Europe/Paris", "executionTimeout": 600 },
+  "staticData": null,
+  "pinData": {},
+  "tags": []
+}

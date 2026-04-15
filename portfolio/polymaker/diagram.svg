@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="Inter, system-ui, sans-serif">
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1864ab"/>
+    </marker>
+    <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0b7285"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2f9e44"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#0A1628">Polymaker — Competitive Intelligence Pipeline</text>
+
+  <!-- Zone 1: Social sources -->
+  <rect x="30" y="70" width="200" height="380" rx="14" fill="#e8f0fe" stroke="#1a2a4a" stroke-width="2"/>
+  <text x="130" y="96" text-anchor="middle" font-size="14" font-weight="700" fill="#1a2a4a">7 Social Platforms</text>
+  <g font-size="13" fill="#1a2a4a">
+    <rect x="50" y="112" width="160" height="36" rx="8" fill="#dbe4ff" stroke="#1864ab" stroke-width="1.5"/>
+    <text x="130" y="135" text-anchor="middle">Instagram</text>
+    <rect x="50" y="156" width="160" height="36" rx="8" fill="#dbe4ff" stroke="#1864ab" stroke-width="1.5"/>
+    <text x="130" y="179" text-anchor="middle">TikTok</text>
+    <rect x="50" y="200" width="160" height="36" rx="8" fill="#dbe4ff" stroke="#1864ab" stroke-width="1.5"/>
+    <text x="130" y="223" text-anchor="middle">YouTube</text>
+    <rect x="50" y="244" width="160" height="36" rx="8" fill="#dbe4ff" stroke="#1864ab" stroke-width="1.5"/>
+    <text x="130" y="267" text-anchor="middle">Facebook</text>
+    <rect x="50" y="288" width="160" height="36" rx="8" fill="#dbe4ff" stroke="#1864ab" stroke-width="1.5"/>
+    <text x="130" y="311" text-anchor="middle">LinkedIn</text>
+    <rect x="50" y="332" width="160" height="36" rx="8" fill="#dbe4ff" stroke="#1864ab" stroke-width="1.5"/>
+    <text x="130" y="355" text-anchor="middle">Discord</text>
+    <rect x="50" y="376" width="160" height="36" rx="8" fill="#dbe4ff" stroke="#1864ab" stroke-width="1.5"/>
+    <text x="130" y="399" text-anchor="middle">Reddit</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <line x1="235" y1="260" x2="295" y2="260" stroke="#1864ab" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+
+  <!-- Zone 2: Apify -->
+  <rect x="300" y="200" width="160" height="120" rx="14" fill="#e3fafc" stroke="#0b7285" stroke-width="2"/>
+  <text x="380" y="250" text-anchor="middle" font-size="16" font-weight="700" fill="#0b7285">Apify Actors</text>
+  <text x="380" y="272" text-anchor="middle" font-size="12" fill="#343a40">Scraping layer</text>
+  <text x="380" y="292" text-anchor="middle" font-size="12" fill="#343a40">Python wrappers</text>
+
+  <!-- Arrow 2 -->
+  <line x1="465" y1="260" x2="525" y2="260" stroke="#0b7285" stroke-width="2.5" marker-end="url(#arrow-cyan)"/>
+
+  <!-- Zone 3: Supabase -->
+  <rect x="530" y="200" width="160" height="120" rx="14" fill="#dbe4ff" stroke="#1864ab" stroke-width="2"/>
+  <text x="610" y="250" text-anchor="middle" font-size="16" font-weight="700" fill="#1864ab">Supabase</text>
+  <text x="610" y="272" text-anchor="middle" font-size="12" fill="#343a40">Raw content store</text>
+  <text x="610" y="292" text-anchor="middle" font-size="12" fill="#343a40">Dedup + history</text>
+
+  <!-- Arrow 3 -->
+  <line x1="695" y1="260" x2="755" y2="260" stroke="#1864ab" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+
+  <!-- Zone 4: Claude -->
+  <rect x="760" y="140" width="120" height="100" rx="14" fill="#74c0fc" stroke="#1971c2" stroke-width="2.5"/>
+  <text x="820" y="180" text-anchor="middle" font-size="15" font-weight="700" fill="#0A1628">Claude API</text>
+  <text x="820" y="202" text-anchor="middle" font-size="12" fill="#0A1628">Strategic</text>
+  <text x="820" y="218" text-anchor="middle" font-size="12" fill="#0A1628">analysis</text>
+
+  <!-- Zone 5: n8n orchestrator -->
+  <rect x="760" y="280" width="120" height="100" rx="14" fill="#f1f3f5" stroke="#343a40" stroke-width="2"/>
+  <text x="820" y="320" text-anchor="middle" font-size="15" font-weight="700" fill="#0A1628">n8n</text>
+  <text x="820" y="342" text-anchor="middle" font-size="12" fill="#343a40">Weekly</text>
+  <text x="820" y="358" text-anchor="middle" font-size="12" fill="#343a40">orchestrator</text>
+
+  <!-- Arrow Supabase -> Claude -->
+  <line x1="680" y1="210" x2="760" y2="180" stroke="#1971c2" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+  <!-- Arrow Claude -> n8n (feedback) -->
+  <line x1="820" y1="240" x2="820" y2="280" stroke="#1971c2" stroke-width="2.5" marker-end="url(#arrow-blue)"/>
+
+  <!-- Zone 6: Google Sheets output -->
+  <rect x="330" y="400" width="280" height="80" rx="14" fill="#d3f9d8" stroke="#2f9e44" stroke-width="2.5"/>
+  <text x="470" y="435" text-anchor="middle" font-size="16" font-weight="700" fill="#2f9e44">Google Sheets Dashboard</text>
+  <text x="470" y="458" text-anchor="middle" font-size="12" fill="#343a40">Weekly report, channel-by-channel KPIs</text>
+
+  <!-- Arrow n8n -> Sheets -->
+  <path d="M 760 360 Q 650 440 615 440" fill="none" stroke="#2f9e44" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+
+  <!-- Caption -->
+  <text x="450" y="505" text-anchor="middle" font-size="12" fill="#8DA2C0" font-style="italic">Runs every week — client opens dashboard Monday morning</text>
+</svg>

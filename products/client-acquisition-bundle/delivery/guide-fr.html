@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Client Acquisition Bundle — Guide de setup — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Client Acquisition Bundle — Guide de setup</h1>
+<blockquote>Tout ce qu'il te faut pour signer et facturer un client comme un pro, sans copier-coller des templates pourris trouvés sur Google. Templates bilingues + 3 scripts Python qui te génèrent les PDFs en 2 secondes. — Manu, fondateur de <a href="https://instagram.com/manu_ai.to">Taiyka</a></blockquote>
+<hr>
+<h2>Ce que tu tiens entre les mains</h2>
+<pre><code class="lang-">client-acquisition-bundle/
+├── templates/
+│   ├── contract-fr.md        ← contrat (forfait + retainer en un seul fichier)
+│   ├── contract-en.md
+│   ├── proposal-fr.md
+│   ├── proposal-en.md
+│   ├── invoice-fr.md
+│   └── invoice-en.md
+├── builders/
+│   ├── create_proposal.py    ← génère le PDF de proposition
+│   ├── create_contract.py    ← génère le PDF de contrat
+│   ├── create_invoice.py     ← génère le PDF de facture
+│   ├── samples/              ← exemples JSON prêts à copier
+│   ├── .env.example
+│   └── README.md
+├── guide-fr.md               ← tu es ici
+├── guide-en.md
+└── cover.svg</code></pre>
+<p>Deux façons d'utiliser le bundle :</p>
+<ul><li><strong>Mode rapide</strong> : tu copies les <code>.md</code> dans Google Docs, tu remplis les <code>[CHAMPS]</code>, tu exportes en PDF. 5 minutes par document.</li><li><strong>Mode auto</strong> : tu remplis un petit JSON, tu lances le script Python, tu reçois le PDF brandé (et optionnellement uploadé sur ton Drive). 30 secondes par document après le setup initial.</li></ul>
+<p>Choisis selon tes goûts. La majorité des freelances utiliseront le mode rapide. Si tu signes plus de 2-3 contrats par mois, le mode auto te fait gagner des heures.</p>
+<hr>
+<h2>Mode rapide — utiliser les templates Markdown</h2>
+<ol><li>Ouvre le template qui te concerne (<code>contract-fr.md</code>, <code>proposal-en.md</code>, etc.)</li><li>Copie tout dans un nouveau Google Doc (ou Notion, ou Word — peu importe)</li><li>Remplace tous les <code>[CHAMPS_ENTRE_CROCHETS]</code> par les vraies valeurs</li><li>Pour le contrat : supprime la variante que tu n'utilises pas (FORFAIT ou ABONNEMENT)</li><li>Exporte en PDF (Fichier → Télécharger → PDF)</li><li>Envoie à ton client</li></ol>
+<p>C'est tout. Pas de Python, pas de setup. Si tu démarres, fais ça.</p>
+<hr>
+<h2>Mode auto — utiliser les builders Python</h2>
+<h3>Prérequis</h3>
+<ul><li><strong>Python 3.10+</strong> installé (<code>python --version</code> pour vérifier)</li><li><strong>pip</strong> installé</li><li>5 minutes pour le setup initial</li></ul>
+<h3>Setup en 4 étapes</h3>
+<p><strong>1. Ouvre un terminal dans le dossier <code>builders/</code></strong> :</p>
+<pre><code class="lang-bash">cd builders</code></pre>
+<p><strong>2. Installe les dépendances</strong> :</p>
+<pre><code class="lang-bash">pip install fpdf2 python-dotenv google-api-python-client google-auth-oauthlib</code></pre>
+<blockquote>Si tu ne veux pas l'upload Google Drive, tu peux skipper les paquets <code>google-*</code>. Le script tournera quand même, il fera juste un PDF local.</blockquote>
+<p><strong>3. Copie <code>.env.example</code> en <code>.env</code></strong> :</p>
+<pre><code class="lang-bash">cp .env.example .env</code></pre>
+<p>Ouvre <code>.env</code> et adapte les chemins de fonts si tu n'es pas sur Windows. Sur Mac/Linux, regarde les exemples commentés.</p>
+<p><strong>4. (Optionnel) Active l'upload Google Drive</strong> :</p>
+<ul><li>Va sur <a href="https://console.cloud.google.com">console.cloud.google.com</a></li><li>Crée un projet (n'importe quel nom)</li><li>Active la <strong>Google Drive API</strong> (menu APIs &amp; Services → Library)</li><li>Crée des <strong>identifiants OAuth 2.0</strong> type <strong>Desktop app</strong> (menu Credentials → + Create credentials)</li><li>Télécharge le JSON, renomme-le <code>credentials.json</code> et mets-le dans le dossier <code>builders/</code></li><li>La première fois que tu lances un script, ton navigateur s'ouvre pour autoriser. Après c'est silencieux à vie.</li></ul>
+<blockquote>Si tu ne veux pas Google Drive : ne fais simplement rien. Le script détecte l'absence de <code>credentials.json</code> et skip l'upload sans planter.</blockquote>
+<h3>Utilisation</h3>
+<p>Chaque script prend un fichier JSON en argument :</p>
+<pre><code class="lang-bash">python create_proposal.py samples/proposal-sample.json
+python create_contract.py samples/contract-sample.json
+python create_invoice.py  samples/invoice-sample.json</code></pre>
+<p>Le PDF arrive dans <code>./output/</code>. Si Drive est configuré, le lien partageable s'affiche dans le terminal.</p>
+<h3>Workflow recommandé</h3>
+<ol><li>Tu as un nouveau client → tu dupliques <code>samples/proposal-sample.json</code> en <code>mon-client.json</code></li><li>Tu remplis les champs (nom client, sections, prix...)</li><li>Tu lances <code>python create_proposal.py mon-client.json</code></li><li>Tu envoies le PDF au client</li><li>Le client signe → tu fais pareil pour le contrat</li><li>Tu factures → pareil pour l'invoice</li></ol>
+<p>Une fois habitué, c'est 5 minutes par document. Tu remplis le JSON pendant que tu réfléchis au pricing, le script s'occupe de la mise en page.</p>
+<hr>
+<h2>Personnaliser les templates</h2>
+<h3>Couleurs</h3>
+<p>Chaque script Python a une constante <code>NAVY = (26, 46, 74)</code> en haut. C'est la couleur principale. Change-la pour matcher ton brand. Pareil pour <code>LIGHT_BG</code>, <code>MID_TEXT</code>, etc.</p>
+<h3>Logo</h3>
+<p>Les scripts utilisent <code>fpdf2</code>. Pour ajouter un logo, tu peux modifier la méthode <code>_draw_cover_header</code> et y ajouter <code>self.image("path/to/logo.png", x=15, y=10, w=30)</code>. Si tu veux que je le fasse pour toi, vois la communauté Skool.</p>
+<h3>Devise</h3>
+<p>Le builder <code>create_invoice.py</code> affiche <code>EUR</code> par défaut. Si tu factures en USD/GBP/CHF, fais un find-and-replace dans le fichier (<code>"EUR"</code> → <code>"USD"</code>).</p>
+<h3>Sections du contrat / proposition</h3>
+<p>Les scripts affichent <strong>toutes</strong> les sections présentes dans ton JSON. Tu peux ajouter, retirer, réordonner librement. Le template Markdown contient le squelette complet — copie-le quand tu commences une section nouvelle.</p>
+<hr>
+<h2>Exemple complet — mode auto, du début à la fin</h2>
+<p>Imagine que tu signes Acme Corp pour un projet de chatbot à 3000€. Voici ta journée :</p>
+<p><strong>Étape 1 — proposition</strong></p>
+<pre><code class="lang-bash">cp samples/proposal-sample.json acme-proposal.json
+# Tu édites acme-proposal.json : nom client, défi, solution, prix
+python create_proposal.py acme-proposal.json
+# → output/Proposal_PRO-001.pdf prêt à envoyer</code></pre>
+<p><strong>Étape 2 — contrat (le client a dit oui)</strong></p>
+<pre><code class="lang-bash">cp samples/contract-sample.json acme-contract.json
+# Tu édites : tu réutilises les sections de la proposition, tu ajoutes les clauses
+python create_contract.py acme-contract.json
+# → output/Contract_CTR-001.pdf prêt à signer</code></pre>
+<p><strong>Étape 3 — facture d'acompte (50%)</strong></p>
+<pre><code class="lang-bash">cp samples/invoice-sample.json acme-deposit.json
+# Tu édites : 1500 EUR, échéance immédiate
+python create_invoice.py acme-deposit.json
+# → output/Invoice_INV-001.pdf prêt à envoyer</code></pre>
+<p><strong>Étape 4 — facture solde (à la livraison)</strong></p>
+<pre><code class="lang-bash">cp samples/invoice-sample.json acme-balance.json
+# Pareil mais INV-002, montant 1500
+python create_invoice.py acme-balance.json</code></pre>
+<p>Total : 4 documents pros, ~10 minutes de travail. Sans bundle, prévois 1-2 heures de copier-coller dans Google Docs.</p>
+<hr>
+<h2>Troubleshooting</h2>
+<p><strong><code>FileNotFoundError: arial.ttf</code></strong> → Tu n'es pas sur Windows. Adapte les chemins <code>FONT_REGULAR</code> / <code>FONT_BOLD</code> / <code>FONT_ITALIC</code> dans <code>.env</code>. Les exemples Mac/Linux sont commentés dans <code>.env.example</code>.</p>
+<p><strong><code>ModuleNotFoundError: No module named 'fpdf'</code></strong> → Tu as installé <code>fpdf</code> au lieu de <code>fpdf2</code>. Désinstalle (<code>pip uninstall fpdf</code>) puis installe le bon (<code>pip install fpdf2</code>).</p>
+<p><strong>Le PDF s'affiche mais les accents sont remplacés par des carrés</strong> → La font que tu as choisie ne supporte pas l'Unicode complet. Utilise Arial, Helvetica ou DejaVu Sans.</p>
+<p><strong>L'upload Google Drive ne se fait jamais</strong> → Vérifie que tu as bien créé un OAuth client de type <strong>Desktop app</strong> (pas Web). Vérifie aussi que le fichier s'appelle exactement <code>credentials.json</code> et qu'il est dans le dossier <code>builders/</code>. Supprime <code>token.pickle</code> pour relancer le flow d'auth.</p>
+<p><strong>Le script tourne mais aucun PDF n'apparaît</strong> → Vérifie le dossier <code>output/</code> à l'intérieur de <code>builders/</code>. Le script ne crée jamais le PDF ailleurs.</p>
+<p><strong>Erreur "JSON decode error"</strong> → Ton fichier JSON n'est pas valide. Colle-le dans <a href="https://jsonlint.com">jsonlint.com</a> pour trouver l'erreur (souvent une virgule en trop, ou des guillemets droits manquants).</p>
+<hr>
+<h2>Mentions légales — à adapter à ta situation</h2>
+<p>Les templates incluent des mentions légales <strong>basées sur le droit français pour un micro-entrepreneur</strong>. Si tu es :</p>
+<ul><li><strong>Salarié-porté ou indépendant français hors micro</strong> : adapte la mention TVA et le statut à l'article 1.</li><li><strong>Auto-entrepreneur belge / suisse / canadien</strong> : remplace les références au CGI par tes propres références fiscales.</li><li><strong>Société (SAS, SARL, EURL...)</strong> : ajoute les mentions RCS, capital social, etc. à l'article 1.</li><li><strong>Hors UE</strong> : retire la mention RGPD (article 14) ou adapte à la loi locale (CCPA, LGPD...).</li></ul>
+<blockquote>⚠️ Ce bundle ne remplace pas un avocat. Si tu signes un gros contrat (&gt; 20k€), fais relire par un pro. Pour des projets freelance classiques, ces templates sont solides et utilisés tous les jours par des milliers d'indépendants.</blockquote>
+<hr>
+<h2>Pour aller plus loin</h2>
+<p>Tu veux passer au niveau suivant — automatiser <strong>toute</strong> ta gestion client (CRM, signature électronique, relances de facture, suivi cash flow) ?</p>
+<p>→ <a href="https://taiyka.com/skool">Rejoins la communauté Skool</a> — accès à mes workflows n8n complets pour la gestion client, les Claude skills <code>/contract-builder</code>, <code>/proposal-builder</code> et <code>/invoice-builder</code> (mode conversationnel guidé), et des Q&amp;A directs avec moi chaque semaine.</p>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+<p>Tu bloques quelque part ? Réponds à l'email de livraison, je lis tout.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

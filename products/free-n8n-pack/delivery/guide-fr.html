@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>5 Workflows n8n pour Entrepreneurs IA — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>5 Workflows n8n pour Entrepreneurs IA</h1>
+<blockquote>Le starter pack que j'aurais aimé avoir quand j'ai commencé à automatiser mon business. — Manu, fondateur de <a href="https://instagram.com/manu_ai.to">Taiyka</a></blockquote>
+<hr>
+<h2>Avant de commencer</h2>
+<p><strong>Tu as besoin de :</strong></p>
+<ul><li>Un compte <strong>n8n</strong> (cloud ou self-hosted — la version cloud gratuite suffit pour démarrer)</li><li>Quelques clés API (selon le workflow) — chaque workflow indique lesquelles</li><li>30 minutes pour tout importer et tester</li></ul>
+<p><strong>Comment importer un workflow :</strong></p>
+<ol><li>Ouvre n8n</li><li>Clique sur <strong>"+ Add workflow"</strong> → menu <strong>... → Import from File</strong></li><li>Sélectionne le <code>.json</code> correspondant</li><li>Connecte les credentials demandés (Gmail, Apify, Hunter, etc.)</li><li>Active le workflow</li></ol>
+<p>C'est tout. Aucun code à écrire.</p>
+<hr>
+<h2>Workflow 1 — AI News Digest 📰</h2>
+<p><strong>Fichier :</strong> <code>01-ai-news-digest.json</code> <strong>Difficulté :</strong> ⭐ Débutant <strong>APIs requises :</strong> Gmail uniquement (compte Google standard)</p>
+<h3>Ce que ça fait</h3>
+<p>Chaque matin à 5h UTC, le workflow récupère les actus IA des principaux médias tech (TechCrunch, VentureBeat, Reuters, MIT Tech Review, CNBC...), les fusionne, génère un PDF et te l'envoie par email.</p>
+<p>Tu n'as plus besoin de scroller Twitter pendant 30 min pour rester à jour.</p>
+<h3>Configuration</h3>
+<ol><li>Importe le workflow</li><li>Connecte ton compte Gmail (n8n te guide via OAuth)</li><li>Remplace <code>PASTE_YOUR_EMAIL_HERE@example.com</code> par ton email</li><li>Active → tu reçois ton premier digest demain matin</li></ol>
+<h3>Pour aller plus loin</h3>
+<ul><li>Ajoute/retire des sources RSS dans les nodes "RSS Feed Read"</li><li>Change le créneau horaire dans le node "Schedule Trigger"</li><li>Adapte le format HTML de l'email dans "Format Email HTML"</li></ul>
+<hr>
+<h2>Workflow 2 — Lead Machine : Email Finder 🎯</h2>
+<p><strong>Fichier :</strong> <code>02-lead-email-finder.json</code> <strong>Difficulté :</strong> ⭐⭐ Intermédiaire <strong>APIs requises :</strong> Hunter.io (gratuit jusqu'à 25 recherches/mois) + Google Sheets</p>
+<h3>Ce que ça fait</h3>
+<p>À partir d'une liste d'entreprises dans un Google Sheet, le workflow trouve l'email du fondateur ou du décideur de chaque boîte. Il scrape d'abord le site web de l'entreprise, et fallback sur Hunter.io si besoin.</p>
+<p>Parfait pour préparer une campagne cold outreach sans payer un outil à 99€/mois.</p>
+<h3>Configuration</h3>
+<ol><li>Crée un compte gratuit sur <a href="https://hunter.io">hunter.io</a> → récupère ta clé API</li><li>Crée un Google Sheet avec une colonne <code>domain</code> (ex: <code>acme.com</code>, <code>stripe.com</code>, ...)</li><li>Importe le workflow</li><li>Remplace dans le node "Edit Fields" :</li><li><code>PASTE_YOUR_HUNTER_API_KEY_HERE</code> → ta clé Hunter</li><li><code>PASTE_YOUR_GOOGLE_SHEET_ID_HERE</code> → l'ID de ton Google Sheet (visible dans l'URL)</li><li>Connecte ton compte Google Sheets</li><li>Lance le workflow → les emails apparaissent dans ton sheet</li></ol>
+<h3>Pour aller plus loin</h3>
+<ul><li>Branche-le sur Apollo, Lemlist, ou Instantly pour automatiser la séquence</li><li>Ajoute un node Claude pour générer un icebreaker personnalisé par contact</li></ul>
+<hr>
+<h2>Workflow 3 — Lead Machine : Google Maps 🗺️</h2>
+<p><strong>Fichier :</strong> <code>03-lead-google-maps.json</code> <strong>Difficulté :</strong> ⭐⭐ Intermédiaire <strong>APIs requises :</strong> Google Maps API + Google Sheets</p>
+<h3>Ce que ça fait</h3>
+<p>Tu lui donnes un type de business + une ville (ex: "barbershops à Toulon"), et le workflow scrape Google Maps pour récupérer <strong>nom, adresse, téléphone, site web, note moyenne</strong> de tous les résultats. Sortie directe dans un Google Sheet.</p>
+<p>Idéal pour prospecter localement (agences digitales, freelances, offres locales).</p>
+<h3>Configuration</h3>
+<ol><li>Crée une clé Google Maps API (<a href="https://console.cloud.google.com">console.cloud.google.com</a>) — il faut activer "Places API"</li><li>Importe le workflow</li><li>Dans le node "Edit Fields", remplace :</li><li><code>PASTE_YOUR_GOOGLE_MAPS_API_KEY_HERE</code> → ta clé</li><li><code>PASTE_YOUR_GOOGLE_SHEET_ID_HERE</code> → ton sheet</li><li>Adapte <code>query</code> (type de business) et <code>location</code> (ville)</li><li>Connecte ton compte Google Sheets</li><li>Lance → tes leads sont dans le sheet</li></ol>
+<h3>Pour aller plus loin</h3>
+<ul><li>Combine avec le Workflow 2 pour enrichir avec l'email du gérant</li><li>Ajoute un filtre sur la note moyenne (<code>&gt;= 4.0</code>) pour ne cibler que les bons profils</li></ul>
+<hr>
+<h2>Workflow 4 — Amazon Rankings Scraper 🛒</h2>
+<p><strong>Fichier :</strong> <code>04-amazon-rankings.json</code> <strong>Difficulté :</strong> ⭐⭐⭐ Avancé <strong>APIs requises :</strong> Apify (compte gratuit avec 5$ de crédits offerts)</p>
+<h3>Ce que ça fait</h3>
+<p>Le workflow scrape les <strong>bestsellers Amazon dans 10 marketplaces</strong> (US, UK, FR, DE, JP, etc.) et extrait les top 100 marques par marché. Sortie dans Google Sheets.</p>
+<p>Si tu fais du e-commerce ou que tu veilles un marché concurrentiel, c'est de l'or.</p>
+<h3>Configuration</h3>
+<ol><li>Crée un compte gratuit sur <a href="https://apify.com">apify.com</a> → récupère ton API token</li><li>Définis la variable d'environnement <code>APIFY_TOKEN</code> dans n8n (Settings → Variables)</li><li>Importe le workflow</li><li>Adapte le <code>spreadsheet_id</code> dans le code Google Sheets API</li><li>Lance → ~5-10 min pour les 10 marchés</li></ol>
+<h3>Pour aller plus loin</h3>
+<ul><li>Lance-le toutes les semaines via un Schedule Trigger</li><li>Ajoute un node Claude pour synthétiser les tendances du mois</li></ul>
+<hr>
+<h2>Workflow 5 — Instagram Daily Collector 📸</h2>
+<p><strong>Fichier :</strong> <code>05-instagram-monitor.json</code> <strong>Difficulté :</strong> ⭐⭐⭐⭐ Expert <strong>APIs requises :</strong> Apify + Supabase</p>
+<h3>Ce que ça fait</h3>
+<p>Chaque jour à 6h UTC, le workflow scrape les comptes Instagram de tes concurrents (followers, posts, engagement) et stocke l'historique dans Supabase pour faire de la veille concurrentielle.</p>
+<p>C'est la version pro du système. Si tu veux juste tester, garde celui-ci pour plus tard et joue avec les 4 premiers.</p>
+<h3>Configuration</h3>
+<p>Le setup demande Supabase (table <code>competitor_handles</code> + <code>channel_metrics</code>) — je te recommande d'attendre d'être à l'aise avec n8n avant de t'attaquer à celui-là.</p>
+<p>Doc complète dans le <strong><a href="https://taiyka.com/products/competitor-intel">Competitor Intelligence System</a></strong> (produit premium).</p>
+<hr>
+<h2>C'est quoi la suite ?</h2>
+<p>Tu veux :</p>
+<ul><li>📩 <strong>Une vraie séquence cold outreach automatisée</strong> (LinkedIn → email → relance) ? → <a href="https://taiyka.com/products/cold-outreach-pack">n8n Pack: Cold Outreach (19€)</a></li></ul>
+<ul><li>🤖 <strong>Apprendre à construire ton premier agent IA de A à Z</strong> ? → <a href="https://taiyka.com/products/ai-agent-playbook">Build Your First AI Agent (29€)</a></li></ul>
+<ul><li>🚀 <strong>Rejoindre une communauté de Solopreneurs IA + accès à tous mes nouveaux produits</strong> ? → <a href="https://taiyka.com/skool">La communauté Skool</a></li></ul>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

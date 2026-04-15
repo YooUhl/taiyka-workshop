@@ -1,0 +1,55 @@
+{
+  "language": "english",
+  "proposal_number": "PRO-001",
+  "date": "01/04/2026",
+  "your_name": "YOUR_BUSINESS_NAME",
+  "your_email": "you@example.com",
+  "client_name": "Jane Doe",
+  "client_company": "Acme Corp",
+  "client_email": "jane@acme.com",
+  "sections": [
+    {
+      "title": "1. EXECUTIVE SUMMARY",
+      "content": "Acme Corp loses revenue every day from missed inbound messages. The proposal puts in place a smart conversational system that answers every incoming message instantly and qualifies serious leads — without manual intervention. The result: zero missed leads, even outside business hours."
+    },
+    {
+      "title": "2. THE CHALLENGE",
+      "content": "Each week, roughly 8 hours are spent answering the same questions across email and social. When a lead waits more than 60 minutes for a reply, the conversion rate drops sharply. Over a month, this represents dozens of warm leads that go cold for no operational reason — they simply weren't answered fast enough."
+    },
+    {
+      "title": "3. THE PROPOSED SOLUTION",
+      "content": "The proposal puts in place an AI Reception Agent that takes every incoming conversation off the team's plate.\n\nHere is what the system does:\n• Replies instantly to every incoming message — no lead waits for a human to be available\n• Answers the most common questions (pricing, services, location) — removing repetitive interruptions\n• Qualifies serious leads with a short structured conversation — only ready-to-buy prospects reach the team\n• Notifies the owner the moment a qualified lead is captured — fast handoff, no leads lost in transit\n\nThe end result: every message gets answered, every serious lead is captured, and the team focuses on closing — not on triage."
+    },
+    {
+      "title": "4. FEATURES",
+      "content": "",
+      "table": {
+        "headers": ["Module", "Detail"],
+        "col_widths": [50, 130],
+        "rows": [
+          ["Auto-reply", "Instant 24/7 replies across email and social DMs"],
+          ["Smart FAQ", "Answers frequent questions: pricing, services, location"],
+          ["Lead qualification", "Captures budget, timeline, project type"],
+          ["Owner alerts", "Sends a summary the moment a qualified lead is ready"],
+          ["Multi-channel", "Email + Instagram + Messenger from one setup"]
+        ]
+      }
+    },
+    {
+      "title": "5. DELIVERABLES",
+      "content": "• A configured AI Reception Agent connected to your channels\n• A custom knowledge base built around your offer\n• A lead qualification flow tuned to your business\n• A live notification system for every qualified lead\n• Clear documentation of the full setup"
+    },
+    {
+      "title": "6. TIMELINE",
+      "content": "Project starts upon receipt of the deposit. Full delivery within two weeks of the start date. Throughout this period, progress will be shared at each milestone for review and feedback."
+    },
+    {
+      "title": "7. ABOUT",
+      "content": "YOUR_BUSINESS_NAME works with service businesses to turn manual, time-consuming processes into automated systems that run in the background. The approach is always results-first: starting from the real situation, not from a template."
+    },
+    {
+      "title": "8. NEXT STEPS",
+      "content": "If this proposal matches what is needed, a simple confirmation by reply email is all that is required. From there, a 30-minute call will finalise the last details and kick the project off as soon as the deposit is received."
+    }
+  ]
+}

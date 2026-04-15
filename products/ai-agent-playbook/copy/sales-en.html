@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sales copy — AI Agent Playbook (EN) — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Sales copy — AI Agent Playbook (EN)</h1>
+<blockquote>Landing page (<code>/products/ai-agent-playbook</code>) + social CTAs. Price: <strong>€29</strong>.</blockquote>
+<hr>
+<h2>H1 (hero)</h2>
+<p><strong>Build your first AI agent — and sell it.</strong> The complete playbook + 3 skills + 1 n8n workflow. Yours for €29.</p>
+<h2>Sub-hero</h2>
+<p>6 chapters to go from "I played with ChatGPT" to "I have an AI agent in production at a client paying me €250/mo in maintenance". No theory. Only things you can ship.</p>
+<h2>Value bullets (4)</h2>
+<ul><li>🤖 <strong>6 chapters from concept to cash</strong> — concept, architecture, build, test, packaging, sales. With concrete examples and real pricing.</li><li>⚡ <strong>1 ready-to-import n8n workflow</strong> (<code>agent-starter.json</code>) — a working receptionist agent in 30 min, built on Claude Sonnet 4.6</li><li>🎁 <strong>3 bundled Claude skills</strong> — <code>agent-prompt-architect</code> (design your prompt), <code>n8n-builder</code> (generate workflows), <code>content-creator</code> (post what you learn)</li><li>💰 <strong>The full pricing method</strong> — 3 billing models (fixed / fixed + monthly / performance), with real numbers and advice on which to pick</li></ul>
+<h2>Primary CTA</h2>
+<p><strong>Get the playbook — €29 →</strong> <em>(Gumroad button)</em></p>
+<h2>Secondary CTA</h2>
+<p><em>Secure Gumroad checkout. You get the ZIP + all files in 30 seconds.</em></p>
+<hr>
+<h2>"Who it's for" section</h2>
+<p><strong>This is for you if:</strong></p>
+<ul><li>You can use ChatGPT but you've never built a working AI agent</li><li>You want to add "AI agent" to your freelance / agency offer (and bill for it)</li><li>You know n8n a bit (or you're ready to learn — 1h max)</li><li>You're tired of theoretical courses on "the future of AI"</li></ul>
+<p><strong>This is NOT for you if:</strong></p>
+<ul><li>You want to learn Python and build from scratch — here we use n8n + Claude API directly</li><li>You're looking for low-level (LangChain, custom code agents) — Skool community for that, later</li><li>You've never opened n8n and refuse to try</li></ul>
+<hr>
+<h2>Short variants (stories / posts / DMs)</h2>
+<h3>Variant 1 — Specificity</h3>
+<blockquote>The playbook I wish I'd had when I sold my first AI agent. 6 chapters + workflow + 3 skills. €29. Link in bio.</blockquote>
+<h3>Variant 2 — Curiosity gap / Result</h3>
+<blockquote>Closed my first AI agent client for €2,500 + €250/mo recurring. I tell everything in 6 chapters. €29. Link in bio.</blockquote>
+<h3>Variant 3 — Challenge</h3>
+<blockquote>Still watching theoretical "AI for Business" courses? Here's a playbook that gets you shipping an agent in 30 min. €29.</blockquote>
+<h3>Variant 4 — Transparency</h3>
+<blockquote>The exact system I use to sell AI agents at Taiyka. n8n workflow + Claude skills + pricing method. €29. Nothing hidden.</blockquote>
+<h3>Variant 5 — Problem hook</h3>
+<blockquote>Everyone's talking about AI agents. Nobody says how to price them or where to find clients. My playbook answers both. €29.</blockquote>
+<hr>
+<h2>Post-purchase email</h2>
+<p><strong>Subject:</strong> ✅ Your AI Agent Playbook is ready — first agent in 30 min</p>
+<p><strong>Body:</strong></p>
+<p>Hey,</p>
+<p>Thanks for buying 🙏</p>
+<p>Download the pack here → [ZIP_LINK]</p>
+<p>Inside:</p>
+<ul><li><strong>The full playbook</strong> (<code>playbook-fr.md</code> + <code>playbook-en.md</code>) — 6 chapters</li><li><strong>The n8n workflow</strong> (<code>agent-starter.json</code>) — a ready-to-import receptionist agent</li><li><strong>3 bundled Claude skills</strong> (<code>content-creator</code>, <code>n8n-builder</code>, <code>agent-prompt-architect</code>)</li><li><strong>Quick-start guide</strong> (<code>guide-fr.md</code> + <code>guide-en.md</code>) — the "I have 30 min" version</li></ul>
+<p><strong>My advice to get started:</strong></p>
+<ol><li>If you're in a rush → read <code>guide-en.md</code> (15 min read). You'll have an agent running in 30 min.</li><li>If you want to go deep → start <code>playbook-en.md</code> from chapter 1. Plan 90 min reading for the 6 chapters.</li><li><strong>Important</strong>: do NOT skip chapters 5 and 6 (packaging + sales). That's where the money hides. Building is the easy part.</li></ol>
+<p>When your first agent is running, <strong>DM me on Insta</strong> (<a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a>) — I love seeing what people build.</p>
+<p>Stuck somewhere? Reply to this email. I read everything, I reply fast.</p>
+<p>Now go ship 🚀</p>
+<p>— Manu</p>
+<p>PS: the <strong><a href="https://taiyka.com/skool">Skool community</a></strong> publishes one new agent per month minimum (with workflow + prompt + tools all wired), weekly live Q&amp;As, and you can have your first agent reviewed live by me. If you want to accelerate after this playbook, that's the place.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>
