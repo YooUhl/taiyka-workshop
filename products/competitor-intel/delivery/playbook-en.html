@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Competitor Intelligence System — The Playbook — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Competitor Intelligence System — The Playbook</h1>
+<blockquote>The complete system to spy on your competitors across Instagram, TikTok, YouTube and LinkedIn — and get a strategic report delivered to your inbox every Monday morning. Without lifting a finger. — Manu, founder of <a href="https://instagram.com/manu_ai.to">Taiyka</a></blockquote>
+<hr>
+<h2>Before you start</h2>
+<p><strong>This playbook is not a theory course.</strong> It's a building site. By the end you'll have:</p>
+<ol><li>An n8n pipeline that scrapes 4 platforms daily</li><li>A Supabase database that stores the full history of your competitors</li><li>A Claude-written report that lands in your inbox every Monday</li></ol>
+<p><strong>Prerequisites:</strong></p>
+<ul><li>An n8n account (cloud or self-hosted)</li><li>A Supabase account (free tier is enough to start)</li><li>An Apify account with ~€20 of credit (covers several months)</li><li>An Anthropic API key (€5 of credit is largely enough)</li><li>A YouTube Data API v3 key (free)</li><li>2-3h for first-time setup</li></ul>
+<hr>
+<h2>1. What the system does</h2>
+<pre><code class="lang-">Apify scrapers ──┐
+YouTube API   ───┼──► n8n collectors ──► Supabase (channel_metrics)
+                 │                              │
+                 │                              ▼
+                 │                    n8n weekly report ──► Claude ──► Gmail
+                 │                                            │
+                 │                                            ▼
+                 │                                   Strategic report</code></pre>
+<p><strong>Every day:</strong></p>
+<ul><li>06:00 UTC — Instagram Collector runs on every approved competitor handle</li><li>06:15 UTC — TikTok Collector</li><li>06:30 UTC — YouTube Collector</li><li>07:30 UTC — LinkedIn Collector</li></ul>
+<p><strong>Every Monday 08:00 UTC:</strong></p>
+<ul><li>The Weekly Report Generator reads the last 14 days of data</li><li>Computes deltas (this week vs last)</li><li>Sends the whole thing to Claude with a calibrated prompt</li><li>You receive a ~500-word report by email</li></ul>
+<hr>
+<h2>2. Architecture</h2>
+<p>Four bricks. Each does one thing well.</p>
+<h3>n8n — the orchestrator</h3>
+<p>The conductor. All 5 workflows in the pack run here.</p>
+<h3>Apify — the scrapers</h3>
+<p>A service that runs pre-built scrapers ("actors") on demand:</p>
+<ul><li><code>apify/instagram-profile-scraper</code> (~$0.003/profile)</li><li><code>clockworks/tiktok-profile-scraper</code> (~$0.004/profile)</li><li><code>harvestapi/linkedin-company</code> (~$0.008/profile)</li></ul>
+<p><strong>Real cost:</strong> tracking 20 competitors × 3 Apify platforms × 30 days → ~€7/month.</p>
+<h3>YouTube Data API v3</h3>
+<p>Free (10,000 units/day, largely enough). We use <code>channels.list?part=statistics</code>.</p>
+<h3>Supabase — the memory</h3>
+<p>Managed Postgres. Three tables: <code>competitors</code>, <code>competitor_handles</code>, <code>channel_metrics</code>. Free tier is enough (500 MB holds 2+ years of data).</p>
+<h3>Claude API — the brain</h3>
+<p>The model that reads the numbers and writes the report. <code>claude-sonnet-4-5</code> by default. Cost: ~€0.01 per weekly report.</p>
+<h3>Gmail — delivery</h3>
+<p>The report lands in your inbox. Forward it to your team, print it, whatever works.</p>
+<hr>
+<h2>3. Setup — 6 steps</h2>
+<h3>Step 1 — Create the Supabase database</h3>
+<ol><li>Go to <a href="https://supabase.com">supabase.com</a> → create a project</li><li>Note the project URL (format <code>https://xxxxx.supabase.co</code>) and the <strong>Service Role Key</strong> (Settings → API)</li><li>Open the SQL Editor → paste the contents of <code>delivery/supabase-schema.sql</code> → Run</li><li>You now have 3 tables ready</li></ol>
+<h3>Step 2 — Seed your competitors</h3>
+<p>In the SQL Editor:</p>
+<pre><code class="lang-sql">insert into competitors (name) values
+  ('Competitor A'),
+  ('Competitor B'),
+  ('Competitor C');
+
+insert into competitor_handles (competitor_id, platform, handle, status)
+  select id, 'instagram', 'competitor_a_ig', 'approved' from competitors where name = 'Competitor A';
+-- repeat for each (competitor, platform)</code></pre>
+<p><strong>For YouTube</strong>, store the <code>channel_id</code> in <code>metadata</code>:</p>
+<pre><code class="lang-sql">update competitor_handles
+  set metadata = '{"channel_id":"UCxxxxxxxxxxxxxxxxxxxxxx"}'::jsonb
+  where handle = 'CompetitorA' and platform = 'youtube';</code></pre>
+<p>The channel_id can be found via <a href="https://commentpicker.com/youtube-channel-id.php">commentpicker.com/youtube-channel-id.php</a>.</p>
+<h3>Step 3 — Get your API keys</h3>
+<table><thead><tr><th>Service</th><th>Where to find it</th></tr></thead><tbody><tr><td>Supabase URL + Service Role Key</td><td>Supabase → Settings → API</td></tr><tr><td>Apify API token</td><td>Apify Console → Settings → Integrations</td></tr><tr><td>YouTube Data API key</td><td><a href="https://console.cloud.google.com">console.cloud.google.com</a> → API Library → YouTube Data API v3</td></tr><tr><td>Anthropic API key</td><td><a href="https://console.anthropic.com">console.anthropic.com</a> → API Keys</td></tr></tbody></table>
+<h3>Step 4 — Import the n8n workflows</h3>
+<ol><li>Open your n8n</li><li><strong>+ Add workflow → ... → Import from File</strong></li><li>Import each file: <code>01-instagram-collector.json</code>, <code>02-tiktok-collector.json</code>, <code>03-youtube-collector.json</code>, <code>04-linkedin-collector.json</code>, <code>05-weekly-report-generator.json</code></li><li>In each workflow, replace all <code>PASTE_YOUR_*_HERE</code> placeholders with your real keys</li></ol>
+<h3>Step 5 — Set up Gmail credentials (workflow 05)</h3>
+<p>Workflow 05 uses n8n's native Gmail node. Create a Gmail OAuth2 credential:</p>
+<ol><li>Credentials → New → Gmail OAuth2 API</li><li>Follow the 2-min flow</li><li>Select this credential inside the "Send via Gmail" node</li><li>Replace <code>PASTE_YOUR_RECIPIENT_EMAIL_HERE</code> with your own email</li></ol>
+<h3>Step 6 — Test</h3>
+<p>For each collector:</p>
+<ol><li>Click <strong>Manual Trigger</strong> → <strong>Execute Workflow</strong></li><li>Check every node turns green</li><li>Open Supabase → <code>channel_metrics</code> table → you should see the rows</li></ol>
+<p>For the report:</p>
+<ol><li>Wait 2-3 days for data to accumulate (otherwise deltas are zero)</li><li>Run workflow 05 manually</li><li>Check your inbox</li></ol>
+<p>Once validated, <strong>activate</strong> all 5 workflows (top-right toggle).</p>
+<hr>
+<h2>4. Per platform — what to know</h2>
+<h3>Instagram (workflow 01)</h3>
+<ul><li>Public accounts only</li><li>Stored metrics: <code>followers</code>, <code>total_posts</code></li><li>Apify actor: <code>apify/instagram-profile-scraper</code></li></ul>
+<h3>TikTok (workflow 02)</h3>
+<ul><li>All profiles are public → no friction</li><li>Stored metrics: <code>followers</code> (fans), <code>total_posts</code> (videos)</li><li>Apify actor: <code>clockworks/tiktok-profile-scraper</code></li></ul>
+<h3>YouTube (workflow 03)</h3>
+<ul><li>Uses the official API (free + stable)</li><li>Requires the <code>channel_id</code> (not just the handle)</li><li>Stored metrics: <code>followers</code> (subs), <code>total_posts</code> (videos), <code>total_views</code></li></ul>
+<h3>LinkedIn (workflow 04)</h3>
+<ul><li><strong>Company Pages only</strong> (not personal profiles)</li><li>Stored metrics: <code>followers</code>, <code>employee_count</code></li><li>Slowest (~90s/profile) and most expensive Apify actor (~$0.008)</li></ul>
+<hr>
+<h2>5. The Claude prompt — how it works</h2>
+<p>Workflow 05 builds a two-part prompt:</p>
+<p><strong>System prompt (analyst identity):</strong></p>
+<pre><code class="lang-">You are a senior competitive intelligence analyst. Your client tracks
+competitors across social platforms and relies on you to surface what
+matters each week. Be sharp, concise, and actionable. Never invent numbers.
+Base every claim on the data provided. Write in the same language as the
+user's request.</code></pre>
+<p><strong>User prompt (data + instructions):</strong></p>
+<ul><li>The computed deltas (followers, posts, views, week N vs N-1)</li><li>A forced report structure: Executive summary → Top movers → Content cadence → Platform insights → Recommendations</li></ul>
+<p>Customise the 5 sections inside the "Build Claude Prompt" node. Example: add "Focus on LinkedIn if B2B client, Instagram if B2C client".</p>
+<hr>
+<h2>6. Example report</h2>
+<pre><code class="lang-markdown"># Competitor Intel — Week ending 2026-04-14
+
+## Executive summary
+- Competitor A gained +8.2k IG followers this week (+3.1% vs monthly average)
+- Competitor B is slowing on TikTok — only 2 posts in 7 days
+- Competitor C clearly launched a LinkedIn campaign (+1.4k followers, +8 posts)
+
+## Top movers
+**Winners:**
+- Competitor A (Instagram): +8,200 followers
+- Competitor C (LinkedIn): +1,400 followers
+- Competitor A (TikTok): +2,100 fans
+
+**Losers:**
+- Competitor B (TikTok): -120 fans (unfollow wave after a controversial post)
+
+## Content cadence signal
+Competitor A is holding pace (5 IG posts this week). Competitor B is on pause
+on TikTok (2 posts vs 7 last week). Competitor C is going on the offensive
+on LinkedIn — likely a commercial campaign is running.
+
+## Platform-by-platform
+**Instagram:** Competitor A is dominating. Gains likely driven by a viral reel.
+Worth investigating.
+**TikTok:** Quiet market, apart from Competitor B's drop.
+**LinkedIn:** Clear push from Competitor C. Check their feed.
+
+## Recommendations
+1. Post an Instagram Reel this week — feed is active
+2. Audit Competitor C's last 3 LinkedIn posts (campaign in progress)
+3. Don't change anything on TikTok — sector is flat</code></pre>
+<hr>
+<h2>7. Customisation</h2>
+<h3>Change the frequency</h3>
+<ul><li><strong>Daily</strong> (default) → cron values <code>0 6 * * *</code>, <code>15 6 * * *</code>, etc.</li><li><strong>Weekly</strong> → <code>0 6 * * 1</code> (Monday 06:00)</li><li><strong>Monthly</strong> → <code>0 6 1 * *</code> (1st of the month)</li></ul>
+<p>Report deltas are computed over 7 days. If you switch to monthly, also change <code>86400000 * 7</code> → <code>86400000 * 30</code> inside the "Compute Weekly Deltas" node.</p>
+<h3>Add a platform</h3>
+<p>The pattern is always: Schedule → Fetch handles → Loop → Apify/API → Build row → Upsert. Duplicate an existing collector, swap the Apify actor and the extraction. 30-45 min.</p>
+<p>Popular Apify actors:</p>
+<ul><li>Facebook: <code>apify/facebook-pages-scraper</code></li><li>Twitter/X: <code>apify/twitter-scraper</code></li><li>Twitch: <code>pocesar/twitch-scraper</code></li></ul>
+<h3>Change the analysis criteria</h3>
+<p>Everything lives inside the "Build Claude Prompt" node (workflow 05). You can:</p>
+<ul><li>Add sections (e.g. "Prices displayed this week")</li><li>Change the tone ("formal" vs "casual")</li><li>Force a language (by default the analyst replies in the language of the prompt)</li></ul>
+<h3>Send the report somewhere else</h3>
+<p>Swap the final Gmail node for:</p>
+<ul><li>A <strong>Slack</strong> node (channel #competitive-intel)</li><li>A <strong>Notion</strong> node (append a row to a "Weekly Reports" database)</li><li>A <strong>Google Sheets</strong> node (archive of all reports)</li></ul>
+<hr>
+<h2>8. Troubleshooting</h2>
+<table><thead><tr><th>Symptom</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>"No approved handles found"</td><td>Nothing in <code>status='approved'</code></td><td><code>update competitor_handles set status='approved' where ...</code></td></tr><tr><td>Apify scraper times out</td><td>Handle in error or private</td><td>Set the handle to <code>status='paused'</code></td></tr><tr><td>Report is empty</td><td>&lt; 7 days of data</td><td>Wait a week before the first real report</td></tr><tr><td>Claude returns 401</td><td>API key mis-pasted</td><td>Check all <code>PASTE_YOUR_ANTHROPIC_API_KEY_HERE</code> were replaced</td></tr><tr><td>YouTube: quota exceeded</td><td>More than 10k calls/day</td><td>Stagger crons or request a quota bump</td></tr><tr><td>Gmail "Invalid credentials"</td><td>OAuth expired in n8n</td><td>Reconnect the credential (Credentials → Gmail → Update)</td></tr></tbody></table>
+<hr>
+<h2>9. Going further</h2>
+<p>You have the system running. Here's how to level up:</p>
+<ul><li>🚀 <strong>The <a href="https://taiyka.com/skool">Taiyka Skool community</a></strong> — access to advanced pipeline versions (per-post content analysis, automatic campaign detection, real-time alerting), weekly Q&amp;A lives, reviews of your reports, all my calibrated prompts.</li></ul>
+<ul><li>📩 <strong>The <a href="https://taiyka.com/products/cold-outreach-pack">Cold Outreach Pack</a> (€19)</strong> — to turn intel into targeted outbound (identify your competitors' clients, offer them something better).</li></ul>
+<ul><li>🤖 <strong>The <a href="https://taiyka.com/products/ai-agent-playbook">AI Agent Playbook</a> (€29)</strong> — to plug in a Claude agent that answers "what did Competitor A do this week" live in Slack / DM.</li></ul>
+<hr>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+<p>Your system is running? DM me, I love seeing reports in production.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

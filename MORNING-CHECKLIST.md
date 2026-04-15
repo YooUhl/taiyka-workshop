@@ -1,32 +1,41 @@
 # 🌅 Morning Checklist — Manu
 
-Bonjour 👋 Voilà ce qui s'est passé pendant ta nuit et ce qu'il te reste à faire. Tout ce qui pouvait être fait sans tes accès tiers est fait. Ce qui suit a besoin de toi.
+Bonjour 👋 Mise à jour : encore plus de choses sont faites depuis la dernière version. Voilà ce qu'il reste vraiment.
 
-Total estimé pour tout terminer : **~3-4 heures de travail** (dont ~2h de comptes tiers + ~1h de visuels/Loom).
+Total estimé restant : **~2-3 heures** (essentiellement des comptes tiers + Loom).
 
 ---
 
 ## 🟢 Ce qui est fait (rien à faire)
 
+### Du sprint nocturne (round 1)
 - ✅ 8 produits complets — guides FR/EN, sales copy FR/EN, covers SVG, ZIPs prêts à uploader
 - ✅ Site Next.js avec hub + /products + /portfolio + /free-n8n-pack (toggle FR/EN partout)
 - ✅ Formulaire de capture email branché sur webhook n8n
 - ✅ Workflow n8n de livraison du lead magnet (FR/EN selon la langue choisie)
-- ✅ Versions HTML print-ready de TOUS les guides (`Cmd+P → Save as PDF` dans le navigateur)
+- ✅ Versions HTML print-ready de TOUS les guides
 - ✅ Diagrammes Excalidraw-style pour les 4 projets du portfolio
 - ✅ Sanitisation : zéro credential, email, ou nom client réel dans les fichiers shippés
-- ✅ Build du site vérifié (`npm run build` passe)
+- ✅ Build du site vérifié
+
+### Du round 2 (autonomous cleanup, après le sprint)
+- ✅ **Scrub des credentials leakés** (700 remplacements dans 108 fichiers, incl. Polymaker-project + Digital Products Project — sweep grep validé)
+- ✅ **Backup de sécurité** de Polymaker créé avant le scrub : `Polymaker-project.backup-20260415-114309/` (à supprimer quand tu as confirmé que tout va bien)
+- ✅ **Git initialisé** — premier commit fait sur la branche `main` (commit `d93fc71`). `.gitignore` couvre `node_modules/`, `.next/`, `.env.local`, `source/`, `*.zip`
+- ✅ **42 PDFs générés** via Chrome headless (`tools/html-to-pdf.sh`) — un PDF par fichier `.html` dans `delivery/` et `copy/`
+- ✅ **8 ZIPs régénérés** avec les PDFs inclus
+- ✅ **Site polish** : favicon SVG, sitemap.ts, robots.ts, métadonnées Open Graph + Twitter Card, OG image 1200×630, build vérifié
 
 ---
 
 ## 🔴 PRIORITÉ HAUTE — À faire en premier (sécurité)
 
 ### 1. Faire tourner les credentials qui ont leaké
-**Pourquoi :** Pendant l'exploration j'ai trouvé tes vrais credentials en clair dans plusieurs fichiers source. Ils n'ont jamais été shippés (les versions delivery/ sont nettoyées) mais ils traînent localement. Mieux vaut les rotate maintenant.
+**Pourquoi :** Les credentials ont été nettoyés des fichiers locaux, MAIS les clés elles-mêmes restent valides dans tes dashboards. Tant qu'elles ne sont pas rotated, elles peuvent être abusées si quelqu'un a vu un de tes anciens fichiers (email, backup, ancien commit ailleurs, etc.).
 
 À rotate :
 - **Supabase service_role JWT** du projet `ylvkvlzq...(full ref in your dashboard)` → Dashboard Supabase → Settings → API → Reset
-- **Apify API token** `apify_api_dLHVe...` → Dashboard Apify → Settings → Integrations → Regenerate
+- **Apify API token** `apify_api_dLHV...(full token in Apify settings)` → Dashboard Apify → Settings → Integrations → Regenerate
 - **Google Maps API key** `AIzaSyABYl...(full key in Google Cloud console)` → [console.cloud.google.com](https://console.cloud.google.com) → APIs & Services → Credentials → Regenerate
 
 Après rotation, mets les nouvelles clés dans `C:/Users/yoanu/.config/global.env` et dans tes workflows n8n productifs.
@@ -35,36 +44,24 @@ Après rotation, mets les nouvelles clés dans `C:/Users/yoanu/.config/global.en
 
 ## 🟡 PRIORITÉ MOYENNE — Lancer la machine
 
-### 2. Convertir les guides Markdown en PDF
-**Auto :** Tous les guides ont déjà un `.html` print-ready dans le même dossier.
+### 2. Héberger les ZIPs publiquement (token gws expiré, pas pu le faire)
+J'ai essayé via `gws` mais le token a renvoyé HTTP 401. Voir `drive-upload-failed.log` à la racine.
 
-**Méthode rapide :**
-1. Ouvre `products/<slug>/delivery/guide-fr.html` dans Chrome
-2. `Ctrl+P` → Destination : `Enregistrer en PDF`
-3. Sauvegarde sous le même nom mais en `.pdf`
-4. Répète pour les EN + tous les playbooks/template-specs
+**Pour relancer :**
+1. Régénère ton token : `python "C:/Users/yoanu/Documents/Claude code/Polymaker-project/get_gws_token.py"`
+2. Soit relance une session Claude et demande "upload les 8 ZIPs sur Drive", soit fais-le manuellement :
+   - Crée un dossier "Taiyka Products" sur Drive
+   - Upload chaque `products/<slug>/delivery/<slug>.zip` (8 fichiers, ~7 Mo total)
+   - Sharing : "Anyone with the link → Viewer"
+   - Note les liens dans `links.txt` à la racine
 
-**Liste à convertir (36 fichiers HTML au total) :**
-```bash
-ls products/*/delivery/*.html products/*/copy/*.html
-```
-
-Si tu veux automatiser : `wkhtmltopdf` ou la lib Python `pdfkit` peuvent batcher tout ça.
-
-### 3. Héberger les ZIPs publiquement
-Les 8 ZIPs sont prêts dans `products/<slug>/delivery/<slug>.zip`.
-
-**Recommandation :** crée un dossier "Taiyka Products" sur Google Drive, upload les 8 ZIPs, partage chacun avec "Anyone with the link can view → Direct download".
-
-Note les liens dans un fichier `links.txt` à la racine pour référence.
-
-### 4. Configurer le webhook n8n du lead magnet
+### 3. Configurer le webhook n8n du lead magnet
 1. Ouvre n8n
 2. Importe `funnel/n8n-workflows/lead-magnet-delivery.json`
 3. Crée un Google Sheet "Taiyka Leads" avec colonnes : `captured_at, email, name, lang, source, product`
 4. Remplace dans le workflow :
    - `PASTE_YOUR_LEADS_SHEET_ID_HERE` → ton Sheet ID
-   - `PASTE_YOUR_FR_ZIP_LINK_HERE` → le lien Drive du ZIP FR
+   - `PASTE_YOUR_FR_ZIP_LINK_HERE` → le lien Drive du ZIP FR (après étape 2)
    - `PASTE_YOUR_EN_ZIP_LINK_HERE` → le lien Drive du ZIP EN
 5. Connecte tes credentials Gmail + Sheets dans n8n
 6. Active le workflow → copie l'URL du webhook
@@ -74,17 +71,17 @@ Note les liens dans un fichier `links.txt` à la racine pour référence.
    ```
 8. Redémarre `npm run dev` → teste le formulaire
 
-### 5. Créer le compte Skool + décider du pricing
+### 4. Créer le compte Skool + décider du pricing
 - Crée la communauté sur [skool.com](https://skool.com)
 - Décision pricing : 29€/mo, 49€/mo, ou 19€/mo + 99€ trimestre ?
-- Récupère le lien public + remplace `PASTE_YOUR_SKOOL_LINK` dans `web/app/page.tsx` (recherche le placeholder)
+- Récupère le lien public + remplace `PASTE_YOUR_SKOOL_LINK` dans `web/app/page.tsx`
 
-### 6. Créer les listings Gumroad
+### 5. Créer les listings Gumroad
 - Crée un compte sur [gumroad.com](https://gumroad.com) si pas déjà fait
 - Pour chaque produit Tier 1 et Tier 2 (6 produits payants) :
   1. Nouveau produit
   2. Hero image : utilise le `delivery/cover.svg` (convertir en PNG via le navigateur si besoin)
-  3. Title + tagline + description : copie depuis `copy/sales-fr.md` (ou EN selon ta cible)
+  3. Title + tagline + description : copie depuis `copy/sales-fr.md` ou `sales-fr.pdf`
   4. Price : voir tableau dans `README.md`
   5. File : upload le `delivery/<slug>.zip`
 - Récupère les liens Gumroad
@@ -94,22 +91,23 @@ Note les liens dans un fichier `links.txt` à la racine pour référence.
 
 ## 🟢 PRIORITÉ BASSE — Polish & growth
 
-### 7. Logo final
+### 6. Logo final
 Le hub utilise actuellement le mot "TAIYKA" en gradient comme logo placeholder. Si tu as un logo SVG/PNG :
 - Drop dans `brand/logo/`
 - Update `web/app/page.tsx` pour utiliser ton logo au lieu du wordmark gradient
+- Note : un favicon SVG (gear électrique sur fond navy) a déjà été créé dans `web/public/favicon.svg`. Tu peux le remplacer par ton vrai logo.
 
-### 8. Vraies URLs Facebook + LinkedIn
+### 7. Vraies URLs Facebook + LinkedIn
 Cherche `PASTE_YOUR_FB` et `PASTE_YOUR_LINKEDIN` dans `web/app/page.tsx` et remplace.
 
-### 9. Loom de démo pour Cold Outreach + AI Agent Playbook
+### 8. Loom de démo pour Cold Outreach + AI Agent Playbook
 Marqués "todo" dans les README de chaque produit. Pas critique pour le launch mais boost les conversions.
 
-### 10. Notion AI Stack — construire le vrai template
-Le produit livre le SPEC complet (`delivery/template-spec-{fr,en}.md`). Tu dois construire le Notion (~30 min en suivant le spec) et fournir un duplicatable link aux acheteurs. Le sales copy est déjà honnête là-dessus.
+### 9. Notion AI Stack — construire le vrai template
+Le produit livre le SPEC complet (`delivery/template-spec-{fr,en}.md` + PDFs). Tu dois construire le Notion (~30 min en suivant le spec) et fournir un duplicatable link aux acheteurs.
 
-### 11. Déployer le site sur Vercel
-Pas fait par moi (risque de l'attacher au mauvais compte). À toi :
+### 10. Déployer le site sur Vercel
+À toi (risque de l'attacher au mauvais compte si je le fais) :
 ```bash
 cd "c:/Users/yoanu/Documents/Claude code/Digital Products Project/web"
 npx vercel
@@ -118,19 +116,7 @@ npx vercel --prod
 ```
 Tu auras une URL en `.vercel.app`. Achète le domaine après si besoin (taiyka.com ?).
 
-### 12. Initialiser le git du projet
-Le projet n'est pas un repo git pour l'instant. Pour versionner :
-```bash
-cd "c:/Users/yoanu/Documents/Claude code/Digital Products Project"
-git init
-echo "node_modules/" > .gitignore
-echo "web/.next/" >> .gitignore
-echo "web/.env.local" >> .gitignore
-echo "products/*/source/" >> .gitignore  # garde les sources internes hors du repo
-git add .
-git commit -m "Initial commit: Taiyka digital products ecosystem"
-```
-Crée un repo privé sur GitHub si tu veux backup.
+**Conseil :** définis `NEXT_PUBLIC_SITE_URL` dans Vercel (ex: `https://taiyka.com`) pour que le sitemap et les meta tags utilisent la bonne URL en prod.
 
 ---
 
@@ -140,12 +126,15 @@ Crée un repo privé sur GitHub si tu veux backup.
 |---|---|
 | Le code du site | `web/` |
 | Les produits prêts à vendre | `products/<slug>/delivery/<slug>.zip` |
-| Les sales copies | `products/<slug>/copy/sales-{fr,en}.md` |
+| Les sales copies | `products/<slug>/copy/sales-{fr,en}.{md,html,pdf}` |
+| Les guides PDF | `products/<slug>/delivery/*.pdf` |
 | Le workflow n8n de livraison | `funnel/n8n-workflows/lead-magnet-delivery.json` |
 | Les diagrammes du portfolio | `portfolio/<slug>/diagram.svg` |
 | Les couleurs de la marque | `brand/tokens.json` |
 | L'index de tous les produits | `README.md` (à la racine) |
 | Le contexte projet pour Claude | `CLAUDE.md` |
+| Backup avant scrub (à supprimer) | `../Polymaker-project.backup-20260415-114309/` |
+| Drive upload échoué | `drive-upload-failed.log` |
 
 ---
 
@@ -154,17 +143,22 @@ Crée un repo privé sur GitHub si tu veux backup.
 - **Site ne build pas :** `cd web && rm -rf .next && npm run build`
 - **Formulaire email ne marche pas :** vérifie que `NEXT_PUBLIC_LEADMAGNET_WEBHOOK_URL` est dans `web/.env.local` ET que tu as redémarré `npm run dev`
 - **HTML guide a mal rendu :** régénère avec `node tools/md-to-html.js`
-- **ZIP corrompu :** régénère depuis le terminal avec PowerShell `Compress-Archive`
+- **PDF mal rendu :** régénère avec `bash tools/html-to-pdf.sh` (idempotent)
+- **ZIP corrompu :** régénère via PowerShell `Compress-Archive`
+- **Credential réapparaît dans un fichier :** relance `python tools/scrub-credentials.py` (idempotent)
 
 ---
 
-## 💪 Bilan de la nuit
+## 💪 Bilan total (sprint nocturne + round 2)
 
-- 📦 **6 nouveaux produits** ajoutés (Free Claude Starter, Notion AI Stack, Prompt Pack 50, Client Acquisition Bundle, AI Agent Playbook, Competitor Intelligence System)
-- 🌐 **5 routes Next.js** fonctionnelles avec lang toggle FR/EN
-- 📄 **36 fichiers HTML** print-ready générés
-- 🗜️ **8 ZIPs** prêts à uploader
-- 🛡️ **Zéro leak** dans les delivery/ (sweep grep validé)
+- 📦 **8 produits complets** (2 free, 3 Tier 1, 3 Tier 2) — workflows + guides bilingues + sales copy + covers + ZIPs avec PDFs
+- 🌐 **7 routes Next.js** : `/`, `/products`, `/portfolio`, `/free-n8n-pack`, `/_not-found`, `/sitemap.xml`, `/robots.txt`
+- 📄 **42 fichiers HTML** print-ready + **42 PDFs** générés en batch
+- 🗜️ **8 ZIPs** prêts à uploader (avec PDFs inclus, ~7 Mo total)
+- 🛡️ **700 credentials scrubbed** sur 108 fichiers (Digital Products + Polymaker)
+- 🔧 **3 outils** : `md-to-html.js`, `html-to-pdf.sh`, `scrub-credentials.py`
+- 📂 **Git repo** initialisé, commit `d93fc71` sur `main`
+- 🎨 **Site polish** : favicon, sitemap, robots, OG meta, OG image 1200×630
 - ⚡ Build du site **passe** (Next 16 + Tailwind v4 + React 19)
 
 Bon café ☕

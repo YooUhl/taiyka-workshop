@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Competitor Intelligence System — Page de vente (FR) — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Competitor Intelligence System — Page de vente (FR)</h1>
+<h2>Hero</h2>
+<p><strong>Sais exactement ce que font tes concurrents. Chaque semaine. Sans rien faire.</strong></p>
+<p>Un système complet qui scrape Instagram, TikTok, YouTube et LinkedIn tous les jours, stocke l'historique, et t'envoie un rapport stratégique rédigé par Claude chaque lundi matin.</p>
+<p><strong>Prix : 49€</strong> — one-shot, accès à vie, mises à jour gratuites.</p>
+<p>[→ Je veux le système]</p>
+<hr>
+<h2>La promesse en 1 ligne</h2>
+<p>Tu passes de <em>"j'sais pas trop ce que font mes concurrents"</em> à <em>"j'ai leur stratégie en PDF chaque lundi à 8h"</em>.</p>
+<hr>
+<h2>À qui c'est destiné</h2>
+<ul><li><strong>Fondateurs B2B</strong> qui veulent tracker leurs 10-20 concurrents sans recruter un analyste</li><li><strong>Équipes marketing</strong> qui en ont marre des reportings Excel bricolés à la main</li><li><strong>Agences</strong> qui veulent offrir du competitive intel en white-label à leurs clients</li><li><strong>Consultants</strong> qui vendent de la stratégie et veulent appuyer leurs recos sur de la data fraîche</li></ul>
+<p>Si tu regardes manuellement les Instagram de tes concurrents tous les mardis, ce produit est pour toi.</p>
+<hr>
+<h2>Ce que tu obtiens</h2>
+<ul><li><strong>5 workflows n8n prêts à l'emploi</strong> — Instagram, TikTok, YouTube, LinkedIn + générateur de rapport hebdo</li><li><strong>Un schéma Supabase complet</strong> — 3 tables, indexées, prêtes à encaisser 2+ ans d'historique</li><li><strong>Un playbook de 40 pages</strong> (FR + EN) — setup, architecture, prompt Claude expliqué, customisation, troubleshooting</li><li><strong>Un quick-start de 2h</strong> — pour tester le système avant de creuser</li><li><strong>Le prompt d'analyse calibré</strong> — celui que j'utilise en prod pour mes clients Taiyka</li></ul>
+<hr>
+<h2>Pourquoi c'est différent</h2>
+<ul><li><strong>Zéro SaaS à payer en plus.</strong> Tout tourne chez toi. Pas d'abonnement mensuel à un outil qui va augmenter dans 6 mois.</li><li><strong>Coût réel : ~10€/mois.</strong> Apify + Anthropic + Supabase gratuit = imbattable.</li><li><strong>Modifiable à 100 %.</strong> C'est du n8n. Tu changes le prompt, la fréquence, les plateformes, en 5 min.</li><li><strong>Claude, pas GPT.</strong> Le rapport est actionnable, pas générique. Testé sur 30+ rapports réels.</li><li><strong>Productisé depuis un vrai client.</strong> C'est le système que j'ai construit pour un client en industrie B2B. Ça tourne depuis 6 mois.</li></ul>
+<hr>
+<h2>Social / Variations courtes</h2>
+<p><strong>Twitter / LinkedIn :</strong></p>
+<blockquote>J'ai construit un système qui scrape les Instagram, TikTok, YouTube, LinkedIn de tes concurrents tous les jours. Le lundi, Claude t'envoie un rapport stratégique par mail. 49€, accès à vie. Lien en bio.</blockquote>
+<p><strong>Instagram / TikTok caption :</strong></p>
+<blockquote>Tu check encore les comptes de tes concurrents à la main ? En retard de fou. J'ai packagé le système que j'utilise pour mes clients — 49€, tu l'installes une fois, il tourne tout seul.</blockquote>
+<p><strong>Hook vidéo :</strong></p>
+<blockquote>Y a un truc que 90 % des fondateurs font à la main. Et qui peut être automatisé en 2h.</blockquote>
+<hr>
+<h2>Post-purchase email</h2>
+<p><strong>Objet :</strong> Ton Competitor Intelligence System est là</p>
+<p>Salut [prenom],</p>
+<p>Merci pour ta confiance — voici ton accès.</p>
+<p><strong>Dans le pack :</strong></p>
+<ul><li>5 workflows n8n (à importer tels quels)</li><li>Le schéma Supabase (SQL prêt à coller)</li><li>Le playbook complet (FR + EN) — 40 pages</li><li>Le quick-start 2h</li><li>Le prompt Claude calibré</li></ul>
+<p><strong>Le bon ordre pour démarrer :</strong></p>
+<ol><li>Lis <code>guide-fr.md</code> (10 min) — tu vois la forme globale</li><li>Setup Supabase + tes clés API (45 min)</li><li>Importe les 5 workflows n8n, replace les placeholders (30 min)</li><li>Lance un test manuel sur chaque collector</li><li>Attends 2-3 jours que la data remonte</li><li>Première génération de rapport → ta boîte mail</li></ol>
+<p>Si tu bloques quelque part, réponds à cet email. Je lis tout.</p>
+<p>Et si tu veux aller plus loin — versions avancées du pipeline, alerting temps réel, review de tes rapports en live — la <a href="https://taiyka.com/skool">communauté Skool Taiyka</a> est l'étape d'après.</p>
+<p>À ton prochain lundi matin bien rempli.</p>
+<p><strong>Manu</strong> · <a href="https://instagram.com/manu<em>ai.to">@manu</em>ai.to</a> · <a href="https://taiyka.com">taiyka.com</a></p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>
