@@ -1,43 +1,150 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import type { Metadata } from "next";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/ProductCard";
-import { getProducts, tierLabel, type Lang, type Tier } from "@/lib/products";
+import { getProducts, type Lang, type Product, type Tier } from "@/lib/products";
+
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
 const COPY = {
   fr: {
-    title: "Produits",
-    tagline:
-      "Du lead magnet gratuit aux systèmes premium — chaque produit résout un problème concret d'automation.",
+    kicker: "CATALOGUE",
+    title: "Kits · Systèmes · Workflows",
+    tagline: "Chaque kit résout un truc précis. Pas de remplissage.",
+    qcmLink: "Pas sûr du bon pack ? Fais le QCM en 2 min →",
     sections: {
-      0: { label: "Gratuit", sub: "Lead magnets" },
-      1: { label: "Entrée — 10-25€", sub: "Démarrer rapidement" },
-      2: { label: "Premium — 25-50€", sub: "Systèmes complets" },
+      0: { kicker: "TIER 0 · GRATUIT", label: "Gratuit", sub: "Lead magnets" },
+      1: { kicker: "TIER 1 · ENTRÉE", label: "Entrée — 10-25€", sub: "Entrée de gamme · Essayer" },
+      2: { kicker: "TIER 2 · PREMIUM", label: "Premium — 25-50€", sub: "Premium · Production" },
     },
-    skoolTitle: "Skool — Communauté Taiyka",
+    skoolKicker: "TIER 3 · COMMUNAUTÉ",
+    skoolHeading: "Communauté Skool",
+    skoolSub: "Communauté",
+    skoolTitle: "THE WORKSHOP — Build together",
     skoolBody:
-      "Une communauté francophone d'entrepreneurs IA. Sessions live, workflows partagés, support direct. Pricing à venir.",
-    skoolCta: "Pricing à venir",
+      "12 semaines. Builds en prod. 100 places fondateurs. Pas d'excuses pour traîner.",
+    skoolCta: "Entrer dans la communauté",
     langSwitch: "EN",
   },
   en: {
-    title: "Products",
-    tagline:
-      "From free lead magnets to premium systems — each product solves a real automation problem.",
+    kicker: "CATALOG",
+    title: "Packs · Systems · Workflows",
+    tagline: "Every pack solves a real problem. No filler.",
+    qcmLink: "Not sure which one? Take the 2-min QCM →",
     sections: {
-      0: { label: "Free", sub: "Lead magnets" },
-      1: { label: "Entry — €10-25", sub: "Get started fast" },
-      2: { label: "Premium — €25-50", sub: "Complete systems" },
+      0: { kicker: "TIER 0 · FREE", label: "Free", sub: "Lead magnets" },
+      1: { kicker: "TIER 1 · ENTRY", label: "Entry — €10-25", sub: "Entry — Try it" },
+      2: { kicker: "TIER 2 · PREMIUM", label: "Premium — €25-50", sub: "Premium — Production" },
     },
-    skoolTitle: "Skool — Taiyka Community",
+    skoolKicker: "TIER 3 · COMMUNITY",
+    skoolHeading: "Skool community",
+    skoolSub: "Community",
+    skoolTitle: "THE WORKSHOP — Build together",
     skoolBody:
-      "A French-speaking community of AI entrepreneurs. Live sessions, shared workflows, direct support. Pricing coming soon.",
-    skoolCta: "Pricing coming soon",
+      "12 weeks. Production builds. 100 founder spots. No excuses to drag your feet.",
+    skoolCta: "Enter the community",
     langSwitch: "FR",
   },
 };
 
+// --- Metadata ---------------------------------------------------------------
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const lang: Lang = sp?.lang === "en" ? "en" : "fr";
+
+  const title =
+    lang === "fr"
+      ? "Catalogue — Kits, systèmes & workflows IA"
+      : "Catalog — AI kits, systems & workflows";
+
+  const description =
+    lang === "fr"
+      ? "Le catalogue Taiyka : lead magnets gratuits, kits 10-25€, systèmes premium 25-50€ et la communauté Skool. Chaque pack résout un truc précis. Pas de remplissage."
+      : "The Taiyka catalog: free lead magnets, €10-25 kits, premium €25-50 systems and the Skool community. Every pack solves a real problem. No filler.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: "/products",
+      languages: {
+        "fr-FR": "/products",
+        "en-US": "/products?lang=en",
+      },
+    },
+    openGraph: {
+      type: "website",
+      url: `${SITE}/products`,
+      siteName: "Taiyka",
+      locale: lang === "fr" ? "fr_FR" : "en_US",
+      title,
+      description,
+      images: [
+        {
+          url: "/og/products.png",
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og/products.png"],
+      creator: "@manu_ai.to",
+    },
+  };
+}
+
+// --- JSON-LD helpers --------------------------------------------------------
+// Convert display price strings ("GRATUIT", "FREE", "0€", "29€") to a numeric
+// string suitable for Product offers ("0", "29"). Falls back to "0" for empty
+// / non-numeric inputs so the schema stays valid.
+function priceToNumber(price: string): string {
+  const raw = (price ?? "").trim().toLowerCase();
+  if (!raw) return "0";
+  if (raw === "gratuit" || raw === "free" || raw === "0" || raw === "0€" || raw === "0 €") {
+    return "0";
+  }
+  const m = raw.match(/(\d+(?:[.,]\d+)?)/);
+  if (!m) return "0";
+  return m[1].replace(",", ".");
+}
+
+function buildItemListJsonLd(products: Product[], lang: Lang) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Taiyka Products",
+    itemListElement: products.map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.name[lang] || p.name.fr,
+        description: p.subhero[lang] || p.subhero.fr || p.hero[lang] || p.hero.fr || "",
+        image: `${SITE}/og/${p.slug}.png`,
+        brand: { "@type": "Brand", name: "Taiyka" },
+        offers: {
+          "@type": "Offer",
+          price: priceToNumber(p.price),
+          priceCurrency: "EUR",
+          availability: "https://schema.org/InStock",
+          url: `${SITE}/products/${p.slug}`,
+        },
+      },
+    })),
+  };
+}
+
+// --- Page -------------------------------------------------------------------
 export default async function ProductsPage({
   searchParams,
 }: {
@@ -52,26 +159,44 @@ export default async function ProductsPage({
 
   const otherLang: Lang = lang === "fr" ? "en" : "fr";
 
+  const itemListJsonLd = buildItemListJsonLd(products, lang);
+
   return (
-    <main className="flex-1 w-full px-6 py-16 max-w-6xl mx-auto">
-      <header className="mb-12 text-center relative">
-        <div className="absolute right-0 top-0">
-          <Link
-            href={`/products?lang=${otherLang}`}
-            className={cn(
-              buttonVariants({ variant: "ghost", size: "sm" }),
-              "text-xs"
-            )}
-          >
-            {t.langSwitch}
-          </Link>
-        </div>
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight">
-          <span className="text-gradient-hero">{t.title}</span>
+    <main className="flex-1 w-full px-6 py-16 max-w-6xl mx-auto text-center relative z-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
+
+      <div className="w-full flex items-center justify-between mb-12 font-mono text-[11px] tracking-[0.22em] uppercase">
+        <Link
+          href="/"
+          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+        >
+          ← TAIYKA · Accueil
+        </Link>
+        <Link
+          href={`/products?lang=${otherLang}`}
+          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+        >
+          {t.langSwitch} →
+        </Link>
+      </div>
+
+      <header className="mb-12 text-center flex flex-col items-center gap-4">
+        <span className="kicker">{t.kicker}</span>
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight uppercase">
+          {t.title}
         </h1>
-        <p className="mt-4 text-muted-foreground max-w-xl mx-auto text-sm md:text-base">
+        <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base">
           {t.tagline}
         </p>
+        <Link
+          href="/qcm"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {t.qcmLink}
+        </Link>
       </header>
 
       <div className="flex flex-col gap-16">
@@ -81,14 +206,13 @@ export default async function ProductsPage({
           const meta = t.sections[tier as 0 | 1 | 2];
           return (
             <section key={tier} className="flex flex-col gap-6">
-              <div className="flex items-end justify-between gap-4 border-b border-border pb-3">
-                <div className="flex flex-col gap-1">
-                  <h2 className="text-2xl font-bold">{meta.label}</h2>
-                  <p className="text-xs text-muted-foreground">{meta.sub}</p>
-                </div>
-                <Badge variant="outline" className="text-[10px]">
-                  {tierLabel(tier)}
-                </Badge>
+              <div className="flex flex-col items-center gap-3">
+                <span className="kicker">{meta.kicker}</span>
+                <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight">
+                  {meta.label}
+                </h2>
+                <p className="text-xs text-muted-foreground">{meta.sub}</p>
+                <hr className="hairline" />
               </div>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((p) => (
@@ -101,30 +225,36 @@ export default async function ProductsPage({
 
         {/* Tier 3 — Skool community */}
         <section className="flex flex-col gap-6">
-          <div className="flex items-end justify-between gap-4 border-b border-border pb-3">
-            <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-bold">Skool</h2>
-              <p className="text-xs text-muted-foreground">Community</p>
-            </div>
-            <Badge variant="outline" className="text-[10px]">
-              {tierLabel(3)}
-            </Badge>
+          <div className="flex flex-col items-center gap-3">
+            <span className="kicker">{t.skoolKicker}</span>
+            <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight">
+              {t.skoolHeading}
+            </h2>
+            <p className="text-xs text-muted-foreground">{t.skoolSub}</p>
+            <hr className="hairline" />
           </div>
-          <div className="rounded-2xl border border-border bg-gradient-glow p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            <div className="flex flex-col gap-2 max-w-xl">
-              <h3 className="text-2xl font-bold text-gradient-hero">
+          <div className="relative rounded-2xl border border-border bg-card/60 p-8 md:p-12 flex flex-col items-center gap-6 text-center">
+            {/* HUD bracket frame — demotes from the previous gradient-glow */}
+            <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-4 w-4 border-l border-t border-[var(--hud-bracket-dim)]" />
+            <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-4 w-4 border-r border-t border-[var(--hud-bracket-dim)]" />
+            <span aria-hidden className="pointer-events-none absolute left-3 bottom-3 h-4 w-4 border-l border-b border-[var(--hud-bracket-dim)]" />
+            <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-4 w-4 border-r border-b border-[var(--hud-bracket-dim)]" />
+
+            <div className="flex flex-col items-center gap-2 max-w-xl">
+              <h3 className="font-heading text-2xl font-bold tracking-tight text-foreground">
                 {t.skoolTitle}
               </h3>
               <p className="text-sm text-muted-foreground">{t.skoolBody}</p>
             </div>
-            <div
+            <Link
+              href="/skool"
               className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "shrink-0 cursor-default opacity-80"
+                buttonVariants({ variant: "default", size: "lg" }),
+                "shrink-0"
               )}
             >
-              {t.skoolCta}
-            </div>
+              {t.skoolCta} <span aria-hidden>→</span>
+            </Link>
           </div>
         </section>
       </div>

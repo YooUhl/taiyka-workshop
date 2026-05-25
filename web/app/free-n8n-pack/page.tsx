@@ -1,183 +1,209 @@
-import fs from "node:fs";
-import path from "node:path";
+import type { Metadata } from "next";
 import Link from "next/link";
 import EmailCaptureForm from "@/components/EmailCaptureForm";
+import { FREE_N8N_PACK_COPY } from "@/lib/copy/free-n8n-pack";
 
 type Lang = "fr" | "en";
 
-type ParsedCopy = {
-  h1Line1: string;
-  h1Line2: string;
-  subHero: string;
-  bullets: string[];
-};
+type SearchParams = { lang?: string; from?: string };
 
-function readCopy(lang: Lang): ParsedCopy {
-  const file = path.join(
-    process.cwd(),
-    "..",
-    "products",
-    "free-n8n-pack",
-    "copy",
-    `sales-${lang}.md`
-  );
-
-  let raw = "";
-  try {
-    raw = fs.readFileSync(file, "utf8");
-  } catch {
-    // Fallback if file missing — still render the page.
-    return {
-      h1Line1:
-        lang === "fr"
-          ? "5 workflows n8n que j'utilise vraiment dans mon business."
-          : "5 n8n workflows I actually use in my business.",
-      h1Line2: lang === "fr" ? "Gratuits. À toi." : "Free. Yours.",
-      subHero:
-        lang === "fr"
-          ? "Pas de théorie. Juste 5 fichiers .json à importer dans ton n8n."
-          : "No theory. Just 5 .json files to import into your n8n.",
-      bullets: [],
-    };
-  }
-
-  // H1 block: between "## H1 (hero)" and the next "## "
-  const h1Match = raw.match(/##\s*H1[^\n]*\n([\s\S]*?)(?=\n##\s)/);
-  let h1Line1 = "";
-  let h1Line2 = "";
-  if (h1Match) {
-    const lines = h1Match[1]
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
-    h1Line1 = lines[0]?.replace(/^\*\*|\*\*$/g, "").replace(/\*\*/g, "") ?? "";
-    h1Line2 = lines[1] ?? "";
-  }
-
-  // Sub-hero: between "## Sub-hero" and next "## "
-  const subMatch = raw.match(/##\s*Sub-hero\s*\n([\s\S]*?)(?=\n##\s)/);
-  const subHero = subMatch
-    ? subMatch[1]
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean)
-        .join(" ")
-    : "";
-
-  // Bullets: section starting with "## Bullets" (FR) or "## Value bullets" (EN)
-  const bulletsMatch = raw.match(
-    /##\s*(?:Bullets[^\n]*|Value bullets[^\n]*)\n([\s\S]*?)(?=\n##\s)/i
-  );
-  const bullets: string[] = [];
-  if (bulletsMatch) {
-    const lines = bulletsMatch[1].split("\n");
-    for (const line of lines) {
-      const m = line.match(/^\s*-\s+(.+)$/);
-      if (m) bullets.push(m[1].trim());
-    }
-  }
-
-  return { h1Line1, h1Line2, subHero, bullets };
+function resolveLang(value: string | undefined): Lang {
+  return value === "en" ? "en" : "fr";
 }
 
-const T = {
-  fr: {
-    formNote: "ZIP en moins de 2 minutes. Pas de spam, jamais.",
-    socialProof: "Rejoins les entrepreneurs qui automatisent déjà leur business.",
-    langSwitch: "EN",
-    langSwitchHref: "/free-n8n-pack?lang=en",
-    backHome: "← Accueil",
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const lang = resolveLang(sp?.lang);
+
+  const title =
+    lang === "fr"
+      ? "Pack n8n gratuit — 5 workflows à importer · Taiyka"
+      : "Free n8n pack — 5 workflows to import · Taiyka";
+
+  const description =
+    lang === "fr"
+      ? "5 workflows n8n que j'utilise vraiment dans mon business. Gratuits, .json à importer, ZIP livré en moins de 2 minutes."
+      : "5 n8n workflows I actually use in my business. Free, .json ready to import, ZIP delivered in under 2 minutes.";
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: "/free-n8n-pack",
+      languages: {
+        "fr-FR": "/free-n8n-pack",
+        "en-US": "/free-n8n-pack?lang=en",
+      },
+    },
+    openGraph: {
+      title,
+      description,
+      images: ["/og/free-n8n-pack.png"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og/free-n8n-pack.png"],
+    },
+  };
+}
+
+const softwareSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  name: "5 n8n Workflows pour Entrepreneurs IA",
+  description:
+    "Pack de 5 workflows n8n gratuits pour automatiser ton activité.",
+  programmingLanguage: "JSON",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "EUR",
   },
-  en: {
-    formNote: "ZIP arrives in under 2 minutes. No spam, ever.",
-    socialProof: "Join the entrepreneurs already automating their business.",
-    langSwitch: "FR",
-    langSwitchHref: "/free-n8n-pack?lang=fr",
-    backHome: "← Home",
-  },
-} as const;
+  codeRepository: "https://taiyka.com/free-n8n-pack",
+};
 
 export default async function FreeN8nPackPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<SearchParams>;
 }) {
   const sp = await searchParams;
-  const lang: Lang = sp?.lang === "en" ? "en" : "fr";
-  const copy = readCopy(lang);
-  const t = T[lang];
+  const lang = resolveLang(sp?.lang);
+  const fromQcm = sp?.from === "qcm-result";
+  const copy = FREE_N8N_PACK_COPY[lang];
+
+  const backHref = fromQcm ? "/qcm/resultat/pas-pret" : "/";
+  const backLabel = fromQcm ? copy.backFromQcm : copy.backHome;
+  const heroKicker = fromQcm ? copy.kickerFromQcm : copy.kicker;
 
   return (
-    <main className="flex-1 w-full px-6 py-12 md:py-20">
-      <div className="mx-auto w-full max-w-2xl flex flex-col items-center gap-10">
+    <main className="relative flex-1 w-full flex flex-col z-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
+      />
+
+      <div
+        className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1 text-center"
+        style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
+      >
         {/* Top bar */}
-        <div className="w-full flex items-center justify-between text-xs text-muted-foreground">
-          <Link href="/" className="hover:text-foreground transition-colors">
-            {t.backHome}
-          </Link>
+        <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[11px] tracking-[0.22em] uppercase">
           <Link
-            href={t.langSwitchHref}
-            className="rounded-md border border-border px-2.5 py-1 hover:border-[#00a6ff] hover:text-foreground transition-colors"
+            href={backHref}
+            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
-            {t.langSwitch}
+            {backLabel}
+          </Link>
+          <span className="hidden sm:inline-flex items-center gap-2 text-muted-foreground">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            {copy.statusPill}
+          </span>
+          <Link
+            href={copy.langSwitchHref}
+            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+          >
+            {copy.langSwitchLabel}
           </Link>
         </div>
 
-        {/* Hero */}
-        <header className="flex flex-col items-center text-center gap-4">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#00a6ff]/30 bg-[#00a6ff]/10 px-3 py-1 text-xs font-medium text-[#00e5ff]">
-            🎁 {lang === "fr" ? "Gratuit" : "Free"}
-          </span>
-          <h1 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-            <span className="text-gradient-hero">{copy.h1Line1}</span>
-            {copy.h1Line2 && (
-              <>
-                <br />
-                <span className="text-foreground">{copy.h1Line2}</span>
-              </>
-            )}
-          </h1>
-          {copy.subHero && (
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl">
-              {copy.subHero}
-            </p>
-          )}
-        </header>
+        {/* Kicker */}
+        <span className="kicker">{heroKicker}</span>
 
-        {/* Value bullets */}
-        {copy.bullets.length > 0 && (
-          <ul className="w-full flex flex-col gap-3">
+        {/* H1 */}
+        <h1 className="mt-5 mb-10 md:mb-12 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.5rem,8.5vw,5rem)]">
+          {copy.h1Line1}{" "}
+          <span className="text-gradient-hero">{copy.h1Line1Gradient}</span>{" "}
+          <span className="text-muted-foreground">{copy.h1Line2}</span>
+        </h1>
+
+        {/* Sub-hero */}
+        <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.65] text-[#e8f0fe] text-balance max-w-[58ch] mx-auto mb-12 md:mb-16">
+          {copy.subHero}
+        </p>
+
+        <div className="hairline mb-12 md:mb-16" />
+
+        {/* Value bullets — left-aligned numbered list (matches site rhythm) */}
+        <div className="flex flex-col items-center gap-6 mb-12 md:mb-16">
+          <span className="kicker">{copy.bulletsKicker}</span>
+          <ul className="flex flex-col gap-4 max-w-[58ch] w-full text-left">
             {copy.bullets.map((b, i) => (
               <li
                 key={i}
-                className="flex items-start gap-3 rounded-xl border border-border bg-card/40 px-4 py-3 text-sm md:text-base text-foreground"
+                className="flex flex-row items-start gap-3 text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]"
               >
-                <span className="mt-0.5 text-[#00e5ff]">›</span>
-                <span>{b}</span>
+                <span
+                  aria-hidden
+                  className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/80 pt-[0.45rem] min-w-[1.5rem]"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span
+                  aria-hidden
+                  className="text-[#00e5ff] pt-[0.05rem]"
+                >
+                  ›
+                </span>
+                <span className="flex-1">{b}</span>
               </li>
             ))}
           </ul>
-        )}
+        </div>
 
-        {/* Form card */}
-        <section className="w-full rounded-2xl border border-border bg-card/60 p-6 md:p-8 shadow-glow">
-          <EmailCaptureForm
-            lang={lang}
-            source="landing-free-n8n-pack"
-            productSlug="free-n8n-pack"
-          />
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            {t.formNote}
+        <div className="hairline mb-12 md:mb-16" />
+
+        {/* CTA — flat layout, no nested card */}
+        <div className="flex flex-col items-center gap-6 mb-8">
+          <span className="kicker">{copy.formKicker}</span>
+          <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground max-w-[50ch]">
+            {copy.formIntro}
           </p>
-        </section>
+          <div className="w-full max-w-md text-left">
+            <EmailCaptureForm
+              lang={lang}
+              source="landing-free-n8n-pack"
+              productSlug="free-n8n-pack"
+              compact
+            />
+          </div>
+          <p className="text-xs text-muted-foreground">{copy.reassurance}</p>
+        </div>
 
-        {/* Social proof */}
-        <p className="text-xs text-muted-foreground text-center">
-          {t.socialProof}
-        </p>
+        <div className="hairline mb-12 md:mb-16" />
 
-        <footer className="text-xs text-muted-foreground pt-2">
-          © {new Date().getFullYear()} Taiyka · @manu_ai.to
+        {/* Upsell — always visible (no state coordination with form) */}
+        <div className="flex flex-col items-center gap-4 mb-12">
+          <span className="kicker">{copy.upsellKicker}</span>
+          <div className="flex flex-col items-center gap-3 max-w-[50ch]">
+            <Link
+              href={copy.upsellPrimaryHref}
+              className="text-[1rem] md:text-[1.0625rem] text-foreground hover:text-[#00e5ff] transition-colors"
+            >
+              {copy.upsellPrimary}
+            </Link>
+            <Link
+              href={copy.upsellSecondaryHref}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {copy.upsellSecondary}
+            </Link>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-auto pt-12 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
+          <span>© {new Date().getFullYear()} Taiyka · @manu_ai.to</span>
         </footer>
       </div>
     </main>
