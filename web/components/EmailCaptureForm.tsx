@@ -4,9 +4,14 @@ import { useState, type FormEvent } from "react";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  lang: "fr" | "en";
-  source: string;
-  productSlug: string;
+  lang?: "fr" | "en";
+  source?: string;
+  productSlug?: string;
+  /**
+   * When true, hides the optional name field (email-only).
+   * Default false to preserve current behavior.
+   */
+  compact?: boolean;
 };
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -19,11 +24,11 @@ const T = {
     namePlaceholder: "Manu",
     submit: "Récupère le pack",
     submitting: "Envoi...",
+    successTitle: "Merci !",
     success: "Vérifie ta boîte mail d'ici 2 min",
-    errorGeneric: "Oups, une erreur est survenue. Réessaie.",
-    notConnectedDev:
-      "Form not yet connected — set NEXT_PUBLIC_LEADMAGNET_WEBHOOK_URL in .env.local",
-    notConnectedProd: "Almost ready, check back soon",
+    errorGeneric:
+      "Ça a pas pris. Réessaie, ou écris-moi : manu.uhila@taiyka.com.",
+    notConnected: "Presque prêt — reviens bientôt.",
   },
   en: {
     emailLabel: "Email",
@@ -32,15 +37,20 @@ const T = {
     namePlaceholder: "Manu",
     submit: "Get the pack",
     submitting: "Sending...",
+    successTitle: "Thanks!",
     success: "Check your inbox in 2 min",
-    errorGeneric: "Oops, something went wrong. Try again.",
-    notConnectedDev:
-      "Form not yet connected — set NEXT_PUBLIC_LEADMAGNET_WEBHOOK_URL in .env.local",
-    notConnectedProd: "Almost ready, check back soon",
+    errorGeneric:
+      "Didn't go through. Try again, or write me: manu.uhila@taiyka.com.",
+    notConnected: "Almost ready, check back soon.",
   },
 } as const;
 
-export default function EmailCaptureForm({ lang, source, productSlug }: Props) {
+export default function EmailCaptureForm({
+  lang = "fr",
+  source = "generic",
+  productSlug,
+  compact = false,
+}: Props) {
   const t = T[lang];
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -55,9 +65,9 @@ export default function EmailCaptureForm({ lang, source, productSlug }: Props) {
     const webhookUrl = process.env.NEXT_PUBLIC_LEADMAGNET_WEBHOOK_URL;
 
     if (!webhookUrl) {
-      const isDev = process.env.NODE_ENV !== "production";
+      // Graceful, on-brand message in both dev and prod — no env leak.
       setStatus("error");
-      setErrorMsg(isDev ? t.notConnectedDev : t.notConnectedProd);
+      setErrorMsg(t.notConnected);
       return;
     }
 
@@ -83,14 +93,19 @@ export default function EmailCaptureForm({ lang, source, productSlug }: Props) {
 
   if (status === "success") {
     return (
-      <div className="w-full rounded-xl border border-[#00a6ff]/40 bg-[#00a6ff]/10 px-5 py-6 text-center">
-        <p className="text-base font-semibold text-white">
-          {lang === "fr" ? "Merci !" : "Thanks!"}
-        </p>
+      <div
+        role="status"
+        aria-live="polite"
+        className="w-full rounded-xl border border-[#00a6ff]/40 bg-[#00a6ff]/10 px-5 py-6 text-center"
+      >
+        <p className="text-base font-semibold text-white">{t.successTitle}</p>
         <p className="mt-1 text-sm text-[#e8f0fe]/80">{t.success}</p>
       </div>
     );
   }
+
+  const isBusy = status === "loading";
+  const isError = status === "error";
 
   return (
     <form onSubmit={onSubmit} className="w-full flex flex-col gap-3">
@@ -104,46 +119,64 @@ export default function EmailCaptureForm({ lang, source, productSlug }: Props) {
           type="email"
           required
           autoComplete="email"
+          inputMode="email"
           placeholder={t.emailPlaceholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          disabled={status === "loading"}
-          className="h-11 w-full rounded-lg border border-border bg-card/60 px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
+          disabled={isBusy}
+          aria-describedby="email-error"
+          aria-invalid={isError}
+          className="h-14 w-full rounded-lg border border-border bg-card/60 px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
         />
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="name" className="text-xs text-muted-foreground">
-          {t.nameLabel}
-        </label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          autoComplete="given-name"
-          placeholder={t.namePlaceholder}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={status === "loading"}
-          className="h-11 w-full rounded-lg border border-border bg-card/60 px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
-        />
-      </div>
+      {!compact && (
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="name" className="text-xs text-muted-foreground">
+            {t.nameLabel}
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            autoComplete="given-name"
+            placeholder={t.namePlaceholder}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={isBusy}
+            className="h-14 w-full rounded-lg border border-border bg-card/60 px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
+          />
+        </div>
+      )}
 
       <button
         type="submit"
-        disabled={status === "loading"}
+        disabled={isBusy}
+        aria-busy={isBusy}
         className={cn(
-          "mt-1 h-12 w-full rounded-lg bg-gradient-hero text-base font-semibold text-[#0a1628] shadow-glow transition-all",
+          "mt-1 h-14 w-full rounded-lg bg-gradient-hero text-base font-semibold text-[#0a1628] shadow-glow transition-all",
           "hover:opacity-95 hover:shadow-[0_0_60px_rgba(0,166,255,0.45)]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
           "disabled:cursor-not-allowed disabled:opacity-60"
         )}
       >
-        {status === "loading" ? t.submitting : t.submit}
+        {isBusy ? t.submitting : t.submit}
       </button>
 
-      {status === "error" && errorMsg && (
-        <p className="text-xs text-destructive text-center mt-1">{errorMsg}</p>
-      )}
+      {/*
+        Always mount the error <p> so that aria-describedby="email-error"
+        resolves to a real node even when there's no error. We toggle
+        visibility via the `hidden` attribute. role="alert" announces it
+        to screen readers when it becomes visible.
+      */}
+      <p
+        id="email-error"
+        role="alert"
+        hidden={!isError || !errorMsg}
+        className="text-xs text-destructive text-center mt-1"
+      >
+        {errorMsg}
+      </p>
     </form>
   );
 }

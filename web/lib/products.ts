@@ -18,16 +18,20 @@ export type Product = {
   coverSvg: string | null;
 };
 
-// Catalog order + display names + Tier-3 entry that has no folder
+// Catalog order + display names + Tier-3 entry that has no folder.
+// `price` is the canonical display string ("GRATUIT", "19€", etc.) used for UI.
+// If a product README provides **Target price:**, that value overrides this fallback.
 const CATALOG: {
   slug: string;
   tier: Tier;
+  price: string;
   fallbackName: { fr: string; en: string };
   ctaHref: string;
 }[] = [
   {
     slug: "free-n8n-pack",
     tier: 0,
+    price: "GRATUIT",
     fallbackName: {
       fr: "5 Workflows n8n pour Entrepreneurs IA",
       en: "5 n8n Workflows for AI Entrepreneurs",
@@ -37,69 +41,98 @@ const CATALOG: {
   {
     slug: "free-claude-starter",
     tier: 0,
+    price: "GRATUIT",
     fallbackName: {
       fr: "Claude Code Starter Pack",
       en: "Claude Code Starter Pack",
     },
-    ctaHref: "#",
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%20Claude%20Code%20Starter%20Pack",
   },
   {
     slug: "cold-outreach-pack",
     tier: 1,
+    price: "19€",
     fallbackName: {
       fr: "Cold Outreach Pack",
       en: "Cold Outreach Pack",
     },
-    ctaHref: "https://gumroad.com/PASTE_YOUR_GUMROAD_LINK",
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%20Cold%20Outreach%20Pack",
   },
   {
     slug: "notion-ai-stack",
     tier: 1,
+    price: "15€",
     fallbackName: {
       fr: "Notion : Solopreneur AI Stack",
       en: "Notion: Solopreneur AI Stack",
     },
-    ctaHref: "#",
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%20Notion%20AI%20Stack",
   },
   {
     slug: "prompt-pack-50",
     tier: 1,
+    price: "12€",
     fallbackName: {
       fr: "50 Prompts pour Automatiser ton Business",
       en: "50 Prompts to Automate Your Business",
     },
-    ctaHref: "#",
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%2050%20Prompts%20Pack",
   },
   {
     slug: "competitor-intel",
     tier: 2,
+    price: "49€",
     fallbackName: {
       fr: "Competitor Intelligence System",
       en: "Competitor Intelligence System",
     },
-    ctaHref: "#",
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%20Competitor%20Intelligence%20System",
   },
   {
     slug: "client-acquisition-bundle",
     tier: 2,
+    price: "39€",
     fallbackName: {
       fr: "Client Acquisition Bundle",
       en: "Client Acquisition Bundle",
     },
-    ctaHref: "#",
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%20Client%20Acquisition%20Bundle",
   },
   {
     slug: "ai-agent-playbook",
     tier: 2,
+    price: "29€",
     fallbackName: {
       fr: "Build Your First AI Agent",
       en: "Build Your First AI Agent",
     },
-    ctaHref: "#",
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%20Build%20Your%20First%20AI%20Agent",
+  },
+  {
+    slug: "prospect-audit-funnel",
+    tier: 2,
+    price: "49€",
+    fallbackName: {
+      fr: "Smart Prospect Audit Funnel",
+      en: "Smart Prospect Audit Funnel",
+    },
+    ctaHref: "/products/prospect-audit-funnel",
+  },
+  {
+    slug: "email-triage-agent",
+    tier: 2,
+    price: "29€",
+    fallbackName: {
+      fr: "Email Triage Agent",
+      en: "Email Triage Agent",
+    },
+    ctaHref: "mailto:manu.uhila@taiyka.com?subject=Notify%20me%20%E2%80%94%20Email%20Triage%20Agent",
   },
 ];
 
-const PRODUCTS_ROOT = path.resolve(process.cwd(), "..", "products");
+// Vercel deployment: data is copied into web/.data/products at prebuild.
+// Local dev: same path, populated by predev script.
+const PRODUCTS_ROOT = path.resolve(process.cwd(), ".data", "products");
 
 function readFileSafe(p: string): string | null {
   try {
@@ -248,7 +281,7 @@ export function getProducts(): Product[] {
     return {
       slug: entry.slug,
       tier,
-      price: meta.price || (tier === 0 ? "Free" : "Coming soon"),
+      price: meta.price || entry.price || (tier === 0 ? "GRATUIT" : "Coming soon"),
       status: finalStatus,
       name: entry.fallbackName,
       hero: { fr: heroFr, en: heroEn },
