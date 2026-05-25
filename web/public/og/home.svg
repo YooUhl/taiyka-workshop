@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#050B14"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00A6FF"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="20%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#00A6FF" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#00A6FF" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#00A6FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Top kicker -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#8DA2C0" letter-spacing="4">
+    <circle cx="80" cy="74" r="5" fill="#00A6FF"/>
+    <text x="100" y="80">§ TAIYKA · HUB</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="280" fill="#FFFFFF" font-family="Inter, system-ui, sans-serif" font-size="92" font-weight="800" letter-spacing="-3">Systèmes</text>
+  <text x="80" y="375" fill="#FFFFFF" font-family="Inter, system-ui, sans-serif" font-size="92" font-weight="800" letter-spacing="-3">d'automatisation IA</text>
+  <text x="80" y="470" fill="url(#accent)" font-family="Inter, system-ui, sans-serif" font-size="92" font-weight="800" letter-spacing="-3">pour entrepreneurs.</text>
+
+  <!-- Hairline -->
+  <rect x="80" y="525" width="1040" height="1" fill="#8DA2C0" opacity="0.20"/>
+
+  <!-- Footer mark -->
+  <text x="80" y="585" fill="#8DA2C0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="3">TAIYKA · @MANU_AI.TO</text>
+  <text x="1120" y="585" text-anchor="end" fill="#8DA2C0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="3">TAIYKA.COM</text>
+</svg>

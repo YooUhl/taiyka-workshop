@@ -12,8 +12,10 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-mono-hud);
   --font-heading: var(--font-sans);
+  --font-mono-hud: var(--font-mono-hud);
+  --font-display-hud: var(--font-display-hud);
 
   /* Brand primary */
   --color-electric-blue: #00a6ff;
@@ -96,6 +98,18 @@
   --sidebar-accent-foreground: #e8f0fe;
   --sidebar-border: rgba(141, 162, 192, 0.2);
   --sidebar-ring: #00a6ff;
+
+  /* HUD broadcast tokens */
+  --hud-grid: rgba(141, 162, 192, 0.045);
+  --hud-grid-strong: rgba(0, 166, 255, 0.06);
+  --hud-scan: rgba(0, 229, 255, 0.04);
+  --hud-bracket: rgba(0, 229, 255, 0.5);
+  --hud-bracket-dim: rgba(141, 162, 192, 0.4);
+  --hud-gauge-track: rgba(141, 162, 192, 0.18);
+  --hud-gauge-arc: #00a6ff;
+  --hud-gauge-arc-glow: rgba(0, 166, 255, 0.55);
+  --hud-tick: rgba(0, 229, 255, 0.7);
+  --hud-ticker-bg: rgba(15, 26, 46, 0.6);
 }
 
 @layer base {
@@ -105,10 +119,53 @@
   body {
     @apply bg-background text-foreground;
     background: linear-gradient(180deg, #0a1628 0%, #000000 100%);
+    background-attachment: fixed;
+    background-color: #000000;
     min-height: 100vh;
+  }
+  /* Global HUD grid + scanline — ambient layer, sits behind all content.
+     Gated to >=768px: removes full-viewport composited layer on mobile for LCP / CPU. */
+  @media (min-width: 768px) {
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(var(--hud-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
+      background-size: 32px 32px;
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
+      mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
+    }
+    /* Faint scanline tint */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 3px,
+        var(--hud-scan) 3px,
+        var(--hud-scan) 4px
+      );
+      opacity: 0.35;
+      mix-blend-mode: screen;
+    }
   }
   html {
     @apply font-sans;
+    /* Bigger comfortable base size — scales all rem-based type + spacing uniformly */
+    font-size: 17px;
+  }
+  @media (min-width: 768px) {
+    html {
+      font-size: 18px;
+    }
   }
 }
 
@@ -131,5 +188,185 @@
   }
   .shadow-glow {
     box-shadow: 0 0 40px rgba(0, 166, 255, 0.35);
+  }
+
+  /* QCM editorial utilities */
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    text-shadow: 0 0 12px rgba(0, 166, 255, 0.35);
+  }
+  .kicker-accent { color: var(--accent); }
+  .hairline {
+    background-color: rgba(141, 162, 192, 0.2);
+    height: 1px;
+    width: 100%;
+  }
+  .hairline-strong {
+    background-color: rgba(141, 162, 192, 0.36);
+    height: 1px;
+    width: 100%;
+  }
+
+  /* Hover-grow — smooth scale + lift on interactive blocks */
+  .hover-grow,
+  .hover-grow-sm,
+  .hover-grow-lg {
+    transition:
+      transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 480ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 480ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: center;
+    will-change: transform;
+  }
+  .hover-grow:hover {
+    transform: scale(1.06);
+    filter: drop-shadow(0 8px 24px rgba(0, 166, 255, 0.18));
+  }
+  .hover-grow-sm:hover {
+    transform: scale(1.035);
+    filter: drop-shadow(0 6px 18px rgba(0, 166, 255, 0.14));
+  }
+  .hover-grow-lg:hover {
+    transform: scale(1.08);
+    filter: drop-shadow(0 10px 28px rgba(0, 166, 255, 0.22));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hover-grow,
+    .hover-grow-sm,
+    .hover-grow-lg {
+      transition: none;
+    }
+    .hover-grow:hover,
+    .hover-grow-sm:hover,
+    .hover-grow-lg:hover {
+      transform: none;
+      filter: none;
+    }
+  }
+
+  /* HUD broadcast utilities */
+  .hud-grid-bg {
+    background-image:
+      linear-gradient(var(--hud-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .hud-grid-bg-tight {
+    background-image:
+      linear-gradient(var(--hud-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+  .hud-grid-bg-loose {
+    background-image:
+      linear-gradient(var(--hud-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+  .hud-fade-mask {
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 80%);
+  }
+  .font-mono-hud {
+    font-family: var(--font-mono-hud), ui-monospace, monospace;
+  }
+  .font-display-hud {
+    font-family: var(--font-display-hud), ui-monospace, monospace;
+  }
+  .shadow-hud-ring {
+    box-shadow: 0 0 0 1px rgba(0, 166, 255, 0.25), 0 0 24px rgba(0, 166, 255, 0.18);
+  }
+  .shadow-hud-inset {
+    box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.2);
+  }
+  .animate-hud-scan {
+    animation: hud-scan 7s linear infinite;
+  }
+  .animate-hud-ticker {
+    animation: hud-ticker 28s linear infinite;
+  }
+  .animate-hud-bracket-pulse {
+    animation: hud-bracket-pulse 4s ease-in-out infinite;
+  }
+  .animate-hud-dot-pulse {
+    animation: hud-dot-pulse 1.8s ease-in-out infinite;
+  }
+
+  /* Opt-in: skip layout/paint for offscreen sections (heavy carousels, lists). */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 800px;
+  }
+}
+
+/* QCM keyframes */
+@keyframes qcm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes qcm-fade-slide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes qcm-glow-pulse-once {
+  0%, 100% { box-shadow: 0 0 40px rgba(0, 166, 255, 0.35); }
+  50% { box-shadow: 0 0 60px rgba(0, 166, 255, 0.55); }
+}
+@keyframes qcm-gradient-sweep {
+  from { background-position: 100% 50%; }
+  to { background-position: 0% 50%; }
+}
+@keyframes qcm-heartbeat {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* HUD broadcast keyframes */
+@keyframes hud-scan {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(100vh); }
+}
+@keyframes hud-ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes hud-gauge-fill {
+  from { stroke-dashoffset: var(--gauge-circumference, 0); }
+  to { stroke-dashoffset: var(--gauge-target, 0); }
+}
+@keyframes hud-bracket-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes hud-dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
+}
+
+/* Respect users with vestibular sensitivity */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High-contrast users: drop ambient HUD overlay (scanline reduces effective contrast). */
+@media (prefers-contrast: more) {
+  body::before,
+  body::after {
+    display: none;
   }
 }

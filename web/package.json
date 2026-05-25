@@ -3,10 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build-data": "node scripts/copy-data.mjs && node scripts/build-portfolio-data.mjs",
+    "predev": "npm run build-data",
     "dev": "next dev",
+    "prebuild": "npm run build-data",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "og:generate": "tsx scripts/og-to-png.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",

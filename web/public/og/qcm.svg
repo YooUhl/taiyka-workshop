@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#050B14"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00A6FF"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="80%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#00A6FF" stop-opacity="0.30"/>
+      <stop offset="60%" stop-color="#00A6FF" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#00A6FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Top kicker -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#8DA2C0" letter-spacing="4">
+    <circle cx="80" cy="74" r="5" fill="#00A6FF"/>
+    <text x="100" y="80">§ 01 / QCM · 9 QUESTIONS · 2 MIN</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="80" y="270" fill="#FFFFFF" font-family="Inter, system-ui, sans-serif" font-size="86" font-weight="800" letter-spacing="-3">Quel type</text>
+  <text x="80" y="360" fill="#FFFFFF" font-family="Inter, system-ui, sans-serif" font-size="86" font-weight="800" letter-spacing="-3">d'entrepreneur</text>
+  <text x="80" y="450" fill="url(#accent)" font-family="Inter, system-ui, sans-serif" font-size="86" font-weight="800" letter-spacing="-3">t'es vraiment ?</text>
+
+  <!-- Subline -->
+  <text x="80" y="510" fill="#8DA2C0" font-family="Inter, system-ui, sans-serif" font-size="26" font-weight="500">Découvre ton profil. Reçois la prochaine étape concrète.</text>
+
+  <!-- Hairline -->
+  <rect x="80" y="540" width="1040" height="1" fill="#8DA2C0" opacity="0.20"/>
+
+  <!-- Footer mark -->
+  <text x="80" y="595" fill="#8DA2C0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="3">TAIYKA · @MANU_AI.TO</text>
+  <text x="1120" y="595" text-anchor="end" fill="#00A6FF" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="3" font-weight="700">GRATUIT →</text>
+</svg>

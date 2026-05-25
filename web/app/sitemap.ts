@@ -2,24 +2,34 @@ import type { MetadataRoute } from "next";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
-const routes = ["", "/products", "/portfolio", "/free-n8n-pack"];
-const langs = ["fr", "en"];
+// Build-time constant — avoids per-request churn that signals constant change to Googlebot.
+const LAST_MOD = new Date("2026-05-25T00:00:00Z");
+
+const routes = [
+  "",
+  "/products",
+  "/portfolio",
+  "/free-n8n-pack",
+  "/qcm",
+  "/brief",
+  "/skool",
+  "/products/prospect-audit-funnel",
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-  const entries: MetadataRoute.Sitemap = [];
-
-  for (const route of routes) {
-    for (const lang of langs) {
-      const path = lang === "fr" ? route : `${route}?lang=en`;
-      entries.push({
-        url: `${SITE}${path || "/"}`,
-        lastModified: now,
-        changeFrequency: route === "" ? "weekly" : "monthly",
-        priority: route === "" ? 1.0 : 0.8,
-      });
-    }
-  }
-
-  return entries;
+  return routes.map((route) => {
+    const path = route || "/";
+    const url = `${SITE}${path}`;
+    return {
+      url,
+      lastModified: LAST_MOD,
+      changeFrequency: route === "" ? "weekly" : "monthly",
+      priority: route === "" ? 1.0 : 0.8,
+      alternates: {
+        languages: {
+          en: `${url}?lang=en`,
+        },
+      },
+    };
+  });
 }
