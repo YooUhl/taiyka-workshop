@@ -211,15 +211,11 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         )}
       </div>
 
-      {/* Card content — pointer-events disabled on tilted side tiles so the 3D-rotated
-          surface doesn't extend its hit area (notably on iOS Safari with perspective:1500px).
-          The outer <button> remains clickable and still routes through scrollToActual. */}
-      <div
-        className={cn(
-          "relative z-10 flex h-full flex-col gap-4 p-4 md:p-5",
-          !isActive && "pointer-events-none"
-        )}
-      >
+      {/* Card content — keep pointer-events on so the outer button receives clicks
+          (Wave 2-B applied pointer-events:none here for iOS phantom-tap protection,
+          but the bracket and gradient overlays already carry pointer-events-none
+          individually — disabling the entire content div blocked hover affordances). */}
+      <div className="relative z-10 flex h-full flex-col gap-4 p-4 md:p-5">
         {/* Top row: status + codename (dimmed/smaller per v3 hierarchy) */}
         <div className="flex items-start justify-between gap-2 font-mono-hud text-[9px] tracking-[0.22em] uppercase">
           <span

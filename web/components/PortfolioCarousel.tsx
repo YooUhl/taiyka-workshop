@@ -248,7 +248,7 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
       >
         <ul
           role="list"
-          className="cv-auto flex items-center gap-4 md:gap-6"
+          className="flex items-center gap-4 md:gap-6"
           style={{
             paddingInline: "calc(50% - min(36vw, 140px))",
           }}

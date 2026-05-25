@@ -1,19 +1,9 @@
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 import MailtoButton from "@/components/MailtoButton";
 import { getProjectMeta } from "@/components/PortfolioDetail";
 import { getPortfolioProjects, type Lang } from "@/lib/portfolio";
-
-// Lazy-load the heavy interactive carousel (rAF + ResizeObserver + modal + 3x looped tiles).
-// SSR-prerendered placeholder shows 3 static project links so the page is meaningful
-// without JS and so bots / crawlers see the catalog.
-// NOTE: `ssr: false` is not permitted in Server Components in this Next.js version
-// (see node_modules/next/dist/docs/01-app/02-guides/lazy-loading.md). Code-splitting
-// still applies — the heavy client bundle is deferred until hydration.
-const PortfolioCarousel = dynamic(() => import("@/components/PortfolioCarousel"), {
-  loading: () => <PortfolioPlaceholder />,
-});
+import PortfolioClient from "./portfolio-client";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
@@ -98,34 +88,6 @@ export async function generateMetadata({
       creator: "@manu_ai.to",
     },
   };
-}
-
-// Static SSR fallback used while the client carousel chunk loads
-// AND as the no-JS degraded experience. Plain anchors, no client code.
-function PortfolioPlaceholder() {
-  const projects = getPortfolioProjects().slice(0, 3);
-  return (
-    <div className="w-full py-12 md:py-20">
-      <ul className="flex flex-wrap items-stretch justify-center gap-4 md:gap-6">
-        {projects.map((p) => (
-          <li key={p.slug} className="w-full sm:w-[280px]">
-            <a
-              href={`#${p.slug}`}
-              className="block rounded-md border border-border bg-card/60 p-6 text-left hover:border-primary/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
-            >
-              <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground mb-2">
-                {p.slug}
-              </p>
-              <h3 className="font-bold text-base mb-2">{p.fr.title}</h3>
-              <p className="text-sm text-muted-foreground line-clamp-3">
-                {p.fr.tagline}
-              </p>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
 }
 
 export default async function PortfolioPage({
@@ -218,7 +180,7 @@ export default async function PortfolioPage({
         )}
       </header>
 
-      <PortfolioCarousel projects={projects} lang={lang} />
+      <PortfolioClient projects={projects} lang={lang} />
 
       <footer className="mt-20 text-center rounded-2xl border border-border bg-card/40 p-10">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">
