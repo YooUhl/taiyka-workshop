@@ -1,15 +1,54 @@
 # Audit Backlog — Applied Report
 
-Run date: 2026-05-25 (unattended execution).
-Source plan: `C:\Users\yoanu\.claude\plans\prepare-a-whole-web-snazzy-quill.md`.
+## Round 1 — 2026-05-25
+
 Source backlog: `AUDIT-BACKLOG.md` (123 findings: 12 P0 / 64 P1 / 47 P2).
+**Status: 122/123 applied, 1 deliberate skip.**
 
-## Status: 122/123 applied, 1 deliberate skip. Build clean. **Push blocked — no git remote configured.**
+## Round 2 — 2026-05-26
 
-3 commits sit on local `main`:
-- `058ad8e` Wave 1 — site-wide infra
-- `b7377e7` Wave 2 — shared components
-- `ceaa6cb` Wave 3 — 10 page routes (EN drafts flagged)
+Source backlog: `AUDIT-BACKLOG-V2.md` (90 findings: 11 P0 / 56 P1 / 23 P2).
+**Status: all 90 applied. Build clean. Push still blocked — no git remote.**
+
+5 commits on local `main`:
+- `058ad8e` R1 Wave 1 — site-wide infra
+- `b7377e7` R1 Wave 2 — shared components
+- `ceaa6cb` R1 Wave 3 — 10 page routes
+- `2575d34` portfolio regression fix (Next 16 dynamic import)
+- `2f0b834` R2 — second-pass audit + fixes across all 10 routes
+
+## Round 2 highlights (what changed since round 1)
+
+Cross-cutting:
+- `lib/lang-utils.ts` shipped with `withLang(href, lang)`; every internal href across 10 pages + 6 components now preserves `?lang=en` chain
+- Quiz questions now bilingual via `pickLocalized` + `LocalizedString {fr,en}`
+- All JSON-LD blocks (Article, FAQPage, Product, Course, Blog, SoftwareSourceCode, ItemList) localized — `inLanguage` + `description` + `name` bound to active lang
+- 8 missing product OG PNGs generated + raster `logo-512.png` for Article schema
+- `<html lang>` now correct on first paint (script moved to `<head>`)
+- Sitemap hreflang fr-FR/en-US + 7 missing routes added
+- 5 pages got semantic `<h1>` (verified or added)
+- Hero `bg-gradient-glow` divs gated `hidden md:block` (mobile LCP win)
+
+Conversion + UX:
+- Quiz `?from=quiz-gate` + lang now propagated → no duplicate email ask on result page
+- Quiz storage cleared on success + namespaced by lang
+- `/products/prospect-audit-funnel` env-aware: when Gumroad URL unset, ships a waitlist `EmailCaptureForm` (not a dead disabled button)
+- Skool sticky CTA now anchors to `#tarif` (visitor sees price before clicking)
+- /portfolio bottom CTA gets HUD bracket frame matching /products Tier-3
+
+A11y:
+- PortfolioModal touch targets bumped to 44×44 + focus-mounts on first focusable
+- PortfolioCarousel keydown listener on `window` (works after tile button steals focus)
+- QuizQuestion ARIA spec violation fixed (`role=radio` on `<button>` dropped)
+- QuizProgress `aria-valuenow` off-by-one fixed
+- Live region hoisted to stable parent (so NVDA/JAWS announce mutations)
+- Skip-link target no longer `display: contents`
+
+Copy:
+- 3 FR profile openings rewritten (broke the banned "frustration en ce moment c'est probablement" template)
+- EN drafts cleaned up: "frame"→"structure", "tire-kickers"→"time-wasters", "Promise."→"I promise.", "tips"→"follow-up emails", etc.
+- TARIF placeholder rewrites (no more "Annonce du tarif fondateur au lancement")
+- Site-wide price meta + Skool CTA standardized
 
 ## Build verification
 
