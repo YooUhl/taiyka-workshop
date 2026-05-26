@@ -12,6 +12,7 @@ type Props = {
   answers: AnswersMap;
   lang?: "fr" | "en";
   onSkip?: () => void;
+  onComplete?: () => void;
 };
 
 type Status = "idle" | "loading" | "analyzing" | "success" | "error";
@@ -54,8 +55,8 @@ const COPY = {
     statusLabel: "TAIYKA · QUIZ",
     progress: "9 / 9 · Complete",
     kicker: "RESULT READY",
-    headlineLine1: "Last step —",
-    headlineLine2: "your email",
+    headlineLine1: "Your profile is ready.",
+    headlineLine2: "Drop your email.",
     blockquoteMain:
       "You're a very specific type of entrepreneur — and what's really going to move the needle for you probably isn't what you think.",
     blockquoteSub:
@@ -64,8 +65,8 @@ const COPY = {
     emailPlaceholder: "your@email.com",
     submitIdle: "Unlock my profile →",
     submitLoading: "Sending...",
-    reassurance: "No spam. Unsubscribe in one click. Promise.",
-    skipLink: "Don't want to share email? See profile without tips →",
+    reassurance: "No spam. One-click unsubscribe. I promise.",
+    skipLink: "Skip the email — show me my profile →",
     errorMsg:
       "Didn't go through. Try again, or write me: manu.uhila@taiyka.com.",
     privacyFooter:
@@ -79,6 +80,7 @@ export default function QuizEmailGate({
   answers,
   lang = "fr",
   onSkip,
+  onComplete,
 }: Props) {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -95,11 +97,14 @@ export default function QuizEmailGate({
       if (analyzingIndex < analyzingLines.length - 1) {
         setAnalyzingIndex(analyzingIndex + 1);
       } else {
-        router.push(`/qcm/resultat/${profile}`);
+        const params = new URLSearchParams();
+        params.set("from", "quiz-gate");
+        if (lang === "en") params.set("lang", "en");
+        router.push(`/qcm/resultat/${profile}?${params.toString()}`);
       }
     }, 800);
     return () => window.clearTimeout(timer);
-  }, [status, analyzingIndex, profile, router, analyzingLines.length]);
+  }, [status, analyzingIndex, profile, router, analyzingLines.length, lang]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -145,6 +150,7 @@ export default function QuizEmailGate({
       return;
     }
 
+    onComplete?.();
     setAnalyzingIndex(0);
     setStatus("analyzing");
   }
@@ -173,11 +179,11 @@ export default function QuizEmailGate({
 
       <span className="kicker">{t.kicker}</span>
 
-      <h1 className="mt-5 mb-8 text-balance font-bold tracking-[-0.04em] leading-[0.98] text-[clamp(2.25rem,7vw,4rem)]">
+      <h2 className="mt-5 mb-8 text-balance font-bold tracking-[-0.04em] leading-[0.98] text-[clamp(2.25rem,7vw,4rem)]">
         {t.headlineLine1}
         <br />
         <span className="text-gradient-hero">{t.headlineLine2}</span>
-      </h1>
+      </h2>
 
       <blockquote className="relative pl-6 border-l border-[rgba(141,162,192,0.36)] mb-10">
         <span aria-hidden className="absolute -left-px top-0 h-12 w-px bg-primary" />
@@ -189,10 +195,7 @@ export default function QuizEmailGate({
         </p>
       </blockquote>
 
-      <section
-        className="w-full rounded-2xl border border-border bg-card/60 p-6 md:p-8 shadow-glow"
-        style={{ animation: "qcm-glow-pulse-once 1200ms ease-out 1" }}
-      >
+      <section className="w-full rounded-2xl border border-border bg-card/40 p-6 md:p-8">
         {status === "analyzing" ? (
           <div className="flex flex-col items-center justify-center py-10 gap-4">
             <div className="relative w-10 h-10">
@@ -227,7 +230,7 @@ export default function QuizEmailGate({
                 disabled={isBusy}
                 aria-describedby="qcm-email-error"
                 aria-invalid={status === "error"}
-                className="h-12 w-full rounded-lg border border-border bg-card/60 px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
+                className="h-14 w-full rounded-lg border border-border bg-card/60 px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
               />
             </div>
 

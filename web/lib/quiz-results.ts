@@ -1,5 +1,23 @@
 import type { ProfileSlug } from "./quiz-questions";
 
+/**
+ * Canonical `from` taxonomy used across quiz → result → free-n8n-pack flow.
+ *
+ *   from=quiz-gate    User submitted their email at the quiz gate before seeing the result.
+ *   from=quiz-skip    User skipped the email gate and went straight to the result.
+ *   from=qcm-result   User arrived from a result page CTA (typically the pas-pret profile
+ *                     redirected to /free-n8n-pack).
+ *
+ * Consumers:
+ *   - /qcm/resultat/[profil]   reads `from` to decide whether to hide the lead-capture form
+ *                              (already gave email upstream = quiz-gate).
+ *   - /free-n8n-pack           reads `from=qcm-result` to swap kicker copy and show the
+ *                              "back to your profile" link.
+ */
+
+/** Date the result pages were first published — fed into JSON-LD datePublished. */
+export const RESULTS_DATE_PUBLISHED = "2026-05-25";
+
 export type ProfileResult = {
   slug: ProfileSlug;
   label: string;
@@ -46,10 +64,10 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Entrer dans la communauté Skool",
+        label: "Entrer dans la communauté Skool →",
         href: SKOOL_URL,
         external: true,
-        meta: "Tarif fondateur tant que c'est en lancement",
+        meta: "Tarif fondateur pour les 100 premiers · Verrouillé à vie",
       },
       ps: "La communauté est en lancement — accès fondateur pour les premiers membres, je relève le prix après.",
     },
@@ -58,7 +76,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       label: "Clear-Eyed Employee",
       name: "The Clear-Eyed Employee",
       tagline:
-        "You have a job. You see the world changing. You don't want to take it — you want to get ahead of it.",
+        "You have a job. You see the world changing. You don't want to be run over by it — you want to get out front.",
       body: [
         {
           tone: "ink",
@@ -78,10 +96,10 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Join the Skool community",
+        label: "Enter the Skool community →",
         href: SKOOL_URL,
         external: true,
-        meta: "Founder pricing while we're launching",
+        meta: "Founder pricing for the first 100 · Locked for life",
       },
       ps: "The community is launching — founder access for the first members, I raise the price after.",
     },
@@ -98,7 +116,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
         {
           tone: "ink",
           text:
-            "T'as lu les threads, t'as suivi les chaînes YouTube, t'as un Notion avec 40 idées et 3 templates à moitié remplis. Tu te reconnais sûrement dans cette boucle où tu prends des notes au lieu de shipper. Ta plus grande frustration en ce moment, c'est probablement de sentir que t'as le feu et le temps, mais pas le déclic qui fait que tu passes à l'action pour de bon.",
+            "T'as lu les threads, t'as suivi les chaînes YouTube, t'as un Notion avec 40 idées et 3 templates à moitié remplis. Le truc qui te ronge, c'est de te dire le dimanche soir «cette semaine je me lance pour de vrai», et de te retrouver le jeudi à prendre encore des notes au lieu de shipper. T'as le feu, t'as le temps. Ce qui manque, c'est le déclic qui te fait passer à l'action pour de bon.",
         },
         {
           tone: "ink",
@@ -113,10 +131,10 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Entrer dans la communauté Skool",
+        label: "Entrer dans la communauté Skool →",
         href: SKOOL_URL,
         external: true,
-        meta: "Tarif fondateur tant que c'est en lancement",
+        meta: "Tarif fondateur pour les 100 premiers · Verrouillé à vie",
       },
       ps: "La communauté est en lancement — accès fondateur pour les premiers membres, je relève le prix après.",
     },
@@ -145,10 +163,10 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Join the Skool community",
+        label: "Enter the Skool community →",
         href: SKOOL_URL,
         external: true,
-        meta: "Founder pricing while we're launching",
+        meta: "Founder pricing for the first 100 · Locked for life",
       },
       ps: "The community is launching — founder access for the first members, I raise the price after.",
     },
@@ -165,7 +183,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
         {
           tone: "ink",
           text:
-            "T'enchaînes les semaines à 60h. 80 mails non lus, 5 clients à relancer, un devis à envoyer, une facture en retard. T'as l'impression de courir partout et d'avancer sur rien d'important. Ta plus grande frustration en ce moment, c'est probablement de savoir exactement ce qu'il faudrait déléguer ou automatiser, sans avoir une seule heure pour le mettre en place.",
+            "Tu connais la scène : il est 22h, tes gamins dorment, t'ouvres ton ordi pour rattraper. 80 mails non lus, 5 clients à relancer, un devis à envoyer, une facture en retard. Tu cours partout et tu sais déjà que demain ce sera pareil. Le pire, c'est que tu vois exactement ce qu'il faudrait déléguer ou automatiser — t'as juste pas une seule heure libre pour le mettre en place.",
         },
         {
           tone: "ink",
@@ -180,10 +198,10 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Entrer dans la communauté Skool",
+        label: "Entrer dans la communauté Skool →",
         href: SKOOL_URL,
         external: true,
-        meta: "Tarif fondateur tant que c'est en lancement",
+        meta: "Tarif fondateur pour les 100 premiers · Verrouillé à vie",
       },
       ps: "La communauté est en lancement — accès fondateur pour les premiers membres, je relève le prix après.",
     },
@@ -212,10 +230,10 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Join the Skool community",
+        label: "Enter the Skool community →",
         href: SKOOL_URL,
         external: true,
-        meta: "Founder pricing while we're launching",
+        meta: "Founder pricing for the first 100 · Locked for life",
       },
       ps: "The community is launching — founder access for the first members, I raise the price after.",
     },
@@ -232,7 +250,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
         {
           tone: "ink",
           text:
-            "Tu fais déjà des chiffres que la plupart des gens qui passent ce QCM rêvent de toucher. Tu sais où va ton business, tu sais ce qui marche. Ce qui te ramène ici, c'est que t'as identifié 10 leviers IA et automation à activer, et que tu trouves pas le bon interlocuteur technique pour les câbler proprement. Ta frustration, c'est pas la stratégie — c'est l'exécution technique propre.",
+            "Soyons clairs : tu fais déjà des chiffres que la plupart des gens qui passent ce QCM rêvent de toucher. Tu sais où va ton business, tu sais ce qui marche, t'as pas besoin qu'on t'explique le game. Si t'es là, c'est que t'as une liste de 10 leviers IA et automation à activer dans la tête, et que t'as pas trouvé le bon interlocuteur technique pour les câbler proprement. C'est pas un problème de stratégie. C'est un problème d'exécution propre.",
         },
         {
           tone: "ink",
@@ -336,7 +354,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
         {
           tone: "ink",
           text:
-            "What's blocking you today isn't lack of strategy or tools. It's that you haven't actually decided this is really for you. Until that decision is made — for real, not in a one-evening story — no action plan will work. Not one.",
+            "What's blocking you today isn't lack of strategy or tools. It's that you haven't actually decided this is really for you. Until that decision is made — for real, not in a Sunday-night burst of motivation — no action plan will work. Not one.",
         },
         {
           tone: "muted",
@@ -347,7 +365,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       useGradient: false,
       cta: {
         label: "Get the free n8n pack",
-        href: "/free-n8n-pack?from=qcm-result",
+        href: "/free-n8n-pack?lang=en&from=qcm-result",
         external: false,
         meta: "5 workflows · PDF · To start slow",
       },

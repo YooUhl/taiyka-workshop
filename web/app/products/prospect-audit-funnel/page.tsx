@@ -1,16 +1,37 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import EmailCaptureForm from "@/components/EmailCaptureForm";
+import { withLang } from "@/lib/lang-utils";
 
-export const metadata: Metadata = {
-  title: "Smart Prospect Audit Funnel — 49€ · Taiyka",
-  description:
-    "Le funnel d'audit IA que j'utilise chez Taiyka pour qualifier mes prospects avant un call. Form + Claude + debrief auto. 49€, plug-and-play.",
-  openGraph: {
-    images: ["/og/prospect-audit-funnel.svg"],
-  },
-};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ lang?: string }>;
+}): Promise<Metadata> {
+  const sp = await searchParams;
+  const isEn = sp?.lang === "en";
+  return {
+    title: isEn
+      ? "Smart Prospect Audit Funnel — 49€ · Taiyka"
+      : "Smart Prospect Audit Funnel — 49€ · Taiyka",
+    description: isEn
+      ? "The AI audit funnel I use at Taiyka to qualify prospects before a call. Form + Claude + auto debrief. 49€, plug-and-play."
+      : "Le funnel d'audit IA que j'utilise chez Taiyka pour qualifier mes prospects avant un call. Form + Claude + debrief auto. 49€, plug-and-play.",
+    openGraph: {
+      images: ["/og/prospect-audit-funnel.png"],
+    },
+    alternates: {
+      canonical: "/products/prospect-audit-funnel",
+      languages: {
+        "fr-FR": "/products/prospect-audit-funnel",
+        "en-US": "/products/prospect-audit-funnel?lang=en",
+      },
+    },
+  };
+}
 
 const GUMROAD_URL = process.env.NEXT_PUBLIC_PROSPECT_AUDIT_FUNNEL_URL || null;
+const CANONICAL_URL = "https://taiyka.com/products/prospect-audit-funnel";
 
 type Lang = "fr" | "en";
 
@@ -41,6 +62,8 @@ type Copy = {
   ctaButton: string;
   ctaSoon: string;
   ctaSoonNote: string;
+  waitlistCopy: string;
+  waitlistSubmit: string;
   ctaNote: string;
   riskReversal: string;
   psLabel: string;
@@ -52,6 +75,8 @@ type Copy = {
   footerRights: string;
   faqQ1: string;
   faqQ2: string;
+  productName: string;
+  productDescription: string;
 };
 
 const COPY: Record<Lang, Copy> = {
@@ -112,6 +137,8 @@ const COPY: Record<Lang, Copy> = {
     ctaButton: "Récupérer le funnel — 49€",
     ctaSoon: "Bientôt disponible",
     ctaSoonNote: "On finalise les derniers détails.",
+    waitlistCopy: "Préviens-moi au lancement — première vague à -20%.",
+    waitlistSubmit: "Préviens-moi",
     ctaNote: "Paiement Gumroad · ZIP livré en 30 sec · Pas d'abonnement",
     riskReversal:
       "Pas convaincu en 7 jours ? Remboursement complet, pas de questions.",
@@ -122,13 +149,15 @@ const COPY: Record<Lang, Copy> = {
     langSwitchHref: "/products/prospect-audit-funnel?lang=en",
     fallbackHeading: "",
     fallback: [
-      { label: "Pas encore prêt → Pack n8n gratuit", href: "/free-n8n-pack" },
       { label: "Découvre ton profil → QCM", href: "/qcm" },
       { label: "Aller plus loin → Skool", href: "/skool" },
     ],
     footerRights: "Tous droits réservés.",
-    faqQ1: "Pour qui c'est?",
-    faqQ2: "Pour qui ce n'est PAS?",
+    faqQ1: "Pour qui c'est ?",
+    faqQ2: "Pour qui ce n'est PAS ?",
+    productName: "Smart Prospect Audit Funnel",
+    productDescription:
+      "Le funnel d'audit IA que Manu utilise chez Taiyka pour qualifier ses prospects avant un call. Form + Claude + debrief auto. Plug-and-play.",
   },
   en: {
     topbarBack: "← TAIYKA · Products",
@@ -137,15 +166,15 @@ const COPY: Record<Lang, Copy> = {
     h1Line1: "Qualify your prospects",
     h1Highlight: "while you sleep.",
     hero:
-      "The AI audit funnel I use at Taiyka so I never waste another call on a tire-kicker. Yours for 49€.",
+      "The AI audit funnel I use at Taiyka so I never waste another call on a time-waster. Yours for 49€.",
     subHero:
-      "An audit form + a Claude agent that generates a tailored solution list in 20 seconds + a structured debrief in your inbox before the prospect books a slot. You walk into the call with everything pre-chewed. Plug-and-play, import in 5 min, fully running in 60 min.",
+      "An audit form + a Claude agent that generates a tailored solution list in 20 seconds + a structured debrief in your inbox before the prospect books a slot. You walk into the call with the homework already done. Plug-and-play, import in 5 min, fully running in 60 min.",
     kickerForWho: "§ 02 / For whom",
     forWhoLabel: "Target",
     forYouHeading: "It's for you if",
     forYou: [
       "— You run an agency (or solo freelance) in AI/automation and get leads without knowing which ones deserve a call",
-      "— You already use n8n and Claude (or you're ready to learn — 1h max if you're a beginner)",
+      "— You already use n8n and Claude (or you're ready to learn — under an hour if you're a beginner)",
       "— You have Calendly hooked up and you're done wasting 30 min on unqualified “free audits”",
       "— You want a system that proves your skill to the prospect BEFORE the call",
     ],
@@ -160,7 +189,7 @@ const COPY: Record<Lang, Copy> = {
     insideBullets: [
       {
         index: "01",
-        lead: "14 questions that filter real prospects from tire-kickers.",
+        lead: "14 questions that filter real prospects from time-wasters.",
         body:
           "Budget, decision authority, timeline, operational pain. No more losing calls to people who “just want to understand AI”.",
       },
@@ -187,8 +216,11 @@ const COPY: Record<Lang, Copy> = {
     ctaButton: "Get the funnel — 49€",
     ctaSoon: "Coming soon",
     ctaSoonNote: "Finalizing last details.",
+    waitlistCopy: "Notify me at launch — first wave at -20%.",
+    waitlistSubmit: "Notify me",
     ctaNote: "Gumroad checkout · ZIP delivered in 30 sec · No subscription",
-    riskReversal: "Not convinced in 7 days? Full refund, no questions.",
+    riskReversal:
+      "Not convinced in 7 days? Full refund, no questions asked.",
     psLabel: "PS",
     ps:
       "If you get stuck during install, reply to the delivery email. I read everything, I answer fast.",
@@ -196,41 +228,16 @@ const COPY: Record<Lang, Copy> = {
     langSwitchHref: "/products/prospect-audit-funnel?lang=fr",
     fallbackHeading: "",
     fallback: [
-      { label: "Not ready yet → Free n8n pack", href: "/free-n8n-pack" },
       { label: "Discover your profile → Quiz", href: "/qcm" },
       { label: "Go further → Skool", href: "/skool" },
     ],
     footerRights: "All rights reserved.",
     faqQ1: "Who is it for?",
     faqQ2: "Who is it NOT for?",
+    productName: "Smart Prospect Audit Funnel",
+    productDescription:
+      "The AI audit funnel Manu uses at Taiyka to qualify prospects before a call. Form + Claude + auto debrief. Plug-and-play.",
   },
-};
-
-const productSchema = {
-  "@context": "https://schema.org",
-  "@type": "Product",
-  name: "Smart Prospect Audit Funnel",
-  description:
-    "Le funnel d'audit IA que Manu utilise chez Taiyka pour qualifier ses prospects avant un call. Form + Claude + debrief auto. Plug-and-play.",
-  brand: {
-    "@type": "Brand",
-    name: "Taiyka",
-  },
-  category: "Business / Sales Automation Template",
-  image: "https://taiyka.com/og/prospect-audit-funnel.svg",
-  offers: {
-    "@type": "Offer",
-    price: "49",
-    priceCurrency: "EUR",
-    availability: "https://schema.org/InStock",
-    seller: {
-      "@type": "Organization",
-      name: "Taiyka",
-      url: "https://taiyka.com",
-    },
-    url: "https://taiyka.com/products/prospect-audit-funnel",
-  },
-  inLanguage: ["fr", "en"],
 };
 
 export default async function ProspectAuditFunnelPage({
@@ -242,6 +249,36 @@ export default async function ProspectAuditFunnelPage({
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
   const t = COPY[lang];
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: t.productName,
+    description: t.productDescription,
+    brand: {
+      "@type": "Brand",
+      name: "Taiyka",
+    },
+    category: "Business / Sales Automation Template",
+    image: "https://taiyka.com/og/prospect-audit-funnel.png",
+    offers: {
+      "@type": "Offer",
+      price: "49",
+      priceCurrency: "EUR",
+      availability: GUMROAD_URL
+        ? "https://schema.org/InStock"
+        : "https://schema.org/PreOrder",
+      seller: {
+        "@type": "Organization",
+        name: "Taiyka",
+        url: "https://taiyka.com",
+      },
+      url: GUMROAD_URL ?? CANONICAL_URL,
+    },
+    inLanguage: lang === "fr" ? "fr-FR" : "en-US",
+  };
+
+  const stripBullet = (s: string) => s.replace(/^—\s*/, "");
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -251,7 +288,7 @@ export default async function ProspectAuditFunnelPage({
         name: t.faqQ1,
         acceptedAnswer: {
           "@type": "Answer",
-          text: t.forYou.join(" "),
+          text: t.forYou.map(stripBullet).join(" "),
         },
       },
       {
@@ -259,7 +296,7 @@ export default async function ProspectAuditFunnelPage({
         name: t.faqQ2,
         acceptedAnswer: {
           "@type": "Answer",
-          text: t.notForYou.join(" "),
+          text: t.notForYou.map(stripBullet).join(" "),
         },
       },
     ],
@@ -277,7 +314,7 @@ export default async function ProspectAuditFunnelPage({
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
+        className="hidden md:block pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
       />
 
       <div
@@ -287,7 +324,7 @@ export default async function ProspectAuditFunnelPage({
         {/* Top bar */}
         <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[11px] tracking-[0.22em] uppercase">
           <Link
-            href="/products"
+            href={withLang("/products", lang)}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {t.topbarBack}
@@ -387,22 +424,22 @@ export default async function ProspectAuditFunnelPage({
               <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
             </a>
           ) : (
-            <>
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-muted/30 text-muted-foreground font-bold text-base md:text-lg tracking-tight cursor-not-allowed opacity-60 border border-border"
-              >
-                {t.ctaSoon}
-              </button>
-              <p className="text-sm text-muted-foreground -mt-2">{t.ctaSoonNote}</p>
-            </>
+            <div className="w-full max-w-md flex flex-col items-center gap-3">
+              <p className="text-[0.9375rem] md:text-[1rem] leading-[1.55] text-[#e8f0fe] text-balance">
+                {t.waitlistCopy}
+              </p>
+              <EmailCaptureForm
+                lang={lang}
+                compact
+                source="prospect-audit-funnel-waitlist"
+                submitLabel={{ fr: "Préviens-moi", en: "Notify me" }}
+              />
+            </div>
           )}
           <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
             {t.ctaNote}
           </p>
-          <p className="text-sm text-muted-foreground italic mt-3 max-w-[55ch]">
+          <p className="text-foreground/90 font-medium text-sm mt-3 max-w-[55ch] border-l-2 border-primary/40 pl-3 text-left">
             {t.riskReversal}
           </p>
         </div>
@@ -422,7 +459,7 @@ export default async function ProspectAuditFunnelPage({
           {t.fallback.map((f, i) => (
             <span key={f.href} className="inline-flex items-center gap-3">
               <Link
-                href={f.href}
+                href={withLang(f.href, lang)}
                 className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
               >
                 {f.label}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { cn } from "@/lib/utils";
+import { withLang } from "@/lib/lang-utils";
 
 const WEBHOOK_URL = "https://n8n.srv1331551.hstgr.cloud/webhook/brief-signup";
 
@@ -32,10 +33,10 @@ const T = {
     emailPlaceholder: "you@email.com",
     submit: "Get the 7am brief",
     submitting: "Sending...",
-    note: "First email tomorrow 7am · 1-click unsubscribe · GDPR compliant",
+    note: "First email tomorrow 7am · 1-click unsubscribe · No spam.",
     successKicker: "✓ Subscribed",
     successTitle: "You're in. Check your inbox.",
-    successSub: "First issue tomorrow morning, 7am.",
+    successSub: "First issue tomorrow at 7am.",
     waitingKicker: "While you wait",
     ctaQcm: "Take the quiz — 2 min, see your profile →",
     ctaSkool: "Join the Skool community →",
@@ -103,13 +104,13 @@ export default function BriefSignupForm({ lang = "fr" }: Props = {}) {
             {t.waitingKicker}
           </p>
           <Link
-            href="/qcm"
+            href={withLang("/qcm", lang)}
             className="text-primary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {t.ctaQcm}
           </Link>
           <Link
-            href="/skool"
+            href={withLang("/skool", lang)}
             className="text-primary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {t.ctaSkool}

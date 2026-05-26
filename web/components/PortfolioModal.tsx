@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { withLang } from "@/lib/lang-utils";
 import type { Lang, PortfolioProject } from "@/lib/portfolio";
 import PortfolioDetail, { getProjectMeta } from "./PortfolioDetail";
 
@@ -64,9 +65,11 @@ export default function PortfolioModal({
   )}`;
 
   // Contextual secondary CTA → /products, mapped from project slug.
+  // Anchor (#competitor-intel) resolves once ProductCard renders id={slug} (Wave 3-B6).
+  // withLang preserves the ?lang=en query when applicable, keeping the hash fragment intact.
   const slugLower = project.slug.toLowerCase();
   const isIntel = slugLower.includes("polymaker") || slugLower.includes("intel");
-  const secondaryHref = isIntel ? "/products#competitor-intel" : "/products";
+  const secondaryHref = withLang(isIntel ? "/products#competitor-intel" : "/products", lang);
   const secondaryLabel = isIntel ? labels.secondaryIntel : labels.secondaryDefault;
 
   // Mount → open after first paint
@@ -75,16 +78,33 @@ export default function PortfolioModal({
     return () => cancelAnimationFrame(id);
   }, []);
 
-  // When project changes (prev/next inside modal), refocus the title for narration continuity
+  // When project changes (prev/next inside modal), refocus the title for narration continuity.
+  // Fallback focuses the FIRST focusable in DOM order (typically the prev button) so
+  // Shift+Tab from the entry point cycles to the last focusable, not back to itself.
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       const titleEl = document.getElementById("portfolio-detail-title");
       if (titleEl instanceof HTMLElement) {
         titleEl.focus();
-      } else {
-        // Fallback: focus close button
-        closeBtnRef.current?.focus();
+        return;
       }
+      // Fallback: focus first focusable inside the dialog (DOM order = prev → next → close).
+      if (dialogRef.current) {
+        const focusables = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+        ).filter(
+          (el) =>
+            !el.hasAttribute("disabled") &&
+            el.getAttribute("aria-hidden") !== "true" &&
+            (el.offsetParent !== null || el === document.activeElement)
+        );
+        if (focusables.length > 0) {
+          focusables[0].focus();
+          return;
+        }
+      }
+      // Last-resort fallback if dialog has no focusables (shouldn't happen)
+      closeBtnRef.current?.focus();
     });
     return () => cancelAnimationFrame(id);
   }, [project.slug]);
@@ -196,15 +216,15 @@ export default function PortfolioModal({
           visible ? "scale-100" : "scale-95"
         )}
       >
-        {/* Top control row: prev / next / close */}
-        <div className="absolute right-4 top-4 z-10 flex items-center gap-2">
+        {/* Top control row: prev / next / close — h-11 w-11 meets 44px touch-target minimum */}
+        <div className="absolute right-4 top-4 z-10 flex items-center gap-3">
           {onPrev && (
             <button
               type="button"
               onClick={onPrev}
               aria-label={labels.prev}
               className={cn(
-                "grid h-9 w-9 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
+                "grid h-11 w-11 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
                 "hover:border-primary hover:text-primary transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
               )}
@@ -218,7 +238,7 @@ export default function PortfolioModal({
               onClick={onNext}
               aria-label={labels.next}
               className={cn(
-                "grid h-9 w-9 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
+                "grid h-11 w-11 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
                 "hover:border-primary hover:text-primary transition-colors",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
               )}
@@ -232,7 +252,7 @@ export default function PortfolioModal({
             onClick={requestClose}
             aria-label={labels.close}
             className={cn(
-              "grid h-9 w-9 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
+              "grid h-11 w-11 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
               "hover:border-primary hover:text-primary transition-colors",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
             )}

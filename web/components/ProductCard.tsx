@@ -20,6 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { withLang } from "@/lib/lang-utils";
 import { tierLabel, type Lang, type Product, type Tier } from "@/lib/products";
 
 type Props = {
@@ -88,25 +89,33 @@ function ProductCover({
   const isEntry = tier === 1;
   const isPremium = tier === 2;
   return (
-    <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-card/40 via-card/60 to-card/40 flex items-center justify-center">
+    <div
+      className={cn(
+        "relative w-full aspect-square overflow-hidden bg-gradient-to-br from-card/40 via-card/60 to-card/40 flex items-center justify-center",
+        // Tier 2 only: inner cyan glow to reinforce premium framing
+        isPremium && "shadow-[inset_0_0_24px_rgba(0,229,255,0.08)]"
+      )}
+    >
       {/* HUD corner brackets */}
       <span aria-hidden className="pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t border-[var(--hud-bracket-dim)]" />
       <span aria-hidden className="pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t border-[var(--hud-bracket-dim)]" />
       <span aria-hidden className="pointer-events-none absolute left-2 bottom-2 h-3 w-3 border-l border-b border-[var(--hud-bracket-dim)]" />
       <span aria-hidden className="pointer-events-none absolute right-2 bottom-2 h-3 w-3 border-r border-b border-[var(--hud-bracket-dim)]" />
-      {/* Faint slug stamp */}
-      <span
-        aria-hidden
-        className="absolute top-3 left-1/2 -translate-x-1/2 font-mono text-[9px] tracking-[0.22em] uppercase text-muted-foreground/40"
-      >
-        // {slug}
-      </span>
+      {/* Faint slug stamp — suppressed on Tier 0 to avoid badge collision */}
+      {!isFree && (
+        <span
+          aria-hidden
+          className="absolute top-3 left-1/2 -translate-x-1/2 font-mono text-[9px] tracking-[0.22em] uppercase text-muted-foreground/40"
+        >
+          // {slug}
+        </span>
+      )}
 
-      {/* Tier 0: GRATUIT / FREE stamp top-left */}
+      {/* Tier 0: solid GRATUIT / FREE chip top-left (replaces dashed sticker look) */}
       {isFree && (
         <span
           aria-hidden
-          className="absolute left-3 top-3 font-mono text-[10px] tracking-[0.2em] uppercase px-1.5 py-0.5 border border-dashed border-primary/60 text-primary/90"
+          className="absolute left-3 top-3 font-mono text-[10px] tracking-[0.2em] uppercase px-1.5 py-0.5 rounded bg-primary/15 text-primary"
         >
           {T.freeStamp[lang]}
         </span>
@@ -124,7 +133,7 @@ function ProductCover({
 
       {/* Tier 2: premium cyan ring container around the icon */}
       {isPremium ? (
-        <div className="relative flex items-center justify-center rounded-full ring-1 ring-cyan-400/40 p-4">
+        <div className="relative flex items-center justify-center rounded-full ring-2 ring-cyan-400/60 p-4">
           <Icon
             aria-hidden
             className="text-primary opacity-90"
@@ -166,8 +175,10 @@ export function ProductCard({ product, lang }: Props) {
       ? T.ctaFree[lang]
       : T.ctaView[lang];
 
-  // Price chip: text + colour vary by tier
+  // Price chip: text + colour vary by tier.
+  // Tier 0 suppresses the chip entirely — the GRATUIT stamp top-left already plays that role.
   const isPremium = product.tier === 2;
+  const isFreeTier = product.tier === 0;
   const priceText = priceLabel(product.price, product.tier, lang);
   const priceChipClass = isPremium
     ? "bg-cyan-400/10 text-cyan-300 ring-cyan-400/40"
@@ -175,15 +186,16 @@ export function ProductCard({ product, lang }: Props) {
 
   return (
     <Card
+      id={product.slug}
       className={cn(
-        "hover-grow-sm bg-card/80 border-border flex flex-col h-full",
+        "hover-grow-sm bg-card/80 border-border flex flex-col h-full scroll-mt-24 md:scroll-mt-32",
         !isReady && "opacity-60"
       )}
     >
       <div className="relative">
         <ProductCover slug={product.slug} tier={product.tier} lang={lang} />
-        {/* Price chip — top-right of the cover */}
-        {priceText && (
+        {/* Price chip — top-right of the cover. Hidden on Tier 0 to avoid duplicating GRATUIT. */}
+        {priceText && !isFreeTier && (
           <span
             className={cn(
               "absolute top-3 right-3 rounded-full text-xs font-mono px-2.5 py-1 ring-1",
@@ -251,7 +263,7 @@ export function ProductCard({ product, lang }: Props) {
               </a>
             ) : (
               <Link
-                href={product.ctaHref}
+                href={withLang(product.ctaHref, lang)}
                 className={cn(
                   buttonVariants({ variant: "default", size: "lg" }),
                   "w-full"

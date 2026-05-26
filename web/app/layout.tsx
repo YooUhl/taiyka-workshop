@@ -5,6 +5,7 @@ import "./globals.css";
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "700", "900"],
   display: "swap",
 });
 
@@ -96,15 +97,18 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr" className={`${inter.variable} ${jetbrainsMono.variable} ${vt323.variable} h-full antialiased`}>
+      <head>
+        {/* Lang-sync runs in <head> so first paint reflects ?lang= in <html lang>. */}
+        <script dangerouslySetInnerHTML={{ __html: langSyncScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-navy"
         >
-          Skip to content
+          Aller au contenu / Skip to content
         </a>
-        <div id="main-content" className="contents">{children}</div>
-        <script dangerouslySetInnerHTML={{ __html: langSyncScript }} />
+        <div id="main-content" tabIndex={-1}>{children}</div>
       </body>
     </html>
   );

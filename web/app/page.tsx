@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import type { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import { withLang } from "@/lib/lang-utils";
 
 type Lang = "fr" | "en";
 
@@ -33,8 +35,10 @@ type Copy = {
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
-// Verified clients only — pulled from web/lib/portfolio-data.generated.json (Polymaker, UFC Wallis).
-// Content-system and lead-pipeline are not external clients so they are not surfaced as proof.
+// Curated freeze — do NOT auto-derive from portfolio data.
+// Portfolio includes internal projects (content-system, lead-pipeline) that are not
+// external clients and therefore cannot be cited as social proof. This list is
+// hand-maintained to only surface verified external client engagements.
 const RECENT_CLIENTS = ["Polymaker", "UFC Wallis"];
 
 const COPY: Record<Lang, Copy> = {
@@ -48,7 +52,7 @@ const COPY: Record<Lang, Copy> = {
     primaryMeta: "Gratuit · 9 questions · 2 min",
     langSwitch: "EN",
     langSwitchHref: "/?lang=en",
-    recentClientsKicker: "Clients récents",
+    recentClientsKicker: "Récents builds",
     sections: [
       {
         kicker: "Ressources",
@@ -74,12 +78,12 @@ const COPY: Record<Lang, Copy> = {
     visualWordmarkLead: "THE ",
     visualWordmarkAccent: "WORKSHOP",
     subhead:
-      "For French-speaking entrepreneurs who want to ship AI agents and automations that pay — not watch a 13th course.",
-    primaryButton: "What kind of entrepreneur are you — and why are you stuck?",
+      "For French-speaking entrepreneurs who want to ship AI agents and automations that actually pay — not sit through another course.",
+    primaryButton: "What kind of entrepreneur are you — and why aren't you moving?",
     primaryMeta: "Free · 9 questions · 2 min",
     langSwitch: "FR",
     langSwitchHref: "/?lang=fr",
-    recentClientsKicker: "Recent clients",
+    recentClientsKicker: "Recent builds",
     sections: [
       {
         kicker: "Resources",
@@ -156,12 +160,15 @@ export async function generateMetadata({
   };
 }
 
+// Google's Organization schema requires a raster logo (PNG/JPG); /logo-512.png is
+// generated in Wave 3-A3. sameAs intentionally lists only IG + TikTok — those are
+// Taiyka's only active public profiles; do not add LinkedIn/X/YouTube placeholders.
 const ORG_JSONLD = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Taiyka",
   url: "https://taiyka.com",
-  logo: "https://taiyka.com/favicon.svg",
+  logo: "https://taiyka.com/logo-512.png",
   sameAs: [
     "https://instagram.com/manu_ai.to",
     "https://tiktok.com/@manu_ai.to",
@@ -252,7 +259,7 @@ export default async function Home({
         <div className="flex flex-col items-center gap-5 mb-8 md:mb-10">
           <span className="kicker">QCM Découverte</span>
           <Link
-            href="/qcm"
+            href={withLang("/qcm", lang)}
             className="hover-grow group inline-flex items-center justify-center gap-3 min-h-14 md:min-h-16 py-3 px-5 md:px-8 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-[0.9375rem] md:text-base tracking-tight shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
           >
             <span className="text-balance leading-tight">{c.primaryButton}</span>
@@ -270,16 +277,14 @@ export default async function Home({
 
         {/* Recent clients proof row — verified portfolio names only */}
         {showRecentClients && (
-          <div className="mb-12 md:mb-16 flex flex-col items-center gap-2">
-            <span className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
-              {c.recentClientsKicker}
-            </span>
-            <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs font-mono uppercase tracking-wider text-muted-foreground">
+          <div className="mt-2 md:mt-4 mb-12 md:mb-16 flex flex-col items-center gap-2">
+            <span className="kicker">{c.recentClientsKicker}</span>
+            <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-foreground/90 text-xs md:text-sm font-mono uppercase tracking-wider">
               {RECENT_CLIENTS.map((name, i) => (
-                <span key={name} className="inline-flex items-center gap-3">
+                <Fragment key={name}>
                   {i > 0 && <span aria-hidden>·</span>}
                   <span>{name}</span>
-                </span>
+                </Fragment>
               ))}
             </p>
           </div>
@@ -360,7 +365,7 @@ export default async function Home({
                   if (link.external) {
                     return (
                       <li key={link.label} className="w-full">
-                        <a href={link.href} target="_blank" rel="noopener noreferrer" className={cardClass}>
+                        <a href={withLang(link.href, lang)} target="_blank" rel="noopener noreferrer" className={cardClass}>
                           {inner}
                         </a>
                       </li>
@@ -368,7 +373,7 @@ export default async function Home({
                   }
                   return (
                     <li key={link.label} className="w-full">
-                      <Link href={link.href} className={cardClass}>
+                      <Link href={withLang(link.href, lang)} className={cardClass}>
                         {inner}
                       </Link>
                     </li>

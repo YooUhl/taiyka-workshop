@@ -67,6 +67,15 @@ const GENERATED: Generated[] = [
   { name: 'profil-surcharge', title: 'Le Surchargé', kicker: 'TAIYKA · QCM · PROFIL' },
   { name: 'profil-scale', title: 'Le Builder Prêt à Scaler', kicker: 'TAIYKA · QCM · PROFIL' },
   { name: 'profil-pas-pret', title: "L'Explorateur", kicker: 'TAIYKA · QCM · PROFIL' },
+  // Product cards — referenced by /products page ItemList JSON-LD as /og/<slug>.png
+  { name: 'free-claude-starter', title: 'Claude Code Starter Pack', kicker: 'TAIYKA · LEAD MAGNET' },
+  { name: 'cold-outreach-pack', title: 'Cold Outreach Pack', kicker: 'TAIYKA · PRODUCT · 10-25€' },
+  { name: 'notion-ai-stack', title: 'Notion — Solopreneur AI Stack', kicker: 'TAIYKA · PRODUCT · 10-25€' },
+  { name: 'prompt-pack-50', title: '50 Prompts pour Automatiser', kicker: 'TAIYKA · PRODUCT · 10-25€' },
+  { name: 'competitor-intel', title: 'Competitor Intelligence System', kicker: 'TAIYKA · PRODUCT · 25-50€' },
+  { name: 'client-acquisition-bundle', title: 'Client Acquisition Bundle', kicker: 'TAIYKA · PRODUCT · 25-50€' },
+  { name: 'ai-agent-playbook', title: 'Build Your First AI Agent', kicker: 'TAIYKA · PRODUCT · 25-50€' },
+  { name: 'email-triage-agent', title: 'Email Triage Agent', kicker: 'TAIYKA · PRODUCT · 25-50€' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -216,6 +225,84 @@ async function rasterizeString(svg: string, outName: string): Promise<string> {
 }
 
 // ---------------------------------------------------------------------------
+// Square raster logo for JSON-LD / Article schema (Google requires min 112×112
+// PNG/JPG — SVG is not accepted). Output: web/public/logo-512.png at 512×512.
+// Visual: dark navy background, HUD bracket frame, centered "TAIYKA" wordmark
+// in electric-blue gradient with a small accent gear glyph above.
+// ---------------------------------------------------------------------------
+const PUBLIC_DIR = path.resolve(__dirname, '../public');
+const LOGO_SIZE = 512;
+
+function buildLogoSvg(): string {
+  const S = LOGO_SIZE;
+  // Gear: 8 teeth around a central hub, rendered as a stroked circle with
+  // short radial spokes. Simple, recognizable, brand-consistent.
+  const cx = S / 2;
+  const cy = 200;
+  const gearR = 70;
+  const teeth = Array.from({ length: 8 }, (_, i) => {
+    const a = (i * Math.PI * 2) / 8 - Math.PI / 2;
+    const x1 = cx + Math.cos(a) * gearR;
+    const y1 = cy + Math.sin(a) * gearR;
+    const x2 = cx + Math.cos(a) * (gearR + 18);
+    const y2 = cy + Math.sin(a) * (gearR + 18);
+    return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="url(#logoAccent)" stroke-width="10" stroke-linecap="round"/>`;
+  }).join('\n  ');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}" width="${S}" height="${S}">
+  <defs>
+    <linearGradient id="logoBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0A1628"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="logoAccent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#00A6FF"/>
+      <stop offset="100%" stop-color="#00E5FF"/>
+    </linearGradient>
+    <radialGradient id="logoGlow" cx="50%" cy="38%" r="55%">
+      <stop offset="0%" stop-color="#00A6FF" stop-opacity="0.35"/>
+      <stop offset="70%" stop-color="#00A6FF" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#00A6FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="${S}" height="${S}" fill="url(#logoBg)"/>
+  <rect width="${S}" height="${S}" fill="url(#logoGlow)"/>
+
+  <!-- HUD bracket frame -->
+  <path d="M32 32 H96 M32 32 V96" stroke="#00A6FF" stroke-width="3" fill="none"/>
+  <path d="M${S - 32} 32 H${S - 96} M${S - 32} 32 V96" stroke="#00A6FF" stroke-width="3" fill="none"/>
+  <path d="M32 ${S - 32} H96 M32 ${S - 32} V${S - 96}" stroke="#00A6FF" stroke-width="3" fill="none"/>
+  <path d="M${S - 32} ${S - 32} H${S - 96} M${S - 32} ${S - 32} V${S - 96}" stroke="#00A6FF" stroke-width="3" fill="none"/>
+
+  <!-- Gear icon -->
+  ${teeth}
+  <circle cx="${cx}" cy="${cy}" r="${gearR}" fill="none" stroke="url(#logoAccent)" stroke-width="10"/>
+  <circle cx="${cx}" cy="${cy}" r="22" fill="url(#logoAccent)"/>
+
+  <!-- Wordmark -->
+  <text x="${S / 2}" y="360" text-anchor="middle" fill="url(#logoAccent)" font-family="Inter, system-ui, sans-serif" font-size="76" font-weight="900" letter-spacing="8">TAIYKA</text>
+
+  <!-- Accent line -->
+  <rect x="${S / 2 - 60}" y="385" width="120" height="4" fill="url(#logoAccent)"/>
+
+  <!-- Tagline -->
+  <text x="${S / 2}" y="440" text-anchor="middle" fill="#8DA2C0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="4">AI · AUTOMATION</text>
+</svg>`;
+}
+
+async function rasterizeLogo(): Promise<string> {
+  const pngPath = path.join(PUBLIC_DIR, 'logo-512.png');
+  const svg = buildLogoSvg();
+  await sharp(Buffer.from(svg), { density: 144 })
+    .resize(LOGO_SIZE, LOGO_SIZE, { fit: 'fill' })
+    .png({ compressionLevel: 9 })
+    .toFile(pngPath);
+  return pngPath;
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 async function main() {
@@ -249,7 +336,18 @@ async function main() {
     }
   }
 
-  console.log(`\nDone. ${created.length} PNGs written to ${OG_DIR}`);
+  // Square raster logo for JSON-LD Article schema (Google requires PNG/JPG)
+  try {
+    const out = await rasterizeLogo();
+    created.push(path.basename(out));
+    console.log(`  generated ${path.basename(out)} (${LOGO_SIZE}x${LOGO_SIZE})`);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    failed.push({ name: 'logo-512', error: msg });
+    console.error(`  FAILED logo-512: ${msg}`);
+  }
+
+  console.log(`\nDone. ${created.length} PNGs written.`);
   if (failed.length) {
     console.error(`\n${failed.length} failure(s):`);
     for (const f of failed) console.error(`  - ${f.name}: ${f.error}`);

@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ProductCard } from "@/components/ProductCard";
 import { getProducts, type Lang, type Product, type Tier } from "@/lib/products";
+import { withLang } from "@/lib/lang-utils";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
@@ -16,7 +17,7 @@ const COPY = {
     sections: {
       0: { kicker: "TIER 0 · GRATUIT", label: "Gratuit", sub: "Lead magnets" },
       1: { kicker: "TIER 1 · ENTRÉE", label: "Entrée — 10-25€", sub: "Entrée de gamme · Essayer" },
-      2: { kicker: "TIER 2 · PREMIUM", label: "Premium — 25-50€", sub: "Premium · Production" },
+      2: { kicker: "TIER 2 · PRO", label: "Premium — 25-50€", sub: "Premium · Production" },
     },
     skoolKicker: "TIER 3 · COMMUNAUTÉ",
     skoolHeading: "Communauté Skool",
@@ -118,6 +119,22 @@ function priceToNumber(price: string): string {
   return m[1].replace(",", ".");
 }
 
+// Set of product slugs that have a dedicated /og/<slug>.png. Anything not in
+// this list falls back to /og/products.png so the schema never points at a
+// missing image.
+const OG_PRODUCT_SLUGS = new Set<string>([
+  "free-n8n-pack",
+  "free-claude-starter",
+  "cold-outreach-pack",
+  "notion-ai-stack",
+  "prompt-pack-50",
+  "competitor-intel",
+  "client-acquisition-bundle",
+  "ai-agent-playbook",
+  "email-triage-agent",
+  "prospect-audit-funnel",
+]);
+
 function buildItemListJsonLd(products: Product[], lang: Lang) {
   return {
     "@context": "https://schema.org",
@@ -128,9 +145,13 @@ function buildItemListJsonLd(products: Product[], lang: Lang) {
       position: i + 1,
       item: {
         "@type": "Product",
-        name: p.name[lang] || p.name.fr,
-        description: p.subhero[lang] || p.subhero.fr || p.hero[lang] || p.hero.fr || "",
-        image: `${SITE}/og/${p.slug}.png`,
+        name: p.name?.[lang] || p.name?.fr || p.slug,
+        // Never bleed FR text into the EN ItemList — stay within the requested
+        // language. Fall back to hero in the same language, then empty string.
+        description: p.subhero?.[lang] || p.hero?.[lang] || "",
+        image: OG_PRODUCT_SLUGS.has(p.slug)
+          ? `${SITE}/og/${p.slug}.png`
+          : `${SITE}/og/products.png`,
         brand: { "@type": "Brand", name: "Taiyka" },
         offers: {
           "@type": "Offer",
@@ -170,7 +191,7 @@ export default async function ProductsPage({
 
       <div className="w-full flex items-center justify-between mb-12 font-mono text-[11px] tracking-[0.22em] uppercase">
         <Link
-          href="/"
+          href={withLang("/", lang)}
           className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
         >
           ← TAIYKA · Accueil
@@ -192,7 +213,7 @@ export default async function ProductsPage({
           {t.tagline}
         </p>
         <Link
-          href="/qcm"
+          href={withLang("/qcm", lang)}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           {t.qcmLink}
@@ -205,7 +226,11 @@ export default async function ProductsPage({
           if (items.length === 0) return null;
           const meta = t.sections[tier as 0 | 1 | 2];
           return (
-            <section key={tier} className="flex flex-col gap-6">
+            <section
+              key={tier}
+              id={`tier-${tier}`}
+              className="flex flex-col gap-6 scroll-mt-24"
+            >
               <div className="flex flex-col items-center gap-3">
                 <span className="kicker">{meta.kicker}</span>
                 <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight">
@@ -224,7 +249,7 @@ export default async function ProductsPage({
         })}
 
         {/* Tier 3 — Skool community */}
-        <section className="flex flex-col gap-6">
+        <section id="skool" className="flex flex-col gap-6 scroll-mt-24">
           <div className="flex flex-col items-center gap-3">
             <span className="kicker">{t.skoolKicker}</span>
             <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight">
@@ -247,7 +272,7 @@ export default async function ProductsPage({
               <p className="text-sm text-muted-foreground">{t.skoolBody}</p>
             </div>
             <Link
-              href="/skool"
+              href={withLang("/skool", lang)}
               className={cn(
                 buttonVariants({ variant: "default", size: "lg" }),
                 "shrink-0"

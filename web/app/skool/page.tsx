@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { withLang } from "@/lib/lang-utils";
 
 type Lang = "fr" | "en";
 
@@ -32,7 +33,9 @@ type Copy = {
   enterCopy: string;
   ctaButton: string;
   ctaMeta: string;
+  refundLine: string;
   stickyCta: string;
+  stickyCtaAriaLabel: string;
   kickerPs: string;
   psCopy: string;
   footerRights: string;
@@ -100,7 +103,8 @@ const COPY: Record<Lang, Copy> = {
       },
     ],
     kickerPricing: "TARIF",
-    pricingHeadline: "Annonce du tarif fondateur au lancement.",
+    pricingHeadline:
+      "Le prix tombe au lancement. Verrouillé à vie pour les 100 premiers — et il bougera plus jamais pour toi.",
     pricingDetails:
       "Mensuel ou annuel — tu choisis. Verrouillé à vie pour les 100 premiers.",
     kickerEnter: "ENTRER",
@@ -108,7 +112,10 @@ const COPY: Record<Lang, Copy> = {
       "Si t'as lu jusqu'ici, t'as déjà décidé. Le clic c'est la formalité.",
     ctaButton: "Entrer dans la communauté",
     ctaMeta: "100 places fondateurs · Tarif verrouillé à vie · Annule quand tu veux",
-    stickyCta: "Entrer dans la communauté →",
+    refundLine:
+      "Pas de progrès en 4 semaines ? Je te rembourse et tu pars. Pas de questions.",
+    stickyCta: "Voir le tarif fondateur →",
+    stickyCtaAriaLabel: "Voir le tarif fondateur",
     kickerPs: "PS",
     psCopy:
       "Le tarif fondateur, c'est pas une urgence marketing — c'est mathématique. Quand on est 100, je ferme. Le prochain qui rentre paie le nouveau prix, et le nouveau prix sera plus élevé.",
@@ -131,14 +138,14 @@ const COPY: Record<Lang, Copy> = {
     manifesto1:
       "You can stack 12 AI courses, subscribe to 4 newsletters, follow 50 creators on LinkedIn — if you're alone in front of your screen at 11pm, you'll ship nothing.",
     manifesto2:
-      "What moves you forward isn't one more module. It's people building alongside you, a frame that forces you to finish what you start, and someone telling you \"no, you're going in circles — do this instead.\" That's what I built here.",
+      "What moves you forward isn't one more module. It's people building alongside you, a structure that forces you to finish what you start, and someone telling you \"no, you're going in circles — do this instead.\" That's what I built here.",
     kickerWho: "WHO FOR",
     whoForYouLabel: "This is for you if",
     whoForYou: [
       "You've played with ChatGPT, Claude, maybe a bit of n8n — and you feel you're at 5% of what you could be doing with it",
       "You're an entrepreneur, freelancer, or employee who wants to become one — and you want to add \"AI agent\" to what you can sell",
-      "You're tired of learning into the void. You want a frame, a schedule, something that ships at week 12",
-      "You work better surrounded. Building solo at 1am — you've already given that a shot",
+      "Tired of studying with nothing to show for it. You want a structure, a schedule, something that ships at week 12",
+      "You work better with people around you. Building solo at 1am — you've already given that a shot",
       "You want to ask questions to someone who's already done what you're trying to do — not a random Discord",
     ],
     whoNotForYouLabel: "This is NOT for you if",
@@ -176,7 +183,8 @@ const COPY: Record<Lang, Copy> = {
       },
     ],
     kickerPricing: "PRICING",
-    pricingHeadline: "Founder pricing announced at launch.",
+    pricingHeadline:
+      "Price drops at launch. Locked for life for the first 100 — never moves for you again.",
     pricingDetails:
       "Monthly or annual — your call. Locked for life for the first 100.",
     kickerEnter: "ENTER",
@@ -184,7 +192,10 @@ const COPY: Record<Lang, Copy> = {
       "If you read this far, you've already decided. The click is just the formality.",
     ctaButton: "Enter the community",
     ctaMeta: "100 founder seats · Locked-for-life pricing · Cancel anytime",
-    stickyCta: "Enter the community →",
+    refundLine:
+      "No progress in 4 weeks? Full refund, you walk. No questions.",
+    stickyCta: "See founder pricing →",
+    stickyCtaAriaLabel: "See founder pricing",
     kickerPs: "PS",
     psCopy:
       "Founder pricing isn't a marketing urgency — it's just math. When we're 100, I close. The next one in pays the new price, and the new price will be higher.",
@@ -243,28 +254,6 @@ export async function generateMetadata({
   };
 }
 
-const skoolSchema = {
-  "@context": "https://schema.org",
-  "@type": "Course",
-  name: "Taiyka — The Workshop",
-  description:
-    "Communauté de builders IA. 12 semaines. 100 places fondateurs.",
-  provider: {
-    "@type": "Organization",
-    name: "Taiyka",
-    url: "https://taiyka.com",
-  },
-  hasCourseInstance: {
-    "@type": "CourseInstance",
-    courseMode: "online",
-    courseWorkload: "PT12W",
-    location: {
-      "@type": "VirtualLocation",
-      url: SKOOL_URL,
-    },
-  },
-};
-
 export default async function SkoolLandingPage({
   searchParams,
 }: {
@@ -274,6 +263,29 @@ export default async function SkoolLandingPage({
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
   const c = COPY[lang];
 
+  const skoolSchema = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: "Taiyka — The Workshop",
+    description: c.metaDescription,
+    inLanguage: lang === "en" ? "en" : "fr",
+    provider: {
+      "@type": "Organization",
+      name: "Taiyka",
+      url: "https://taiyka.com",
+    },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      courseWorkload: "PT12W",
+      inLanguage: lang === "en" ? "en" : "fr",
+      location: {
+        "@type": "VirtualLocation",
+        url: SKOOL_URL,
+      },
+    },
+  };
+
   return (
     <main className="relative flex-1 w-full flex flex-col z-10">
       <script
@@ -282,22 +294,22 @@ export default async function SkoolLandingPage({
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
+        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl hidden md:block"
       />
 
       <div
-        className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 pb-28 md:pb-20 flex flex-col flex-1 text-center"
+        className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 pb-36 md:pb-20 flex flex-col flex-1 text-center"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
         {/* Top bar */}
         <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[11px] tracking-[0.22em] uppercase gap-3">
           <Link
-            href={lang === "en" ? "/?lang=en" : "/"}
+            href={withLang("/", lang)}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {c.topLeftHome}
           </Link>
-          <span className="hidden sm:inline-flex items-center gap-2 text-muted-foreground">
+          <span className="inline-flex items-center gap-2 text-muted-foreground">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             {c.metaPill}
           </span>
@@ -375,8 +387,8 @@ export default async function SkoolLandingPage({
           </div>
           <ul className="w-full max-w-[58ch] mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
             {c.inside.map((item, i) => (
-              <li key={`inside-${i}`} className="flex flex-col items-center gap-1.5 text-center">
-                <span className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70">
+              <li key={`inside-${i}`} className="flex flex-row items-baseline gap-3 text-left">
+                <span className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70 shrink-0">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
@@ -390,7 +402,7 @@ export default async function SkoolLandingPage({
         <div className="hairline mb-12 md:mb-16" />
 
         {/* Prix — placeholder pending launch */}
-        <div className="flex flex-col items-center gap-6 mb-12 md:mb-16">
+        <div id="tarif" className="flex flex-col items-center gap-6 mb-12 md:mb-16 scroll-mt-24">
           <div className="flex flex-col items-center gap-2">
             <h2 className="kicker">{c.kickerPricing}</h2>
           </div>
@@ -424,6 +436,9 @@ export default async function SkoolLandingPage({
           <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
             {c.ctaMeta}
           </p>
+          <p className="text-sm md:text-base leading-[1.65] text-muted-foreground italic max-w-[55ch]">
+            {c.refundLine}
+          </p>
         </div>
 
         {/* PS */}
@@ -444,17 +459,19 @@ export default async function SkoolLandingPage({
         </footer>
       </div>
 
-      {/* Sticky bottom CTA — mobile only */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-border bg-navy/95 backdrop-blur p-3">
-        <a
-          href={SKOOL_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+      {/* Sticky bottom CTA — mobile only. Anchors to #tarif so pricing is seen before the external Skool CTA fires. */}
+      <aside
+        aria-label={c.stickyCtaAriaLabel}
+        className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-border bg-navy/95 backdrop-blur p-3"
+      >
+        <Link
+          href="#tarif"
+          aria-label={`Sticky CTA: ${c.stickyCtaAriaLabel}`}
           className="block w-full text-center py-3 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-sm tracking-tight shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
         >
           {c.stickyCta}
-        </a>
-      </div>
+        </Link>
+      </aside>
     </main>
   );
 }

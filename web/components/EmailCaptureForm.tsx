@@ -12,6 +12,12 @@ type Props = {
    * Default false to preserve current behavior.
    */
   compact?: boolean;
+  /**
+   * Optional per-page override for the submit button label.
+   * Useful for non-pack flows (e.g. waitlist: "Préviens-moi" / "Notify me").
+   * Falls back to the localized default ("Récupérer le pack" / "Get the pack").
+   */
+  submitLabel?: { fr: string; en: string };
 };
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -22,7 +28,7 @@ const T = {
     emailPlaceholder: "ton@email.com",
     nameLabel: "Prénom (optionnel)",
     namePlaceholder: "Manu",
-    submit: "Récupère le pack",
+    submit: "Récupérer le pack",
     submitting: "Envoi...",
     successTitle: "Merci !",
     success: "Vérifie ta boîte mail d'ici 2 min",
@@ -50,8 +56,10 @@ export default function EmailCaptureForm({
   source = "generic",
   productSlug,
   compact = false,
+  submitLabel,
 }: Props) {
   const t = T[lang];
+  const submitText = submitLabel?.[lang] ?? t.submit;
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [status, setStatus] = useState<Status>("idle");
@@ -160,7 +168,7 @@ export default function EmailCaptureForm({
           "disabled:cursor-not-allowed disabled:opacity-60"
         )}
       >
-        {isBusy ? t.submitting : t.submit}
+        {isBusy ? t.submitting : submitText}
       </button>
 
       {/*

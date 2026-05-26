@@ -148,7 +148,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         className={cn(
           "pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t transition-colors",
           isActive
-            ? "border-primary animate-hud-bracket-pulse"
+            ? "border-primary motion-safe:animate-hud-bracket-pulse"
             : hoverActive
               ? "border-[var(--hud-bracket)]"
               : "border-[var(--hud-bracket-dim)]"
@@ -159,7 +159,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         className={cn(
           "pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t transition-colors",
           isActive
-            ? "border-primary animate-hud-bracket-pulse"
+            ? "border-primary motion-safe:animate-hud-bracket-pulse"
             : hoverActive
               ? "border-[var(--hud-bracket)]"
               : "border-[var(--hud-bracket-dim)]"
@@ -170,7 +170,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         className={cn(
           "pointer-events-none absolute left-2 bottom-2 h-3 w-3 border-l border-b transition-colors",
           isActive
-            ? "border-primary animate-hud-bracket-pulse"
+            ? "border-primary motion-safe:animate-hud-bracket-pulse"
             : hoverActive
               ? "border-[var(--hud-bracket)]"
               : "border-[var(--hud-bracket-dim)]"
@@ -181,7 +181,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         className={cn(
           "pointer-events-none absolute right-2 bottom-2 h-3 w-3 border-r border-b transition-colors",
           isActive
-            ? "border-primary animate-hud-bracket-pulse"
+            ? "border-primary motion-safe:animate-hud-bracket-pulse"
             : hoverActive
               ? "border-[var(--hud-bracket)]"
               : "border-[var(--hud-bracket-dim)]"
@@ -229,7 +229,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
               className={cn(
                 "inline-block w-1 h-1 rounded-full",
                 isActive
-                  ? "bg-primary animate-hud-bracket-pulse"
+                  ? "bg-primary motion-safe:animate-hud-bracket-pulse"
                   : "bg-muted-foreground/60"
               )}
             />
@@ -284,7 +284,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
                 <span
                   className={cn(
                     "font-display-hud text-3xl md:text-4xl leading-none text-primary tabular-nums",
-                    isActive && "animate-hud-bracket-pulse"
+                    isActive && "motion-safe:animate-hud-bracket-pulse"
                   )}
                   style={{
                     textShadow: isActive

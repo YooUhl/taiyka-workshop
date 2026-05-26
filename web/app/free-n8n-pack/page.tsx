@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import EmailCaptureForm from "@/components/EmailCaptureForm";
 import { FREE_N8N_PACK_COPY } from "@/lib/copy/free-n8n-pack";
+import { withLang } from "@/lib/lang-utils";
 
 type Lang = "fr" | "en";
 
@@ -53,21 +54,6 @@ export async function generateMetadata({
   };
 }
 
-const softwareSchema = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareSourceCode",
-  name: "5 n8n Workflows pour Entrepreneurs IA",
-  description:
-    "Pack de 5 workflows n8n gratuits pour automatiser ton activité.",
-  programmingLanguage: "JSON",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "EUR",
-  },
-  codeRepository: "https://taiyka.com/free-n8n-pack",
-};
-
 export default async function FreeN8nPackPage({
   searchParams,
 }: {
@@ -78,7 +64,24 @@ export default async function FreeN8nPackPage({
   const fromQcm = sp?.from === "qcm-result";
   const copy = FREE_N8N_PACK_COPY[lang];
 
-  const backHref = fromQcm ? "/qcm/resultat/pas-pret" : "/";
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    name:
+      lang === "fr"
+        ? "5 workflows n8n pour entrepreneurs IA"
+        : "5 n8n workflows for AI entrepreneurs",
+    description: copy.subHero,
+    programmingLanguage: "JSON",
+    inLanguage: lang === "fr" ? "fr-FR" : "en-US",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "EUR",
+    },
+  };
+
+  const backHref = withLang(fromQcm ? "/qcm/resultat/pas-pret" : "/", lang);
   const backLabel = fromQcm ? copy.backFromQcm : copy.backHome;
   const heroKicker = fromQcm ? copy.kickerFromQcm : copy.kicker;
 
@@ -90,7 +93,7 @@ export default async function FreeN8nPackPage({
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
+        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl hidden md:block"
       />
 
       <div
@@ -187,13 +190,13 @@ export default async function FreeN8nPackPage({
           <span className="kicker">{copy.upsellKicker}</span>
           <div className="flex flex-col items-center gap-3 max-w-[50ch]">
             <Link
-              href={copy.upsellPrimaryHref}
+              href={withLang(copy.upsellPrimaryHref, lang)}
               className="text-[1rem] md:text-[1.0625rem] text-foreground hover:text-[#00e5ff] transition-colors"
             >
               {copy.upsellPrimary}
             </Link>
             <Link
-              href={copy.upsellSecondaryHref}
+              href={withLang(copy.upsellSecondaryHref, lang)}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {copy.upsellSecondary}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BriefSignupForm from "@/components/BriefSignupForm";
+import { withLang } from "@/lib/lang-utils";
 
 type Lang = "fr" | "en";
 
@@ -26,7 +27,6 @@ type Copy = {
   featureMeta: string;
   kickerSignup: string;
   signupLead: string;
-  postCta: string;
   footerRights: string;
 };
 
@@ -56,8 +56,6 @@ const COPY: Record<Lang, Copy> = {
     featureMeta: "Pas de pitch. Pas de pub. Pas de spam.",
     kickerSignup: "S'INSCRIRE",
     signupLead: "Entre ton email. Premier numéro demain matin, 7h.",
-    postCta:
-      "Pendant qu'on prépare ton premier numéro: prends 2 min pour le QCM →",
     footerRights: "Tous droits réservés.",
   },
   en: {
@@ -66,8 +64,8 @@ const COPY: Record<Lang, Copy> = {
     langSwitchLabel: "FR",
     langSwitchHref: "/brief",
     statusPill: "Newsletter · 7am · 5 min",
-    kickerHero: "AI NEWS · 7AM SHARP",
-    h1Lead: "AI that moves,",
+    kickerHero: "AI NEWS · DAILY @ 7AM",
+    h1Lead: "The AI that's actually moving,",
     h1Accent: "every morning.",
     h1Tail: "In French. No bullshit.",
     kickerManifesto: "MANIFESTO",
@@ -77,7 +75,7 @@ const COPY: Record<Lang, Copy> = {
       "I do it for you. Every morning at 7am. The news that matters, my quick takes on it, in French. 5 minutes max. That's it.",
     kickerInside: "INSIDE · FORMAT",
     feature1:
-      "The 3-5 AI news that moved yesterday — agents, models, tools, business.",
+      "The 3-5 AI stories that moved the needle yesterday — agents, models, tools, business.",
     feature2:
       "My quick take on each one — what matters, what's noise.",
     feature3:
@@ -85,8 +83,6 @@ const COPY: Record<Lang, Copy> = {
     featureMeta: "No pitch. No ads. No spam.",
     kickerSignup: "SIGN UP",
     signupLead: "Drop your email. First issue tomorrow morning, 7am.",
-    postCta:
-      "While we prep your first issue: take the 2-min QCM →",
     footerRights: "All rights reserved.",
   },
 };
@@ -145,19 +141,6 @@ export async function generateMetadata({
   };
 }
 
-const briefSchema = {
-  "@context": "https://schema.org",
-  "@type": "Blog",
-  name: "AI NEWS",
-  description: "Le brief quotidien de l'IA, sans bullshit.",
-  publisher: {
-    "@type": "Organization",
-    name: "Taiyka",
-    url: "https://taiyka.com",
-  },
-  inLanguage: "fr-FR",
-};
-
 export default async function BriefLandingPage({
   searchParams,
 }: {
@@ -167,6 +150,22 @@ export default async function BriefLandingPage({
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
   const c = COPY[lang];
 
+  const briefSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "AI NEWS",
+    description:
+      lang === "fr"
+        ? "Le brief quotidien de l'IA, sans bullshit."
+        : "The daily AI brief, no bullshit.",
+    publisher: {
+      "@type": "Organization",
+      name: "Taiyka",
+      url: "https://taiyka.com",
+    },
+    inLanguage: lang === "fr" ? "fr-FR" : "en-US",
+  };
+
   return (
     <main className="relative flex-1 w-full flex flex-col z-10">
       <script
@@ -175,7 +174,7 @@ export default async function BriefLandingPage({
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
+        className="hidden md:block pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
       />
 
       <div
@@ -185,7 +184,7 @@ export default async function BriefLandingPage({
         {/* Top bar */}
         <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase gap-3">
           <Link
-            href="/"
+            href={withLang("/", lang)}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {c.topHome}
@@ -273,13 +272,6 @@ export default async function BriefLandingPage({
           <div className="w-full max-w-md text-left">
             <BriefSignupForm lang={lang} />
           </div>
-          {/* Always-visible next-step pointer — keeps users moving even before submit */}
-          <Link
-            href="/qcm"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors mt-3 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
-          >
-            {c.postCta}
-          </Link>
         </div>
 
         {/* Footer */}

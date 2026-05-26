@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import MailtoButton from "@/components/MailtoButton";
 import { getProjectMeta } from "@/components/PortfolioDetail";
 import { getPortfolioProjects, type Lang } from "@/lib/portfolio";
+import { withLang } from "@/lib/lang-utils";
 import PortfolioClient from "./portfolio-client";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
@@ -11,6 +12,7 @@ type SearchParams = Promise<{ lang?: string }>;
 
 const COPY = {
   fr: {
+    home: "← TAIYKA · Accueil",
     kicker: "OPS LOG",
     title: "DEPLOYED",
     tagline: "Workflows buildés, testés, en prod chez des clients.",
@@ -18,11 +20,12 @@ const COPY = {
     ctaTitle: "Prêt à shipper ?",
     ctaBody: "Places limitées. Je prends 2-3 projets ce mois-ci.",
     ctaPrimary: "Réserver un call de 30 min",
-    ctaSecondary: "Voir mes systèmes packagés →",
+    ctaSecondary: "Voir mes systèmes prêts à brancher →",
     ctaTertiary: "Ou rejoins la communauté Skool →",
     ctaOpening: "Ouverture…",
   },
   en: {
+    home: "← TAIYKA · Home",
     kicker: "OPS LOG",
     title: "DEPLOYED",
     tagline: "Workflows built, tested, running in production.",
@@ -116,7 +119,10 @@ export default async function PortfolioPage({
     }
   }
 
-  // ItemList JSON-LD — each project as a CreativeWork
+  // ItemList JSON-LD — each project as a CreativeWork.
+  // Bound to current lang so SEO + previews match the page locale.
+  // `dateCreated` is omitted on purpose: PortfolioProject carries no real dates,
+  // and a hardcoded year would be misleading.
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -126,10 +132,9 @@ export default async function PortfolioPage({
       position: i + 1,
       item: {
         "@type": "CreativeWork",
-        name: p.fr.title,
-        description: p.fr.tagline,
+        name: p[lang].title,
+        description: p[lang].tagline,
         image: `${SITE}/og/portfolio.png`,
-        dateCreated: "2026",
       },
     })),
   };
@@ -143,10 +148,10 @@ export default async function PortfolioPage({
       />
       <div className="w-full flex items-center justify-between mb-12 font-mono text-[11px] tracking-[0.22em] uppercase">
         <Link
-          href="/"
+          href={withLang("/", lang)}
           className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
         >
-          ← TAIYKA · Accueil
+          {copy.home}
         </Link>
         <Link
           href={`/portfolio?lang=${otherLang}`}
@@ -157,7 +162,7 @@ export default async function PortfolioPage({
       </div>
       <header className="mb-12 text-center flex flex-col items-center gap-4">
         <span className="kicker">{copy.kicker}</span>
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight uppercase">
+        <h1 className="text-[clamp(2rem,5vw,3.75rem)] font-bold tracking-tight uppercase">
           <span className="text-gradient-hero">{copy.title}</span>
         </h1>
         <p className="text-muted-foreground max-w-xl mx-auto">
@@ -182,7 +187,14 @@ export default async function PortfolioPage({
 
       <PortfolioClient projects={projects} lang={lang} />
 
-      <footer className="mt-20 text-center rounded-2xl border border-border bg-card/40 p-10">
+      <hr className="hairline mb-8 mt-20" />
+      <footer className="relative text-center rounded-2xl border border-border bg-card/40 p-10">
+        {/* HUD bracket frame — matches the Tier-3 Skool card treatment on /products */}
+        <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-4 w-4 border-l border-t border-[var(--hud-bracket-dim)]" />
+        <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-4 w-4 border-r border-t border-[var(--hud-bracket-dim)]" />
+        <span aria-hidden className="pointer-events-none absolute left-3 bottom-3 h-4 w-4 border-l border-b border-[var(--hud-bracket-dim)]" />
+        <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-4 w-4 border-r border-b border-[var(--hud-bracket-dim)]" />
+
         <h2 className="text-2xl md:text-3xl font-bold mb-2">
           <span className="text-gradient-hero">{copy.ctaTitle}</span>
         </h2>
@@ -199,14 +211,14 @@ export default async function PortfolioPage({
             <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
           </MailtoButton>
           <Link
-            href={`/products${lang === "en" ? "?lang=en" : ""}`}
+            href={withLang("/products", lang)}
             className="inline-flex items-center justify-center gap-2 min-h-14 py-3 px-6 rounded-md border border-primary/40 text-foreground hover:border-primary hover:bg-card/60 transition-all font-medium text-[0.9375rem] md:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
           >
             {copy.ctaSecondary}
           </Link>
         </div>
         <Link
-          href="/skool"
+          href={withLang("/skool", lang)}
           className="inline-block text-sm text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
         >
           {copy.ctaTertiary}

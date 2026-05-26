@@ -160,19 +160,30 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
 
   // Forward-only navigation: ArrowRight advances; ArrowLeft also advances
   // (forward-only is a locked design decision — left mirrors right so it doesn't feel broken).
-  // Listener attached to the scroll container, which is focusable via tabIndex={0}.
+  // Listener attached to window so it works after a tile button steals focus from the container.
+  // Guards: bail when the modal is open, or when focus is in an editable element.
   useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
     const onKey = (e: KeyboardEvent) => {
       if (openLogicalIndex !== null) return;
+      const active = typeof document !== "undefined" ? document.activeElement : null;
+      if (active instanceof HTMLElement) {
+        const tag = active.tagName;
+        if (
+          tag === "INPUT" ||
+          tag === "TEXTAREA" ||
+          tag === "SELECT" ||
+          active.isContentEditable
+        ) {
+          return;
+        }
+      }
       if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
         e.preventDefault();
         scrollToActual(actualIndex + 1);
       }
     };
-    container.addEventListener("keydown", onKey);
-    return () => container.removeEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [actualIndex, openLogicalIndex]);
 
@@ -284,7 +295,7 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
       </div>
 
       {/* Forward-only Next button — desktop only, pulses for first 4s as affordance */}
-      <div className="pointer-events-none hidden md:flex absolute inset-y-0 left-0 right-0 items-center justify-end px-2 lg:px-4">
+      <div className="pointer-events-none hidden md:flex absolute inset-y-0 left-0 right-0 items-center justify-end px-4 lg:px-8">
         <button
           type="button"
           onClick={() => scrollToActual(actualIndex + 1)}

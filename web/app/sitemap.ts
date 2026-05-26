@@ -11,6 +11,12 @@ const routes = [
   "/portfolio",
   "/free-n8n-pack",
   "/qcm",
+  "/qcm/quiz",
+  "/qcm/resultat/salarie",
+  "/qcm/resultat/aspirant",
+  "/qcm/resultat/surcharge",
+  "/qcm/resultat/scale",
+  "/qcm/resultat/pas-pret",
   "/brief",
   "/skool",
   "/products/prospect-audit-funnel",
@@ -27,7 +33,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: route === "" ? 1.0 : 0.8,
       alternates: {
         languages: {
-          en: `${url}?lang=en`,
+          "en-US": `${url}?lang=en`,
         },
       },
     };

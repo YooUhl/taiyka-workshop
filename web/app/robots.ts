@@ -12,6 +12,7 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
     sitemap: `${SITE}/sitemap.xml`,
+    // `host` is a Yandex-specific directive (ignored by Google/Bing). Low-risk noise.
     host: "https://taiyka.com",
   };
 }

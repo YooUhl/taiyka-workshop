@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { withLang } from "@/lib/lang-utils";
 
 type Lang = "fr" | "en";
 
@@ -36,7 +37,7 @@ const COPY: Record<Lang, Copy> = {
       "Tout le monde te vend des outils, des formations, des frameworks. Personne te dit où tu en es vraiment — ni ce qui te bloque, toi.",
     manifesto2:
       "9 questions, 2 minutes. À la fin tu sais quel type d’entrepreneur tu es, et la seule chose à faire ensuite pour que ça bouge.",
-    ctaButton: "Découvrir mon profil en 2 min",
+    ctaButton: "Commencer — je veux savoir.",
     ctaMeta: "Gratuit · Sans email avant la fin · 2 min",
     skipLink: "Pas envie du QCM ? Voir les produits →",
     langSwitch: "EN",
@@ -58,7 +59,7 @@ const COPY: Record<Lang, Copy> = {
       "Everyone sells you tools, courses, frameworks. Nobody tells you where you actually stand — or what’s blocking you, specifically.",
     manifesto2:
       "9 questions, 2 minutes. By the end you know what kind of entrepreneur you are, and the one thing to do next so things finally move.",
-    ctaButton: "Discover my profile in 2 min",
+    ctaButton: "Start — I want to know.",
     ctaMeta: "Free · No email until the end · 2 min",
     skipLink: "Don’t want the quiz? See the products →",
     langSwitch: "FR",
@@ -113,23 +114,28 @@ export async function generateMetadata({
   };
 }
 
-const qcmSchema = {
-  "@context": "https://schema.org",
-  "@type": "Course",
-  name: "QCM Entrepreneur IA",
-  description:
-    "9 questions, 2 minutes. Découvre ton profil d'entrepreneur et la prochaine étape concrète pour faire bouger ton business avec l'IA.",
-  provider: {
-    "@type": "Organization",
-    name: "Taiyka",
-    url: "https://taiyka.com",
-  },
-  hasCourseInstance: {
-    "@type": "CourseInstance",
-    courseMode: "online",
-    courseWorkload: "PT2M",
-  },
-};
+function buildQcmSchema(c: Copy) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: "QCM Entrepreneur IA",
+    description: c.metaDescription,
+    provider: {
+      "@type": "Organization",
+      name: "Taiyka",
+      url: "https://taiyka.com",
+    },
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      courseWorkload: "PT2M",
+      location: {
+        "@type": "VirtualLocation",
+        url: "https://taiyka.com/qcm/quiz",
+      },
+    },
+  };
+}
 
 export default async function QcmLandingPage({
   searchParams,
@@ -139,6 +145,7 @@ export default async function QcmLandingPage({
   const sp = await searchParams;
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
   const c = COPY[lang];
+  const qcmSchema = buildQcmSchema(c);
 
   return (
     <main className="relative flex-1 w-full z-10">
@@ -158,7 +165,7 @@ export default async function QcmLandingPage({
         {/* Top bar — keep justify-between for nav scannability */}
         <div className="w-full flex items-center justify-between mb-10 md:mb-14 font-mono text-[10px] md:text-[11px] tracking-[0.22em] uppercase">
           <Link
-            href={lang === "en" ? "/?lang=en" : "/"}
+            href={withLang("/", lang)}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {c.topLeftHome}
@@ -209,7 +216,7 @@ export default async function QcmLandingPage({
         {/* CTA — centered */}
         <div className="flex flex-col items-center gap-6">
           <Link
-            href={lang === "en" ? "/qcm/quiz?lang=en" : "/qcm/quiz"}
+            href={withLang("/qcm/quiz", lang)}
             className="hover-grow group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-base md:text-lg tracking-tight shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all"
           >
             {c.ctaButton}
@@ -221,8 +228,8 @@ export default async function QcmLandingPage({
             {c.ctaMeta}
           </p>
           <Link
-            href={lang === "en" ? "/products?lang=en" : "/products"}
-            className="text-xs text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
+            href={withLang("/products", lang)}
+            className="mt-8 md:mt-10 text-[10px] tracking-wide text-muted-foreground/60 hover:text-muted-foreground underline-offset-4 hover:underline"
           >
             {c.skipLink}
           </Link>

@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { RESULTS } from "@/lib/quiz-results";
+import { RESULTS, RESULTS_DATE_PUBLISHED } from "@/lib/quiz-results";
 import { isValidProfile } from "@/lib/quiz-scoring";
 import type { ProfileSlug } from "@/lib/quiz-questions";
 import ProfileEmailForm from "@/components/ProfileEmailForm";
+import { withLang } from "@/lib/lang-utils";
 
 type RouteParams = { profil: string };
 type SearchParams = { [key: string]: string | string[] | undefined };
@@ -35,11 +36,23 @@ export async function generateMetadata({
   const lang = pickLang(sp);
   if (!isValidProfile(profil)) return { title: "Résultat — Taiyka" };
   const r = RESULTS[profil][lang];
+  const path = `/qcm/resultat/${profil}`;
+  const ogTitle =
+    lang === "fr"
+      ? `Je suis ${r.name} sur le QCM Taiyka. Et toi ?`
+      : `I'm ${r.name} on the Taiyka quiz. What about you?`;
   return {
     title: `${r.name} — ${lang === "fr" ? "Ton profil" : "Your profile"} · Taiyka QCM`,
     description: r.tagline,
+    alternates: {
+      canonical: path,
+      languages: {
+        "fr-FR": path,
+        "en-US": `${path}?lang=en`,
+      },
+    },
     openGraph: {
-      title: `${r.name} — Taiyka QCM`,
+      title: ogTitle,
       description: r.tagline,
       images: [
         {
@@ -81,8 +94,10 @@ export default async function ResultPage({
   const from = pickFrom(sp);
   const r = RESULTS[profil][lang];
 
-  // Hide inline email form when user already gave email at the gate, or explicitly opted out.
-  const hideEmailForm = from === "quiz-skip" || from === "quiz-gate";
+  // Finding 5: skip-path opts out entirely — hide whole tips block.
+  // Finding 6: gate-path already submitted email — hide form, show 1-line muted note.
+  const skipPath = from === "quiz-skip";
+  const gatePath = from === "quiz-gate";
 
   // Localized UI strings.
   const t = {
@@ -95,7 +110,9 @@ export default async function ResultPage({
       kickerPs: "PS",
       kickerTips: "Emails taillés pour ton profil",
       tipsBlurb: "Reçois 2-3 emails taillés pour ton profil. Optionnel.",
-      alreadyReceived: "Email déjà reçu ? Check ta boîte.",
+      gateNote: "Email déjà envoyé — check ta boîte. Pas arrivé ? ",
+      gateNoteCta: "Écris-moi",
+      gateNoteTail: ".",
       fallback: "Email pas arrivé ? ",
       fallbackCta: "Écris-moi",
       fallbackTail: ", je te renvoie ton profil.",
@@ -112,7 +129,9 @@ export default async function ResultPage({
       kickerPs: "PS",
       kickerTips: "What I'd do in your spot",
       tipsBlurb: "Get 2-3 emails tailored to your profile. Optional.",
-      alreadyReceived: "Email already received? Check your inbox.",
+      gateNote: "Email already sent — check your inbox. Didn't arrive? ",
+      gateNoteCta: "Write me",
+      gateNoteTail: ".",
       fallback: "Email didn't arrive? ",
       fallbackCta: "Write me",
       fallbackTail: ", I'll resend your profile.",
@@ -124,10 +143,11 @@ export default async function ResultPage({
 
   const rail = otherProfilesRail(profil, lang);
 
-  // Article JSON-LD — finding 4.
+  // Article JSON-LD — localized + dynamic (round-2 audit finding 2).
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
+    inLanguage: lang === "fr" ? "fr-FR" : "en-US",
     headline: r.name,
     description: r.tagline,
     image: `https://taiyka.com/og/profil-${profil}.png`,
@@ -141,10 +161,11 @@ export default async function ResultPage({
       name: "Taiyka",
       logo: {
         "@type": "ImageObject",
-        url: "https://taiyka.com/favicon.svg",
+        url: "https://taiyka.com/logo-512.png",
       },
     },
-    datePublished: "2026-05-25",
+    datePublished: RESULTS_DATE_PUBLISHED,
+    dateModified: RESULTS_DATE_PUBLISHED,
   };
 
   return (
@@ -165,7 +186,7 @@ export default async function ResultPage({
         {/* Top bar */}
         <div className="w-full flex items-center justify-between mb-16 md:mb-20 font-mono text-[11px] tracking-[0.22em] uppercase">
           <Link
-            href="/"
+            href={withLang("/", lang)}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {t.home}
@@ -231,7 +252,7 @@ export default async function ResultPage({
           <div className="flex flex-col items-center gap-6">
             <h2 className="kicker kicker-accent">{t.kickerNext}</h2>
             <a
-              href={r.cta.href}
+              href={r.cta.external ? r.cta.href : withLang(r.cta.href, lang)}
               target={r.cta.external ? "_blank" : undefined}
               rel={r.cta.external ? "noopener noreferrer" : undefined}
               className="hover-grow group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-base md:text-lg tracking-tight shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all"
@@ -249,50 +270,53 @@ export default async function ResultPage({
           </div>
         )}
 
-        {/* PS section — finding 1: h2.kicker for the PS label */}
+        {/* PS section — round-2 findings 4 + 9: h2.kicker for visual consistency + contrast. */}
         <div className="mt-12 max-w-[60ch] mx-auto">
-          <h2 className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground/70 mb-2">
-            {t.kickerPs}
-          </h2>
+          <h2 className="kicker mb-2">{t.kickerPs}</h2>
           <p className="text-sm md:text-base leading-[1.65] text-muted-foreground italic">
             {r.ps}
           </p>
         </div>
 
-        {/* Finding 2: hairline above the tips block — matches rhythm of other sections. */}
-        <div className="hairline mt-16 mb-12" />
-
-        {/* Optional profile email capture — highest-intent moment.
-            Finding 6: hide form when user came from quiz-skip / quiz-gate. */}
-        <div className="max-w-[60ch] mx-auto">
-          <h2 className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground mb-3 text-center">
-            {t.kickerTips}
-          </h2>
-          {hideEmailForm ? (
-            <p className="text-sm md:text-base leading-[1.65] text-muted-foreground mb-5 text-center">
-              {t.alreadyReceived}
-            </p>
-          ) : (
-            <>
-              <p className="text-sm md:text-base leading-[1.65] text-muted-foreground mb-5 text-center">
-                {t.tipsBlurb}
-              </p>
-              <ProfileEmailForm profile={profil} lang={lang} />
-            </>
-          )}
-
-          {/* Finding 7: fallback adjacent to email form (or to the "already received" note). */}
-          <p className="mt-5 text-xs text-muted-foreground italic text-center">
-            {t.fallback}
-            <a
-              href="mailto:manu.uhila@taiyka.com"
-              className="not-italic underline-offset-4 hover:underline hover:text-primary transition-colors"
-            >
-              {t.fallbackCta}
-            </a>
-            {t.fallbackTail}
-          </p>
-        </div>
+        {/* Tips block — round-2 finding 5: hide entire block when from=quiz-skip (user opted out).
+            Round-2 finding 6: from=quiz-gate → hide form, show 1-line note + write-me link. */}
+        {!skipPath && (
+          <>
+            <div className="hairline mt-16 mb-12" />
+            <div className="max-w-[60ch] mx-auto">
+              <h2 className="kicker mb-3 text-center">{t.kickerTips}</h2>
+              {gatePath ? (
+                <p className="text-sm md:text-base leading-[1.65] text-muted-foreground text-center">
+                  {t.gateNote}
+                  <a
+                    href="mailto:manu.uhila@taiyka.com"
+                    className="underline-offset-4 hover:underline hover:text-primary transition-colors"
+                  >
+                    {t.gateNoteCta}
+                  </a>
+                  {t.gateNoteTail}
+                </p>
+              ) : (
+                <>
+                  <p className="text-sm md:text-base leading-[1.65] text-muted-foreground mb-5 text-center">
+                    {t.tipsBlurb}
+                  </p>
+                  <ProfileEmailForm profile={profil} lang={lang} />
+                  <p className="mt-5 text-xs text-muted-foreground italic text-center">
+                    {t.fallback}
+                    <a
+                      href="mailto:manu.uhila@taiyka.com"
+                      className="not-italic underline-offset-4 hover:underline hover:text-primary transition-colors"
+                    >
+                      {t.fallbackCta}
+                    </a>
+                    {t.fallbackTail}
+                  </p>
+                </>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Finding 9: "Autres profils" rail. */}
         <nav
@@ -303,7 +327,7 @@ export default async function ResultPage({
           {rail.map((p, i) => (
             <span key={p.slug}>
               <Link
-                href={`/qcm/resultat/${p.slug}${lang === "en" ? "?lang=en" : ""}`}
+                href={withLang(`/qcm/resultat/${p.slug}`, lang)}
                 className="hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
               >
                 {p.label}
