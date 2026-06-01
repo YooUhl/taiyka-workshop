@@ -1,0 +1,210 @@
+{
+  "name": "Taiyka — AI NEWS Daily Brief",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "an-001",
+      "name": "Cron — 06:30 Europe/Paris",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 400],
+      "notes": "Timezone is taken from n8n instance setting. Confirm n8n env var GENERIC_TIMEZONE=Europe/Paris on the host."
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Source registry ===\n// RSS / Reddit feeds + Apify Twitter actor.\n// Returns one merged, deduped, time-filtered array.\n\nconst RSS_FEEDS = [\n  { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'techcrunch.com' },\n  { url: 'https://www.theverge.com/ai-artificial-intelligence/rss/index.xml', source: 'theverge.com' },\n  { url: 'https://www.technologyreview.com/topic/artificial-intelligence/feed', source: 'technologyreview.com' },\n  { url: 'https://www.anthropic.com/news/rss.xml', source: 'anthropic.com' },\n  { url: 'https://openai.com/blog/rss.xml', source: 'openai.com' },\n  { url: 'https://hnrss.org/frontpage?q=AI+OR+LLM+OR+Claude+OR+GPT', source: 'news.ycombinator.com' },\n  { url: 'https://www.reddit.com/r/LocalLLaMA/.rss', source: 'reddit.com/r/LocalLLaMA' },\n  { url: 'https://www.reddit.com/r/MachineLearning/.rss', source: 'reddit.com/r/MachineLearning' },\n  { url: 'https://www.reddit.com/r/singularity/top.rss?t=day', source: 'reddit.com/r/singularity' },\n];\n\nconst CUTOFF_MS = Date.now() - 24 * 60 * 60 * 1000;\n\nfunction stripCdata(s = '') {\n  return s.replace(/<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>/g, '$1').replace(/<[^>]+>/g, '').trim();\n}\n\nfunction parseRss(xml, source) {\n  const items = [];\n  // Both <item> (RSS) and <entry> (Atom)\n  const blocks = xml.match(/<(item|entry)[\\s\\S]*?<\\/(item|entry)>/g) || [];\n  for (const block of blocks) {\n    const title = (block.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/) || [, ''])[1];\n    const linkMatch =\n      block.match(/<link[^>]*href=\"([^\"]+)\"/) ||\n      block.match(/<link[^>]*>([\\s\\S]*?)<\\/link>/);\n    const link = linkMatch ? linkMatch[1] : '';\n    const pub =\n      (block.match(/<pubDate[^>]*>([\\s\\S]*?)<\\/pubDate>/) || [, ''])[1] ||\n      (block.match(/<published[^>]*>([\\s\\S]*?)<\\/published>/) || [, ''])[1] ||\n      (block.match(/<updated[^>]*>([\\s\\S]*?)<\\/updated>/) || [, ''])[1];\n    const desc =\n      (block.match(/<description[^>]*>([\\s\\S]*?)<\\/description>/) || [, ''])[1] ||\n      (block.match(/<summary[^>]*>([\\s\\S]*?)<\\/summary>/) || [, ''])[1];\n    const publishedMs = pub ? Date.parse(pub) : NaN;\n    if (!title || !link) continue;\n    items.push({\n      title: stripCdata(title),\n      url: link.trim(),\n      source,\n      published_at: pub,\n      published_ms: isFinite(publishedMs) ? publishedMs : Date.now(),\n      snippet: stripCdata(desc).slice(0, 400),\n      kind: 'rss',\n    });\n  }\n  return items;\n}\n\nasync function fetchFeed({ url, source }) {\n  try {\n    const xml = await this.helpers.httpRequest({\n      method: 'GET',\n      url,\n      headers: { 'User-Agent': 'TaiykaAINewsBot/1.0 (+https://taiyka.com)' },\n      returnFullResponse: false,\n    });\n    return parseRss(typeof xml === 'string' ? xml : String(xml), source);\n  } catch (err) {\n    console.warn(`Feed failed: ${source} ${err.message}`);\n    return [];\n  }\n}\n\nconst all = [];\nfor (const feed of RSS_FEEDS) {\n  const items = await fetchFeed.call(this, feed);\n  all.push(...items);\n}\n\n// Filter last 24h, dedupe by URL, sort newest first, cap to 80\nconst seen = new Set();\nconst filtered = all\n  .filter((i) => i.published_ms >= CUTOFF_MS)\n  .filter((i) => {\n    if (seen.has(i.url)) return false;\n    seen.add(i.url);\n    return true;\n  })\n  .sort((a, b) => b.published_ms - a.published_ms)\n  .slice(0, 80);\n\nreturn [{ json: { items: filtered, fetched_at: new Date().toISOString(), count: filtered.length } }];\n"
+      },
+      "id": "an-002",
+      "name": "Fetch RSS + Reddit Sources",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 320],
+      "notes": "Single Code node fetches all RSS/Reddit feeds. Switch off any feed by removing its row in RSS_FEEDS."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apidojo~twitter-scraper-lite/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "={{ $env.APIFY_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"searchTerms\": [\"from:sama\", \"from:karpathy\", \"from:AnthropicAI\", \"from:OpenAI\", \"from:GoogleDeepMind\", \"from:miramurati\", \"from:swyx\", \"from:hwchase17\"],\n  \"sort\": \"Latest\",\n  \"tweetLanguage\": \"en\",\n  \"maxItems\": 40\n}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "an-003",
+      "name": "Apify — Twitter (last 24h)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 520],
+      "notes": "Apify actor pulls last 24h tweets from watched accounts. Requires APIFY_API_KEY in n8n env. Switch actor name in URL if rate-limited (kaitoeasyapi/twitter-x-data-tweet-scraper-pay-per-result-cheapest is a paid fallback).",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the Apify Twitter dataset rows into our item shape\nconst CUTOFF_MS = Date.now() - 24 * 60 * 60 * 1000;\nconst rows = items.map((i) => i.json);\nconst normalized = rows\n  .map((t) => {\n    const created = t.createdAt || t.created_at || t.date;\n    const ms = created ? Date.parse(created) : Date.now();\n    const handle = t.author?.userName || t.user?.screen_name || t.username || 'unknown';\n    return {\n      title: t.text ? t.text.slice(0, 200) : '',\n      url: t.url || t.twitterUrl || `https://x.com/${handle}/status/${t.id || ''}`,\n      source: `x.com/@${handle}`,\n      published_at: created,\n      published_ms: ms,\n      snippet: t.text || '',\n      kind: 'tweet',\n      engagement: (t.likeCount || 0) + (t.retweetCount || 0) * 2,\n    };\n  })\n  .filter((t) => t.title && t.published_ms >= CUTOFF_MS)\n  .sort((a, b) => b.engagement - a.engagement)\n  .slice(0, 15);\n\nreturn [{ json: { items: normalized, count: normalized.length } }];\n"
+      },
+      "id": "an-004",
+      "name": "Normalize Tweets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 520]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "an-005",
+      "name": "Merge Sources",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine both branches into a single item list\nconst combined = [];\nfor (const i of items) {\n  if (Array.isArray(i.json?.items)) combined.push(...i.json.items);\n}\n// Deterministic issue number based on day-of-year + year (so #042 increments daily)\nconst now = new Date();\nconst start = Date.UTC(now.getUTCFullYear(), 0, 0);\nconst dayOfYear = Math.floor((now.getTime() - start) / 86400000);\nconst issueNumber = (now.getUTCFullYear() - 2024) * 365 + dayOfYear; // simple monotonic\nreturn [{\n  json: {\n    items: combined,\n    count: combined.length,\n    issue_number: issueNumber,\n    date_iso: now.toISOString(),\n  },\n}];\n"
+      },
+      "id": "an-006",
+      "name": "Combine + Tag Issue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 2000,\n  \"system\": \"Tu es l'éditeur de la newsletter AI NEWS de Manu (Taiyka). Audience: entrepreneurs francophones qui codent avec l'IA. Tu reçois 50-100 news des dernières 24h (RSS + tweets). Ton job: choisir les 3-5 qui ont vraiment bougé pour eux. Skip: drama, leaks vagues, hype creuse. Garde: agents qui marchent, lancements produits réels, benchmarks crédibles, levées de fonds business, outils de builder. Pour chaque news garde: un headline FR de 6-12 mots (punchy, factuel), une prise rapide FR de 2 phrases (ce qui compte, pourquoi ça bouge pour eux), la source (domaine), l'URL. Réponds UNIQUEMENT en JSON valide, sans markdown, suivant ce schéma exact: {\\\"stories\\\":[{\\\"headline\\\":\\\"...\\\",\\\"take\\\":\\\"...\\\",\\\"source\\\":\\\"...\\\",\\\"url\\\":\\\"...\\\"}]}\",\n  \"messages\": [{\n    \"role\": \"user\",\n    \"content\": {{ JSON.stringify('Items pour le brief du ' + $json.date_iso + ' (issue #' + $json.issue_number + '):\\n\\n' + JSON.stringify($json.items.map(i => ({ title: i.title, source: i.source, url: i.url, snippet: (i.snippet||'').slice(0,300), kind: i.kind })), null, 2)) }}\n  }]\n}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "an-007",
+      "name": "Claude — Curate + Write",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 400],
+      "notes": "Claude Sonnet 4.6 scores items and writes the brief. ANTHROPIC_API_KEY required in n8n env. Costs ~$0.02 per issue."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude's JSON reply, render the HTML email body matching the SampleIssuePreview UI.\nconst reply = $input.first().json;\nconst raw = reply?.content?.[0]?.text || '{}';\n\nlet parsed;\ntry {\n  // Strip optional fences just in case\n  const cleaned = raw.replace(/^```json\\s*/i, '').replace(/^```\\s*/i, '').replace(/```\\s*$/, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  throw new Error('Claude returned non-JSON: ' + raw.slice(0, 500));\n}\n\nconst stories = Array.isArray(parsed.stories) ? parsed.stories.slice(0, 5) : [];\nif (stories.length === 0) throw new Error('Claude returned zero stories');\n\nconst issueData = $('Combine + Tag Issue').first().json;\nconst issueNumber = issueData.issue_number;\nconst dateLabel = new Date(issueData.date_iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });\n\nconst storiesHtml = stories.map((s, i) => `\n  <tr><td style=\"padding:0 0 28px 0;\">\n    <div style=\"font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#00a6ff;margin-bottom:8px;\">${String(i+1).padStart(2,'0')}</div>\n    <h3 style=\"margin:0 0 8px 0;font-family:Inter,Arial,sans-serif;font-size:18px;line-height:1.3;color:#e8f0fe;font-weight:600;\"><a href=\"${s.url}\" style=\"color:#e8f0fe;text-decoration:none;\">${s.headline}</a></h3>\n    <p style=\"margin:0 0 8px 0;font-family:Inter,Arial,sans-serif;font-size:15px;line-height:1.55;color:#8da2c0;\">${s.take}</p>\n    <div style=\"font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#8da2c0;\"><a href=\"${s.url}\" style=\"color:#8da2c0;text-decoration:underline;\">${s.source}</a></div>\n  </td></tr>\n`).join('');\n\nconst html = `<!doctype html>\n<html><head><meta charset=\"utf-8\"></head>\n<body style=\"margin:0;padding:0;background:#0a1628;\">\n<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0a1628;\">\n<tr><td align=\"center\" style=\"padding:32px 16px;\">\n  <table role=\"presentation\" width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:560px;width:100%;background:#0f1a2e;border:1px solid rgba(141,162,192,0.2);border-radius:8px;padding:28px;\">\n    <tr><td style=\"border-bottom:1px solid rgba(141,162,192,0.2);padding-bottom:16px;\">\n      <table role=\"presentation\" width=\"100%\"><tr>\n        <td style=\"font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#00a6ff;\">AI NEWS · #${String(issueNumber).padStart(3,'0')}</td>\n        <td align=\"right\" style=\"font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#8da2c0;\">${dateLabel} · 7h</td>\n      </tr></table>\n    </td></tr>\n    <tr><td style=\"padding:24px 0 0 0;\"><table role=\"presentation\" width=\"100%\">${storiesHtml}</table></td></tr>\n    <tr><td style=\"border-top:1px solid rgba(141,162,192,0.2);padding-top:16px;text-align:center;font-family:Inter,Arial,sans-serif;font-size:12px;color:#8da2c0;\">\n      <p style=\"margin:0 0 6px 0;\">— Manu · <a href=\"https://instagram.com/manu_ai.to\" style=\"color:#00a6ff;text-decoration:none;\">@manu_ai.to</a></p>\n      <p style=\"margin:0;font-size:11px;\"><a href=\"https://taiyka.com/brief/unsubscribe?email={{EMAIL}}\" style=\"color:#8da2c0;text-decoration:underline;\">Se désinscrire en 1 clic</a></p>\n    </td></tr>\n  </table>\n</td></tr></table>\n</body></html>`;\n\nreturn [{\n  json: {\n    issue_number: issueNumber,\n    date_iso: issueData.date_iso,\n    stories,\n    stories_json: JSON.stringify(stories),\n    html_body: html,\n    subject: `[DRAFT] AI NEWS #${String(issueNumber).padStart(3,'0')} — ${dateLabel}`,\n    status: 'draft',\n  },\n}];\n"
+      },
+      "id": "an-008",
+      "name": "Render Email HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 400]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_YOUR_BRIEFS_SHEET_ID_HERE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "briefs",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date_iso": "={{ $json.date_iso }}",
+            "issue_number": "={{ $json.issue_number }}",
+            "subject": "={{ $json.subject }}",
+            "status": "={{ $json.status }}",
+            "stories_json": "={{ $json.stories_json }}",
+            "html_body": "={{ $json.html_body }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "an-009",
+      "name": "Log Draft to Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1760, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      },
+      "notes": "Create a new sheet 'AI NEWS Briefs' with tab 'briefs' and columns: date_iso, issue_number, subject, status, stories_json, html_body."
+    },
+    {
+      "parameters": {
+        "sendTo": "manu.uhila@taiyka.com",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.html_body.replace('{{EMAIL}}', 'manu.uhila@taiyka.com') }}",
+        "options": {}
+      },
+      "id": "an-010",
+      "name": "Send Draft to Manu (v1 gate)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1980, 400],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "REPLACE_WITH_YOUR_GMAIL_CREDENTIAL_ID",
+          "name": "Gmail"
+        }
+      },
+      "notes": "v1 = sends draft ONLY to Manu for manual review. To flip to v2 auto-send, replace this node with Sheets Read → Loop → Gmail Send (see README)."
+    }
+  ],
+  "connections": {
+    "Cron — 06:30 Europe/Paris": {
+      "main": [
+        [
+          { "node": "Fetch RSS + Reddit Sources", "type": "main", "index": 0 },
+          { "node": "Apify — Twitter (last 24h)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Apify — Twitter (last 24h)": { "main": [[{ "node": "Normalize Tweets", "type": "main", "index": 0 }]] },
+    "Fetch RSS + Reddit Sources": { "main": [[{ "node": "Merge Sources", "type": "main", "index": 0 }]] },
+    "Normalize Tweets": { "main": [[{ "node": "Merge Sources", "type": "main", "index": 1 }]] },
+    "Merge Sources": { "main": [[{ "node": "Combine + Tag Issue", "type": "main", "index": 0 }]] },
+    "Combine + Tag Issue": { "main": [[{ "node": "Claude — Curate + Write", "type": "main", "index": 0 }]] },
+    "Claude — Curate + Write": { "main": [[{ "node": "Render Email HTML", "type": "main", "index": 0 }]] },
+    "Render Email HTML": { "main": [[{ "node": "Log Draft to Sheets", "type": "main", "index": 0 }]] },
+    "Log Draft to Sheets": { "main": [[{ "node": "Send Draft to Manu (v1 gate)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Europe/Paris" },
+  "tags": [{ "name": "newsletter" }, { "name": "ai-news" }, { "name": "taiyka" }]
+}
