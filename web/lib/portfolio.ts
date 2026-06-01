@@ -1,5 +1,6 @@
-import fs from "node:fs";
-import path from "node:path";
+// Data is pre-built at prebuild time (see scripts/build-portfolio-data.mjs).
+// Importing the JSON ensures Next.js bundles it into the serverless function.
+import portfolioRaw from "./portfolio-data.generated.json";
 
 export type Lang = "fr" | "en";
 
@@ -19,8 +20,6 @@ export type PortfolioProject = {
   en: LocalizedContent;
   diagramSvg: string;
 };
-
-const SLUGS = ["polymaker", "ufc-gym", "content-system", "lead-pipeline"] as const;
 
 // Section header patterns. Each language has its own headers.
 const SECTION_HEADERS = {
@@ -113,33 +112,20 @@ function parseLocalized(section: string, lang: Lang): LocalizedContent {
   };
 }
 
-/**
- * Resolve the portfolio root. The Next app lives in `web/`, the portfolio
- * folder lives at `../portfolio/`. process.cwd() is the `web/` directory at
- * build/runtime.
- */
-function portfolioRoot(): string {
-  return path.resolve(process.cwd(), "..", "portfolio");
-}
+type RawEntry = { slug: string; md: string; svg: string };
 
 let cached: PortfolioProject[] | null = null;
 
 export function getPortfolioProjects(): PortfolioProject[] {
   if (cached) return cached;
-
-  const root = portfolioRoot();
-  cached = SLUGS.map((slug) => {
-    const dir = path.join(root, slug);
-    const md = fs.readFileSync(path.join(dir, "README.md"), "utf-8");
-    const svg = fs.readFileSync(path.join(dir, "diagram.svg"), "utf-8");
-    const { fr, en } = splitLanguages(md);
+  cached = (portfolioRaw as RawEntry[]).map((entry) => {
+    const { fr, en } = splitLanguages(entry.md);
     return {
-      slug,
+      slug: entry.slug,
       fr: parseLocalized(fr, "fr"),
       en: parseLocalized(en, "en"),
-      diagramSvg: svg,
+      diagramSvg: entry.svg,
     };
   });
-
   return cached;
 }
