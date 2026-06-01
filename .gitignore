@@ -50,3 +50,10 @@ pdf-errors.log
 
 # Claude Code artifacts
 .claude/
+
+# internal build/launch kits (Skool launch docs, generated assets, sheet IDs)
+_build/
+
+# n8n test artifacts (may contain personal PII in rendered email previews)
+funnel/n8n-workflows/preview.html
+

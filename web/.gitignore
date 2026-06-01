@@ -36,6 +36,11 @@ yarn-error.log*
 # vercel
 .vercel
 
+# build-time copied data (see scripts/copy-data.mjs)
+/.data
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel
