@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gumroad Listing — Smart Prospect Audit Funnel (FR) — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Gumroad Listing — Smart Prospect Audit Funnel (FR)</h1>
+<blockquote>Source paste sheet for Gumroad's product creation form. Paste each field as-is into the matching Gumroad input. Last reviewed 2026-05-20.</blockquote>
+<hr>
+<h2>Field: Product name (max 60 chars)</h2>
+<pre><code class="lang-">Smart Prospect Audit Funnel — qualifie pendant que tu dors</code></pre>
+<p>(58 chars)</p>
+<p><strong>Alternate 1 (49 chars):</strong></p>
+<pre><code class="lang-">Smart Prospect Audit Funnel — n8n + Claude</code></pre>
+<p><strong>Alternate 2 (55 chars):</strong></p>
+<pre><code class="lang-">Le funnel d'audit IA pour agences (n8n + Claude)</code></pre>
+<hr>
+<h2>Field: Tagline / Subtitle (max 130 chars)</h2>
+<pre><code class="lang-">Un form de 14 questions + Claude + un debrief auto dans ton inbox avant le call. Plug-and-play en 60 min. Importable n8n.</code></pre>
+<p>(125 chars)</p>
+<hr>
+<h2>Field: Price</h2>
+<ul><li><strong>Amount:</strong> <code>49</code></li><li><strong>Currency:</strong> EUR</li><li><strong>Pricing type:</strong> Fixed price (no PWYW slider — keep the anchor clean)</li><li><strong>Allow tips:</strong> off</li></ul>
+<hr>
+<h2>Field: Cover / thumbnail</h2>
+<ul><li><strong>Cover image:</strong> upload <code>delivery/cover.svg</code> (1080×1080 SVG, on-brand Taiyka)</li><li>If Gumroad rejects SVG cover, export as PNG 1280×720 first using any browser screenshot of <code>delivery/cover.svg</code></li><li><strong>Thumbnail option:</strong> same as cover</li></ul>
+<hr>
+<h2>Field: Description (markdown, Gumroad-flavored)</h2>
+<pre><code class="lang-markdown">## Qualifie tes prospects pendant que tu dors.
+
+Le funnel d'audit IA que j'utilise chez Taiyka pour ne plus jamais perdre un call avec un curieux.
+
+Un formulaire d'audit + un agent Claude qui génère une liste de solutions sur-mesure en 20 secondes + un debrief dans ton inbox **avant** que le prospect ne réserve son créneau.
+
+Tu arrives en call avec tout déjà mâché. Plug-and-play, importable en 60 min.
+
+---
+
+### Ce que tu reçois dans le ZIP
+
+- **`n8n-workflow.json`** — le workflow complet, 9 nodes, importable directement dans ton n8n
+- **`audit-form-template.html`** — le formulaire 14 questions, Tailwind via CDN, déployable sur Vercel/Netlify en 5 min
+- **`claude-prompt-template.md`** — le system prompt avec exemple input + output pour calibrer Claude
+- **`setup-guide-fr.md`** + **`setup-guide-en.md`** — guide d'install pas à pas (60-90 min total)
+- **`cover.svg`** — la cover du produit si tu veux la rebrander pour ton agence
+
+---
+
+### Comment ça marche
+
+1. Tu mets le form en lien sur ton site / DM / bio Insta
+2. Le prospect remplit les 14 questions (budget, autorité, timeline, douleur)
+3. Le webhook fire → Claude lit les réponses → sort 3-5 solutions personnalisées + un score 0-100
+4. Tu reçois un email structuré : résumé, score, top solutions, données brutes
+5. Le prospect arrive sur ton Calendly **déjà qualifié**
+6. Tu prends le call (ou pas) en sachant exactement à qui tu parles
+
+---
+
+### C'est pour toi si
+
+- T'as une agence ou tu fais du freelance en AI/automation et tu reçois des leads sans savoir lesquels valent un call
+- Tu utilises déjà n8n + Claude (ou t'es prêt à apprendre — 1h max si t'es débutant)
+- T'as un Calendly branché à ton calendrier et tu veux arrêter de perdre 30 min par "audit gratuit" non qualifié
+- Tu veux montrer tes compétences au prospect **avant** le call, pas pendant
+
+### C'est PAS pour toi si
+
+- Tu fais 200+ leads/mois et tu cherches du Salesforce-grade — ici on optimise pour les agences à 5-50 leads/mois
+- T'as zéro autorité sur ton stack tech et tu peux pas brancher un workflow n8n toi-même
+- Tu vends à des particuliers — c'est un funnel B2B
+
+---
+
+### Coût d'exécution
+
+- API Anthropic (Claude Sonnet) : **~0.02€ par audit**
+- API Anthropic (Claude Haiku 4.5) : **~0.004€ par audit**
+- Tu peux faire tourner 100 audits/mois pour 0.40-2€ d'API
+
+Tout le reste (n8n self-hosted ou free tier, Google Sheets gratuit, Gmail, Vercel free) : **0€**.
+
+---
+
+### Setup time honnête
+
+- Si tu connais déjà n8n : **60 min**
+- Si tu débutes sur n8n mais t'as déjà touché à Zapier/Make : **2h**
+- Si tu pars de zéro tech : **demi-journée** + le guide est ton meilleur ami
+
+---
+
+### Garantie
+
+Si après avoir suivi le guide tu ne fais pas tourner le funnel en 24h, je te rembourse + tu gardes le pack. Tu DM `@manu_ai.to` sur Instagram. C'est tout.
+
+---
+
+### Qui je suis
+
+Je suis Manu (Taiyka). Je build des agents IA pour des entrepreneurs et des agences en France et dans le Pacifique. Ce funnel, c'est exactement celui que j'utilise tous les jours pour ne pas perdre mon temps sur des leads qui ne ferment jamais.
+
+Si t'as une question avant d'acheter → DM sur [Instagram](https://instagram.com/manu_ai.to).</code></pre>
+<hr>
+<h2>Field: "What's included" / "Get instant access to" (bullet list)</h2>
+<pre><code class="lang-">- Workflow n8n complet (9 nodes) — importable en 5 min
+- Formulaire 14 questions HTML + Tailwind responsive
+- System prompt Claude calibré (avec exemple input/output)
+- Guide d'installation pas à pas (FR + EN)
+- Cover SVG rebrandable
+- Mises à jour à vie (toute version 1.x)
+- Support DM Insta si tu bloques pendant l'install</code></pre>
+<hr>
+<h2>Field: FAQ (Gumroad allows FAQ blocks — paste each Q/A pair)</h2>
+<p><strong>Q1 : J'ai jamais touché à n8n. Je peux le faire marcher ?</strong> R : Oui, mais compte 2h au lieu de 60 min. Le guide d'install est écrit pour des débutants n8n (pas pour des débutants tech). Si t'as déjà créé un Zap, t'es bon.</p>
+<p><strong>Q2 : Combien ça coûte en API Anthropic par audit ?</strong> R : Avec <code>claude-sonnet-4-6</code> : ~0.02€ par audit. Avec <code>claude-haiku-4-5</code> : ~0.004€. Sur 100 audits/mois, t'es entre 0.40€ et 2€.</p>
+<p><strong>Q3 : Je peux le revendre à mes clients ?</strong> R : Non. C'est une licence pour un usage personnel/interne à ton agence. Si tu veux le revendre, DM moi sur Insta pour une licence agence.</p>
+<p><strong>Q4 : Ça marche avec Make ou Zapier au lieu de n8n ?</strong> R : Le workflow est écrit pour n8n. Tu peux le porter sur Make ou Zapier mais les codes nodes JS ne migrent pas tels quels — prévois 1h de portage.</p>
+<p><strong>Q5 : Le formulaire est responsive ?</strong> R : Oui. Tailwind via CDN, testé sur mobile / tablet / desktop.</p>
+<p><strong>Q6 : Je dois avoir Gmail ? Si j'utilise Outlook ?</strong> R : Le workflow utilise le node Gmail par défaut. Remplace-le par le node SMTP natif (configure ton serveur Outlook/SMTP). Compte 10 min.</p>
+<p><strong>Q7 : Combien de temps avant d'avoir mon premier prospect qualifié ?</strong> R : Une fois le funnel installé (60-90 min), dès que tu colles le lien du form quelque part (DM, bio, site, lead magnet), le premier audit complet peut arriver le jour même.</p>
+<hr>
+<h2>Field: Refund policy</h2>
+<pre><code class="lang-">Remboursement 14 jours, no questions asked. Tu DM @manu_ai.to sur Instagram avec ton email d'achat, je te rembourse dans la journée. Tu gardes le pack — ça reste à toi de faire bon usage.</code></pre>
+<p>(Gumroad already has a 30-day refund policy by default — keep theirs visible AND paste this in the description for trust.)</p>
+<hr>
+<h2>Field: Tags (8-10 max)</h2>
+<pre><code class="lang-">n8n
+claude
+ai automation
+lead generation
+b2b
+agency tools
+prospect qualification
+workflow template
+sales automation
+agent ia</code></pre>
+<hr>
+<h2>Field: URL slug</h2>
+<pre><code class="lang-">prospect-audit-funnel</code></pre>
+<p>(Full URL: <code>gumroad.com/l/prospect-audit-funnel</code>)</p>
+<hr>
+<h2>Field: Categories (Gumroad's taxonomy)</h2>
+<ul><li>Primary: <strong>Business &amp; Money → Sales &amp; Marketing</strong></li><li>Secondary: <strong>Software Development → Templates</strong></li></ul>
+<hr>
+<h2>Field: Discord roles / member access (if you have a Gumroad-Discord integration)</h2>
+<p>Not applicable. Buyers get pointed to the Taiyka Skool community via the post-purchase email instead.</p>
+<hr>
+<h2>Pre-launch checklist before going public on Gumroad</h2>
+<ul><li>[ ] Replace <code>[LIEN_ZIP]</code> in the post-purchase email with the actual ZIP upload URL</li><li>[ ] Confirm <code>cover.svg</code> renders correctly as the thumbnail (or convert to PNG if not)</li><li>[ ] Add <code>manu.uhila@taiyka.com</code> as the contact email in Gumroad seller settings</li><li>[ ] Enable VAT collection if Gumroad asks (Taiyka SIRET 99291760900016, but TVA non applicable, art. 293 B du CGI — toggle accordingly)</li><li>[ ] Set up the "Send to customers after purchase" email automation using the existing post-purchase template in <code>sales-fr.md</code></li><li>[ ] Test buy with a 100% off discount code (<code>TAIYKA-TEST</code>) before going public</li><li>[ ] Set <code>gumroad.com/l/prospect-audit-funnel</code> as the canonical link on the Taiyka site product page</li><li>[ ] Update the placeholder in <code>web/app/products/prospect-audit-funnel/page.tsx</code> (<code>GUMROAD_URL</code>) with the real Gumroad link</li></ul>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

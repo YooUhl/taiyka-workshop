@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide d'installation — Smart Prospect Audit Funnel (FR) — Taiyka</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --navy: #0A1628;
+  --blue: #00A6FF;
+  --cyan: #00E5FF;
+  --white: #FFFFFF;
+  --text: #E8F0FE;
+  --muted: #8FA1BD;
+  --panel: #11223d;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--navy);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+header.brand {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 166, 255, 0.25);
+}
+header.brand .logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+header.brand .handle {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 40px 64px;
+}
+footer {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 40px 48px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  border-top: 1px solid rgba(0, 166, 255, 0.15);
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--white);
+  line-height: 1.25;
+  margin: 1.8em 0 0.6em;
+  font-weight: 700;
+}
+h1 {
+  font-size: 2.1em;
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.3em;
+  border-bottom: 2px solid rgba(0, 166, 255, 0.35);
+}
+h2 { font-size: 1.55em; color: var(--cyan); }
+h3 { font-size: 1.25em; color: var(--blue); }
+h4 { font-size: 1.05em; color: var(--white); }
+p { margin: 0.9em 0; }
+a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--blue); }
+strong { color: var(--white); }
+em { color: var(--text); }
+hr {
+  border: none;
+  border-top: 1px solid rgba(0, 166, 255, 0.25);
+  margin: 2em 0;
+}
+ul, ol { padding-left: 1.4em; margin: 0.9em 0; }
+li { margin: 0.3em 0; }
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.6em 1.1em;
+  border-left: 3px solid var(--blue);
+  background: rgba(0, 166, 255, 0.08);
+  color: var(--text);
+  border-radius: 0 6px 6px 0;
+}
+code {
+  font-family: 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  font-size: 0.92em;
+  background: var(--panel);
+  color: var(--cyan);
+  padding: 0.12em 0.4em;
+  border-radius: 4px;
+}
+pre {
+  background: var(--panel);
+  border: 1px solid rgba(0, 166, 255, 0.2);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 1.2em 0;
+  line-height: 1.5;
+}
+pre code {
+  background: transparent;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.88em;
+}
+img { max-width: 100%; border-radius: 6px; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+th, td {
+  border: 1px solid rgba(0, 166, 255, 0.25);
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: rgba(0, 166, 255, 0.12); color: var(--white); font-weight: 600; }
+tbody tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+
+/* Print mode — polished light PDF */
+@media print {
+  @page { margin: 18mm 16mm; }
+  html, body {
+    background: #ffffff !important;
+    color: #111 !important;
+    font-size: 11.5pt;
+  }
+  header.brand {
+    border-bottom: 1px solid #00A6FF;
+    padding: 0 0 10px;
+    margin-bottom: 16px;
+  }
+  header.brand .logo {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF;
+    background: none;
+  }
+  header.brand .handle { color: #555; }
+  main, footer { padding: 0; max-width: none; }
+  footer { border-top: 1px solid #ccc; color: #555; margin-top: 24px; padding-top: 10px; }
+  h1, h2, h3, h4 { color: #0A1628 !important; }
+  h1 {
+    -webkit-text-fill-color: initial;
+    color: #00A6FF !important;
+    background: none;
+    border-bottom: 2px solid #00A6FF;
+    page-break-before: always;
+  }
+  h1:first-of-type { page-break-before: avoid; }
+  h2 { color: #0078c8 !important; page-break-after: avoid; }
+  h3, h4 { page-break-after: avoid; }
+  h2, h3, h4 { page-break-inside: avoid; }
+  a { color: #0078c8; }
+  strong { color: #000; }
+  code {
+    background: #f2f6fb;
+    color: #0a4f8a;
+    border: 1px solid #dde5f0;
+  }
+  pre {
+    background: #f7f9fc;
+    border: 1px solid #dde5f0;
+    color: #111;
+    page-break-inside: avoid;
+  }
+  pre code { color: #111; }
+  blockquote {
+    background: #f2f8ff;
+    color: #222;
+    border-left: 3px solid #00A6FF;
+    page-break-inside: avoid;
+  }
+  table, tr, td, th { page-break-inside: avoid; }
+  th { background: #eaf4ff; color: #0A1628; }
+  tbody tr:nth-child(even) td { background: #fafcff; }
+  img { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <header class="brand">
+    <div class="logo">TAIYKA</div>
+    <div class="handle">@manu_ai.to</div>
+  </header>
+  <main>
+<h1>Guide d'installation — Smart Prospect Audit Funnel (FR)</h1>
+<blockquote>Ce guide est écrit pour un owner d'agence qui sait câbler un workflow n8n et déployer une page statique. Compte 60 à 90 minutes pour avoir le funnel en production, customisation comprise.</blockquote>
+<hr>
+<h2>Comptes requis</h2>
+<p>Avant de commencer, assure-toi d'avoir un accès actif aux services suivants :</p>
+<ul><li><strong>n8n</strong> — cloud (n8n.io) ou self-hosted, peu importe. Le workflow utilise des nodes natifs uniquement, aucune dépendance externe.</li><li><strong>Anthropic</strong> — clé API depuis <a href="https://console.anthropic.com">console.anthropic.com</a>. Prévois 5€ de crédit minimum pour les tests.</li><li><strong>Google Workspace</strong> — un compte Google avec accès Sheets + Gmail. Tu peux utiliser un compte perso, mais on recommande un compte dédié à ton agence.</li><li><strong>Calendly</strong> — un type d'event configuré (30 min, qualification call). Tu auras besoin de l'URL publique du type d'event.</li><li><strong>Un hébergeur statique</strong> pour le formulaire — Vercel, Netlify, Cloudflare Pages ou ton propre site WordPress avec un plugin HTML.</li></ul>
+<hr>
+<h2>Étape 1 — Importer le workflow n8n (5 min)</h2>
+<ol><li>Ouvre ton instance n8n.</li><li>Crée un nouveau workflow vide : <strong>+ Add workflow</strong>.</li><li>Clique sur le menu (trois points en haut à droite) → <strong>Import from File</strong>.</li><li>Sélectionne <code>source/n8n-workflow.json</code>.</li><li>Tu dois voir 9 nodes apparaître, connectés en trois branches après "Parse + format" (Sheets / Gmail / Respond to form).</li></ol>
+<p>Si l'import échoue : vérifie que ta version n8n est au minimum 1.50. Le workflow utilise <code>typeVersion 3.4+</code> sur les nodes Set.</p>
+<hr>
+<h2>Étape 2 — Configurer les credentials (15 min)</h2>
+<p>Tu as <strong>5 credentials</strong> à câbler. Ouvre chaque node et remplace les placeholders <code>PASTE_YOUR_*_HERE</code>.</p>
+<h3>2.1 — Node "Config"</h3>
+<p>Édite les valeurs directement dans le node Set (pas besoin de créer un credential n8n) :</p>
+<table><thead><tr><th>Champ</th><th>À remplir avec</th></tr></thead><tbody><tr><td><code>anthropic_api_key</code></td><td>Ta clé API Anthropic (<code>sk-ant-...</code>)</td></tr><tr><td><code>claude_model</code></td><td>Laisse <code>claude-sonnet-4-6</code> ou bascule sur <code>claude-haiku-4-5</code> pour économiser</td></tr><tr><td><code>agency_name</code></td><td>Le nom de ton agence (ex: "Taiyka")</td></tr><tr><td><code>agency_vertical</code></td><td>Le vertical que tu sers (ex: "e-commerce DTC brands")</td></tr><tr><td><code>calendly_url</code></td><td>L'URL publique de ton type d'event Calendly</td></tr><tr><td><code>notification_email</code></td><td>Ton email où tu veux recevoir le debrief</td></tr><tr><td><code>google_sheet_id</code></td><td>L'ID de ton spreadsheet (dans l'URL : <code>docs.google.com/spreadsheets/d/SHEET_ID/edit</code>)</td></tr></tbody></table>
+<h3>2.2 — Google Sheets credential</h3>
+<ol><li>Crée un spreadsheet Google avec un onglet nommé exactement <strong><code>prospects</code></strong>.</li><li>Ajoute la ligne d'en-tête suivante en première ligne (copie-colle telle quelle) : ``<code> submitted_at | full_name | contact_email | contact_phone | company_name | company_size | industry | bottleneck | hours_wasted_weekly | tech_stack | ai_familiarity | budget_monthly | decision_authority | timeline | slot_intent | qualification_score | qualification_reason | summary | top_solutions_json </code>``</li><li>Dans n8n : Settings → Credentials → New → Google Sheets OAuth2.</li><li>Suis le wizard (utilise un projet Google Cloud dédié — autorise l'API Sheets).</li><li>Connecte le credential au node "Log to Google Sheets".</li></ol>
+<h3>2.3 — Gmail credential</h3>
+<ol><li>Dans n8n : Settings → Credentials → New → Gmail OAuth2.</li><li>Active l'API Gmail dans le même projet Google Cloud que pour Sheets.</li><li>Connecte le credential au node "Email debrief".</li></ol>
+<hr>
+<h2>Étape 3 — Customiser le prompt Claude pour ton vertical (15 min)</h2>
+<p>C'est l'étape qui sépare un funnel générique d'un funnel qui ferme des deals.</p>
+<ol><li>Ouvre le node <strong>"Build Claude prompt"</strong> (code node).</li><li>Dans le code JS, cherche la constante <code>system</code>. C'est là que vit le system prompt.</li><li>Édite trois zones :</li><li><code># IDENTITY</code> — déjà templated, n'y touche pas sauf pour ajuster le ton.</li><li><code># CONSTRAINTS</code> — ajoute 2-3 règles spécifiques à ton vertical. Exemples :</li><li>E-commerce : <code>Privilégie les solutions branchées sur Shopify, Klaviyo, ou Gorgias.</code></li><li>Cabinets d'avocats : <code>Ne jamais proposer d'automatisations qui touchent au conseil juridique. Cible le back-office (facturation, suivi des dossiers, calendrier).</code></li><li><strong>(Optionnel)</strong> Ajoute une section <code># QUALIFICATION RUBRIC</code> avec tes propres seuils budgétaires. Le template par défaut est dans <code>source/claude-prompt-template.md</code>.</li><li>Sauvegarde le node.</li></ol>
+<p>Astuce : avant de modifier, lance le workflow avec un faux prospect (étape 7) pour voir comment Claude répond avec le prompt par défaut. Ça te donne une baseline.</p>
+<hr>
+<h2>Étape 4 — Customiser le formulaire (10 min)</h2>
+<p>Le fichier <code>source/audit-form-template.html</code> est ton point de départ. Ouvre-le dans un éditeur de texte.</p>
+<p><strong>À adapter au minimum :</strong></p>
+<ol><li>La balise <code>&lt;title&gt;</code> — mets le nom de ton agence.</li><li>Le <code>&lt;h1&gt;</code> "Free Automation Audit" — ajuste si tu veux un wording plus accrocheur.</li><li>Les questions optionnelles — tu peux retirer la question 13 (téléphone) si ton vertical ne le demande pas, mais ne touche pas aux 10 premières, le prompt Claude les attend.</li></ol>
+<p><strong>À adapter selon ton positionnement :</strong></p>
+<ul><li>Si tu vises un vertical précis, ajoute une question 15 du type "Quel est ton objectif business le plus important sur 6 mois ?". N'oublie pas de l'ajouter aussi dans le node <code>Normalize answers</code> et dans le prompt Claude.</li><li>Si tu veux changer les couleurs : le fichier utilise Tailwind via CDN. Cherche <code>bg-[#0A1628]</code> et remplace par tes propres codes hex.</li></ul>
+<hr>
+<h2>Étape 5 — Connecter Calendly (5 min)</h2>
+<ol><li>Va sur <a href="https://calendly.com">calendly.com</a> → Event Types → ton event "Qualification Call".</li><li>Copie l'URL publique (format : <code>https://calendly.com/ton-handle/30min</code>).</li><li>Colle-la dans le champ <code>calendly_url</code> du node "Config" (cf. étape 2.1).</li><li><strong>Optionnel mais recommandé :</strong> active les redirections post-booking de Calendly pour pointer vers une page "Merci" sur ton site. Ça améliore l'attribution.</li></ol>
+<hr>
+<h2>Étape 6 — Déployer le formulaire (15 min)</h2>
+<h3>Option A — Vercel (recommandé)</h3>
+<ol><li>Crée un dossier <code>audit-funnel</code> sur ta machine.</li><li>Mets-y <code>index.html</code> (ton <code>audit-form-template.html</code> customisé).</li><li>Lance <code>npx vercel</code> à la racine, suis les prompts.</li><li>Vercel te donne une URL en <code>*.vercel.app</code>. Tu peux la mapper sur ton propre domaine (<code>audit.tonagence.com</code>).</li></ol>
+<h3>Option B — Netlify Drop</h3>
+<ol><li>Va sur <a href="https://app.netlify.com/drop">app.netlify.com/drop</a>.</li><li>Drag-and-drop ton fichier HTML.</li><li>Récupère l'URL.</li></ol>
+<h3>Option C — Embed dans WordPress / Webflow</h3>
+<p>Utilise un block "Custom HTML" et colle le contenu complet du fichier. Vérifie que ton thème ne strip pas le <code>&lt;script&gt;</code> à la fin.</p>
+<p><strong>Dans tous les cas :</strong> remplace la constante <code>WEBHOOK_URL</code> (en haut du <code>&lt;script&gt;</code> dans le HTML) par l'URL de production de ton webhook n8n (Webhook node → "Production URL").</p>
+<hr>
+<h2>Étape 7 — Test end-to-end (10 min)</h2>
+<ol><li>Active le workflow dans n8n (toggle en haut à droite).</li><li>Ouvre le formulaire déployé.</li><li>Remplis-le avec des données réalistes (ton entreprise ou une fake plausible).</li><li>Soumets. Tu dois :</li><li>Voir une animation de loading pendant 15-30 secondes.</li><li>Recevoir la réponse avec une liste de solutions et le bouton Calendly.</li><li>Recevoir l'email debrief dans ton inbox (<code>notification_email</code>).</li><li>Voir une nouvelle ligne dans ton Google Sheet <code>prospects</code>.</li></ol>
+<p>Si l'un des 4 manque, va voir les logs d'exécution dans n8n (Executions tab).</p>
+<hr>
+<h2>Étape 8 — Mise en production (5 min)</h2>
+<ol><li>Vérifie que ton workflow est bien sur <strong>Production URL</strong> (pas Test).</li><li>Désactive le mode test du webhook.</li><li>Ajoute l'URL du formulaire à ta bio Instagram, dans tes signatures email, dans tes lead magnets.</li><li>Suis les conversions dans le Google Sheet — la colonne <code>qualification_score</code> te dit en un coup d'œil quels prospects valent un call.</li></ol>
+<hr>
+<h2>Troubleshooting</h2>
+<table><thead><tr><th>Symptôme</th><th>Cause probable</th><th>Fix</th></tr></thead><tbody><tr><td>Le formulaire reste bloqué sur "Analyzing…"</td><td>Le webhook n'est pas accessible publiquement ou le workflow n'est pas actif</td><td>Active le workflow, vérifie l'URL Production dans le node Webhook</td></tr><tr><td>Email debrief jamais reçu</td><td>Credential Gmail mal configuré ou Gmail OAuth pas autorisé</td><td>Reconnecte le credential, teste avec une exécution manuelle</td></tr><tr><td>"qualification<em>score: 0" et "parse</em>error" partout</td><td>Claude renvoie du Markdown au lieu de JSON pur</td><td>Vérifie que ton system prompt force bien "Return STRICT JSON, no prose around it"</td></tr><tr><td>Google Sheets pas mis à jour</td><td>Mauvais <code>google_sheet_id</code>, mauvais nom d'onglet, ou en-têtes manquants</td><td>Vérifie l'ID dans l'URL du Sheet, vérifie l'orthographe exacte de l'onglet <code>prospects</code></td></tr><tr><td>HTTP 529 / rate limited from Anthropic</td><td>Ton plan Anthropic est saturé</td><td>Ajoute un retry dans le node "Call Claude" (Settings → Retry on fail) ou upgrade ton plan</td></tr><tr><td>Le prompt Claude répond toujours en anglais alors que mes prospects sont francophones</td><td>Auto-detection rate insuffisante</td><td>Ajoute dans le system prompt : <code>Reply ONLY in French.</code></td></tr></tbody></table>
+<hr>
+<h2>Pour aller plus loin</h2>
+<ul><li>Branche un node <strong>Slack</strong> après "Parse + format" pour ping ton commercial en direct sur les prospects au-dessus de 80/100.</li><li>Branche un node <strong>HubSpot/Pipedrive</strong> pour créer automatiquement un deal qualifié.</li><li>Si tu reçois &gt;50 audits/mois, switch le modèle de <code>claude-sonnet-4-6</code> vers <code>claude-haiku-4-5</code> pour diviser le coût par 5 (qualité reste correcte sur ce use case structuré).</li></ul>
+<p>Tu bloques quelque part ? Réponds à l'email de livraison Gumroad.</p>
+  </main>
+  <footer><p>© Taiyka — manu_ai.to</p></footer>
+</body>
+</html>

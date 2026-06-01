@@ -16,12 +16,14 @@ Approved plan: `C:/Users/yoanu/.claude/plans/quiet-stirring-goose.md`
 |---|---|---|---|---|---|
 | 0 | 5 n8n Workflows pour Entrepreneurs IA | [free-n8n-pack](products/free-n8n-pack/) | Free | 🟢 ready | ✅ |
 | 0 | Claude Code Starter Pack | [free-claude-starter](products/free-claude-starter/) | Free | 🟢 ready | ✅ |
+| 0 | Email Triage Agent (Skool welcome gift) | [email-triage-agent](products/email-triage-agent/) | Free | 🟢 ready | — |
 | 1 | n8n Pack: Cold Outreach | [cold-outreach-pack](products/cold-outreach-pack/) | 19€ | 🟢 ready | ✅ |
 | 1 | Notion: Solopreneur AI Stack (spec) | [notion-ai-stack](products/notion-ai-stack/) | 15€ | 🟢 ready | ✅ |
 | 1 | 50 Prompts pour Automatiser ton Business | [prompt-pack-50](products/prompt-pack-50/) | 12€ | 🟢 ready | ✅ |
 | 2 | Competitor Intelligence System | [competitor-intel](products/competitor-intel/) | 49€ | 🟢 ready | ✅ |
 | 2 | Client Acquisition Bundle | [client-acquisition-bundle](products/client-acquisition-bundle/) | 39€ | 🟢 ready | ✅ |
 | 2 | Build Your First AI Agent | [ai-agent-playbook](products/ai-agent-playbook/) | 29€ | 🟢 ready | ✅ |
+| 2 | Smart Prospect Audit Funnel | [prospect-audit-funnel](products/prospect-audit-funnel/) | 49€ | 🟡 draft | — |
 | 3 | Skool community | — | TBD | 🟡 to launch | — |
 
 Each product folder contains:

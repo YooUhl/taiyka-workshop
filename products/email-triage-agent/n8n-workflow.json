@@ -1,0 +1,173 @@
+{
+  "name": "Email Triage Agent — Daily Gmail Digest (Claude)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "id": "etr-node-01",
+      "name": "Every day at 8h"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "etr-cfg-01", "name": "anthropic_api_key", "value": "PASTE_YOUR_ANTHROPIC_API_KEY_HERE", "type": "string" },
+            { "id": "etr-cfg-02", "name": "claude_model", "value": "claude-haiku-4-5", "type": "string" },
+            { "id": "etr-cfg-03", "name": "digest_recipient_email", "value": "PASTE_YOUR_EMAIL_HERE", "type": "string" },
+            { "id": "etr-cfg-04", "name": "batch_size", "value": 25, "type": "number" },
+            { "id": "etr-cfg-05", "name": "max_emails_per_run", "value": 50, "type": "number" }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 0],
+      "id": "etr-node-02",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 50,
+        "filters": {
+          "q": "newer_than:1d"
+        },
+        "options": {
+          "format": "full"
+        },
+        "simple": true
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [440, 0],
+      "id": "etr-node-03",
+      "name": "Gmail — last 24h",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PASTE_YOUR_GMAIL_CRED_ID_HERE",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Gmail items into a clean array the LLM can chew.\nconst items = $input.all();\nconst cfg = $('Config').first().json;\nconst maxEmails = Number(cfg.max_emails_per_run) || 50;\n\nconst safe = (v, fallback = '') => (v === undefined || v === null) ? fallback : String(v).trim();\n\nfunction parseFrom(rawFrom) {\n  const s = safe(rawFrom);\n  const match = s.match(/^\\s*\"?([^\"<]*?)\"?\\s*<([^>]+)>\\s*$/);\n  if (match) return { name: match[1].trim() || match[2], email: match[2].trim() };\n  return { name: s, email: s };\n}\n\nfunction pickSnippet(item) {\n  if (item.snippet) return safe(item.snippet);\n  if (item.text) return safe(item.text);\n  if (item.html) return safe(item.html).replace(/<[^>]+>/g, ' ');\n  return '';\n}\n\nconst normalized = items.slice(0, maxEmails).map((it, i) => {\n  const j = it.json || {};\n  const headers = j.payload?.headers || [];\n  const get = (n) => (headers.find(h => h.name?.toLowerCase() === n.toLowerCase())?.value) || '';\n  const fromRaw = safe(j.from) || get('From');\n  const subject = safe(j.subject) || get('Subject') || '(no subject)';\n  const dateRaw = safe(j.date) || get('Date') || new Date().toISOString();\n  const snippet = pickSnippet(j).slice(0, 300);\n  const { name, email } = parseFrom(fromRaw);\n  return {\n    idx: i,\n    id: safe(j.id, ''),\n    threadId: safe(j.threadId, ''),\n    from_email: email,\n    from_name: name,\n    subject,\n    snippet,\n    date: dateRaw\n  };\n});\n\nreturn [{ json: { emails: normalized, total: normalized.length } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0],
+      "id": "etr-node-04",
+      "name": "Normalize emails"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build batched prompt for Claude — one item per chunk of batch_size emails.\nconst cfg = $('Config').first().json;\nconst batchSize = Number(cfg.batch_size) || 25;\nconst { emails } = $input.item.json;\n\nif (!emails || emails.length === 0) {\n  return [{ json: { _skip: true, emails: [], total: 0 } }];\n}\n\nconst system = `# IDENTITY\nYou are an email triage agent. You classify emails for a busy entrepreneur into one of four categories and assign each a priority.\n\n# CATEGORIES\n- \"client\"   : an existing paying customer or active project contact\n- \"prospect\" : a new lead, sales enquiry, cold outreach, or warm intro\n- \"admin\"    : invoices, banking, tax, government, infrastructure alerts, scheduling, calendar invites, anything operational\n- \"junk\"     : newsletters, marketing, promo, social notifications, automated nags, anything ignorable\n\n# PRIORITY\n- 3 : reply today, time-sensitive or high-value\n- 2 : reply this week\n- 1 : low urgency, FYI, can wait or be archived\n\n# OUTPUT FORMAT\nReturn STRICT JSON, no prose around it. An array, one object per input email, in the same order, schema:\n[\n  { \"idx\": <integer>, \"category\": \"client|prospect|admin|junk\", \"priority\": 1|2|3, \"reason\": \"<8 words max>\" }\n]\n\n# RULES\n- Always return exactly one object per input email.\n- Never invent fields. Never wrap in markdown fences.\n- If unsure, default to \"admin\" with priority 1.`;\n\nconst batches = [];\nfor (let i = 0; i < emails.length; i += batchSize) {\n  batches.push(emails.slice(i, i + batchSize));\n}\n\nreturn batches.map((batch) => {\n  const userPrompt = `# EMAILS TO CLASSIFY\\n${batch.map(e => `---\\nidx: ${e.idx}\\nfrom: ${e.from_name} <${e.from_email}>\\nsubject: ${e.subject}\\nsnippet: ${e.snippet}`).join('\\n')}\\n---\\n\\nReturn the JSON array now.`;\n  return {\n    json: {\n      _claude_system: system,\n      _claude_user: userPrompt,\n      batch_emails: batch\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 0],
+      "id": "etr-node-05",
+      "name": "Build Claude batch prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $('Config').first().json.anthropic_api_key }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"{{ $('Config').first().json.claude_model }}\",\n  \"max_tokens\": 2000,\n  \"system\": {{ JSON.stringify($json._claude_system) }},\n  \"messages\": [\n    { \"role\": \"user\", \"content\": {{ JSON.stringify($json._claude_user) }} }\n  ]\n}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 0],
+      "id": "etr-node-06",
+      "name": "Call Claude"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude's reply, merge classifications back into the original email objects.\nconst response = $input.item.json;\nconst raw = (response?.content?.[0]?.text || '').trim();\nconst batchEmails = $input.item.json.batch_emails || $('Build Claude batch prompt').item.json.batch_emails || [];\n\nfunction extractJsonArray(s) {\n  if (!s) return null;\n  const fenced = s.match(/```(?:json)?\\s*([\\s\\S]*?)```/);\n  const candidate = (fenced ? fenced[1] : s).trim();\n  try { return JSON.parse(candidate); } catch (e) { /* fall through */ }\n  const arrayMatch = candidate.match(/\\[[\\s\\S]*\\]/);\n  if (arrayMatch) {\n    try { return JSON.parse(arrayMatch[0]); } catch (e) { return null; }\n  }\n  return null;\n}\n\nconst classified = extractJsonArray(raw) || [];\nconst byIdx = new Map(classified.map(c => [Number(c.idx), c]));\n\nconst merged = batchEmails.map((e) => {\n  const c = byIdx.get(Number(e.idx)) || { category: 'admin', priority: 1, reason: 'parse_fallback' };\n  return {\n    ...e,\n    category: ['client', 'prospect', 'admin', 'junk'].includes(c.category) ? c.category : 'admin',\n    priority: [1, 2, 3].includes(Number(c.priority)) ? Number(c.priority) : 1,\n    reason: String(c.reason || '').slice(0, 80)\n  };\n});\n\nreturn merged.map(json => ({ json }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 0],
+      "id": "etr-node-07",
+      "name": "Parse Claude reply"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate, group by category, sort each group by priority + date desc.\nconst items = $input.all().map(i => i.json);\n\nconst groups = { client: [], prospect: [], admin: [], junk: [] };\nfor (const e of items) {\n  if (groups[e.category]) groups[e.category].push(e);\n}\n\nfor (const cat of Object.keys(groups)) {\n  groups[cat].sort((a, b) => {\n    if (b.priority !== a.priority) return b.priority - a.priority;\n    return new Date(b.date).getTime() - new Date(a.date).getTime();\n  });\n}\n\nconst total = items.length;\nconst counts = {\n  client: groups.client.length,\n  prospect: groups.prospect.length,\n  admin: groups.admin.length,\n  junk: groups.junk.length\n};\n\nreturn [{ json: { groups, counts, total } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1540, 0],
+      "id": "etr-node-08",
+      "name": "Group + sort"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the final HTML digest email — brand-aligned Taiyka.\nconst { groups, counts, total } = $input.item.json;\n\nconst today = new Date().toLocaleDateString('fr-FR', {\n  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'\n});\n\nconst CATEGORY_META = {\n  client:   { label: 'Clients',   icon: '🔴', color: '#ff6b6b' },\n  prospect: { label: 'Prospects', icon: '🟡', color: '#ffd43b' },\n  admin:    { label: 'Admin',     icon: '📋', color: '#00A6FF' },\n  junk:     { label: 'Junk',      icon: '🗑️', color: '#868e96' }\n};\n\nfunction escapeHtml(s) {\n  return String(s || '').replace(/[&<>\"']/g, m => ({\n    '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;'\n  }[m]));\n}\n\nfunction renderSection(catKey) {\n  const meta = CATEGORY_META[catKey];\n  const list = (groups[catKey] || []).slice(0, 5);\n  const count = counts[catKey] || 0;\n\n  const rows = list.map(e => {\n    const subj = escapeHtml(e.subject);\n    const from = escapeHtml(e.from_name || e.from_email);\n    const reason = escapeHtml(e.reason);\n    const mailto = `mailto:${encodeURIComponent(e.from_email)}?subject=${encodeURIComponent('Re: ' + e.subject)}`;\n    const dot = '•'.repeat(e.priority);\n    return `<tr><td style=\"padding:8px 6px;border-bottom:1px solid #1a2a4a;color:${meta.color};font-weight:700;font-size:12px;vertical-align:top;\">${dot}</td><td style=\"padding:8px 6px;border-bottom:1px solid #1a2a4a;vertical-align:top;\"><a href=\"${mailto}\" style=\"color:#00E5FF;text-decoration:none;font-weight:600;\">${subj}</a><div style=\"color:#9aa4b2;font-size:12px;margin-top:2px;\">${from} · ${reason}</div></td></tr>`;\n  }).join('');\n\n  return `<div style=\"margin:24px 0;\"><h2 style=\"color:#FFFFFF;font-size:18px;margin:0 0 8px 0;\">${meta.icon} ${meta.label} <span style=\"color:${meta.color};font-weight:400;font-size:14px;margin-left:6px;\">(${count})</span></h2>${count === 0 ? `<p style=\"color:#9aa4b2;font-size:14px;margin:4px 0;\">Aucun email dans cette catégorie.</p>` : `<table style=\"width:100%;border-collapse:collapse;background:#0A1628;border-radius:8px;\">${rows}</table>`}</div>`;\n}\n\nconst html = `<div style=\"font-family:Inter,Arial,sans-serif;max-width:680px;margin:0 auto;background:#0A1628;color:#FFFFFF;padding:32px;border-radius:16px;\"><div style=\"border-bottom:2px solid #00A6FF;padding-bottom:16px;margin-bottom:16px;\"><h1 style=\"color:#FFFFFF;font-size:22px;margin:0;\">Triage du ${escapeHtml(today)}</h1><p style=\"color:#9aa4b2;font-size:14px;margin:6px 0 0 0;\">${total} email${total > 1 ? 's' : ''} sur les 24 dernières heures · ${counts.client} clients · ${counts.prospect} prospects · ${counts.admin} admin · ${counts.junk} junk</p></div>${['client', 'prospect', 'admin', 'junk'].map(renderSection).join('')}<div style=\"margin-top:32px;padding-top:16px;border-top:1px solid #1a2a4a;color:#6c757d;font-size:12px;text-align:center;\">Powered by Taiyka · Skool community welcome gift</div></div>`;\n\nreturn [{ json: { html, total, counts } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1760, 0],
+      "id": "etr-node-09",
+      "name": "Format summary email"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Config').first().json.digest_recipient_email }}",
+        "subject": "=Triage du jour — {{ $json.total }} mails dans ta boîte",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1980, 0],
+      "id": "etr-node-10",
+      "name": "Send digest",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PASTE_YOUR_GMAIL_CRED_ID_HERE",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Every day at 8h":          { "main": [[{ "node": "Config", "type": "main", "index": 0 }]] },
+    "Config":                   { "main": [[{ "node": "Gmail — last 24h", "type": "main", "index": 0 }]] },
+    "Gmail — last 24h":         { "main": [[{ "node": "Normalize emails", "type": "main", "index": 0 }]] },
+    "Normalize emails":         { "main": [[{ "node": "Build Claude batch prompt", "type": "main", "index": 0 }]] },
+    "Build Claude batch prompt":{ "main": [[{ "node": "Call Claude", "type": "main", "index": 0 }]] },
+    "Call Claude":              { "main": [[{ "node": "Parse Claude reply", "type": "main", "index": 0 }]] },
+    "Parse Claude reply":       { "main": [[{ "node": "Group + sort", "type": "main", "index": 0 }]] },
+    "Group + sort":             { "main": [[{ "node": "Format summary email", "type": "main", "index": 0 }]] },
+    "Format summary email":     { "main": [[{ "node": "Send digest", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "staticData": null
+}
