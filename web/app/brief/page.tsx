@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import BriefSignupForm from "@/components/BriefSignupForm";
+import SampleIssuePreview from "@/components/SampleIssuePreview";
 import { withLang } from "@/lib/lang-utils";
 
 type Lang = "fr" | "en";
@@ -25,6 +26,8 @@ type Copy = {
   feature2: string;
   feature3: string;
   featureMeta: string;
+  kickerSample: string;
+  sampleLead: string;
   kickerSignup: string;
   signupLead: string;
   footerRights: string;
@@ -54,6 +57,8 @@ const COPY: Record<Lang, Copy> = {
     feature3:
       "Un outil ou workflow concret à tester quand c'est pertinent.",
     featureMeta: "Pas de pitch. Pas de pub. Pas de spam.",
+    kickerSample: "EXEMPLE · UN NUMÉRO",
+    sampleLead: "Voilà à quoi ressemble un matin dans ta boîte.",
     kickerSignup: "S'INSCRIRE",
     signupLead: "Entre ton email. Premier numéro demain matin, 7h.",
     footerRights: "Tous droits réservés.",
@@ -81,6 +86,8 @@ const COPY: Record<Lang, Copy> = {
     feature3:
       "A concrete tool or workflow to try when it's relevant.",
     featureMeta: "No pitch. No ads. No spam.",
+    kickerSample: "SAMPLE · ONE ISSUE",
+    sampleLead: "Here's what one morning looks like in your inbox.",
     kickerSignup: "SIGN UP",
     signupLead: "Drop your email. First issue tomorrow morning, 7am.",
     footerRights: "All rights reserved.",
@@ -182,14 +189,17 @@ export default async function BriefLandingPage({
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
         {/* Top bar */}
-        <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase gap-3">
+        <div className="w-full flex items-center justify-between mb-14 md:mb-20 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase gap-3">
           <Link
             href={withLang("/", lang)}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
           >
             {c.topHome}
           </Link>
-          <span className="inline-flex items-center gap-2 text-muted-foreground shrink-0">
+          <span
+            className="inline-flex items-center gap-2 text-foreground/80 shrink-0"
+            style={{ textShadow: "0 0 8px rgba(10,22,40,0.9)" }}
+          >
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             {c.statusPill}
           </span>
@@ -205,16 +215,18 @@ export default async function BriefLandingPage({
         <span className="kicker">{c.kickerHero}</span>
 
         {/* H1 */}
-        <h1 className="mt-5 mb-10 md:mb-12 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.5rem,8.5vw,5rem)]">
+        <h1 className="mt-5 mb-4 md:mb-5 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.5rem,8.5vw,5rem)]">
           {c.h1Lead}{" "}
-          <span className="text-gradient-hero">{c.h1Accent}</span>{" "}
-          <span className="text-muted-foreground">{c.h1Tail}</span>
+          <span className="text-gradient-hero">{c.h1Accent}</span>
         </h1>
+        <p className="mb-12 md:mb-16 text-balance text-[0.95rem] md:text-base leading-relaxed text-muted-foreground">
+          {c.h1Tail}
+        </p>
 
-        <div className="hairline mb-12 md:mb-16" />
+        <div className="hairline mb-14 md:mb-20" />
 
         {/* Manifesto — centered */}
-        <div className="flex flex-col items-center gap-5 mb-12 md:mb-16">
+        <div className="flex flex-col items-center gap-5 mb-14 md:mb-20">
           <span className="kicker">{c.kickerManifesto}</span>
           <blockquote className="relative pt-5 max-w-[58ch] mx-auto">
             <span
@@ -231,29 +243,29 @@ export default async function BriefLandingPage({
         </div>
 
         {/* What's inside — centered stack (no hairline above; merged with manifesto block) */}
-        <div className="flex flex-col items-center gap-6 mb-12 md:mb-16">
+        <div className="flex flex-col items-center gap-6 mb-14 md:mb-20">
           <span className="kicker">{c.kickerInside}</span>
           <div className="flex flex-col items-center gap-4 max-w-[58ch]">
             <div className="flex flex-col items-center gap-1">
-              <span className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70">01</span>
+              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/80">01</span>
               <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
                 {c.feature1}
               </p>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <span className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70">02</span>
+              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/80">02</span>
               <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
                 {c.feature2}
               </p>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <span className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70">03</span>
+              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/80">03</span>
               <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
                 {c.feature3}
               </p>
             </div>
             <div className="flex flex-col items-center gap-1">
-              <span className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70">—</span>
+              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70">—</span>
               <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground">
                 {c.featureMeta}
               </p>
@@ -261,7 +273,16 @@ export default async function BriefLandingPage({
           </div>
         </div>
 
-        <div className="hairline mb-12 md:mb-16" />
+        {/* Sample issue preview — visual proof of format before sign up */}
+        <div className="flex flex-col items-center gap-6 mb-14 md:mb-20">
+          <span className="kicker">{c.kickerSample}</span>
+          <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground max-w-[50ch]">
+            {c.sampleLead}
+          </p>
+          <SampleIssuePreview lang={lang} />
+        </div>
+
+        <div className="hairline mb-14 md:mb-20" />
 
         {/* CTA — centered. Form fields keep their own left text alignment via component. */}
         <div className="flex flex-col items-center gap-6 mb-8">
