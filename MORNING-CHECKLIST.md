@@ -138,6 +138,64 @@ Tu auras une URL en `.vercel.app`. Achète le domaine après si besoin (taiyka.c
 
 ---
 
+## 👥 Repo public + handoff dev (NEW)
+
+Le repo est **public sur GitHub** : https://github.com/YooUhl/taiyka-workshop
+
+L'historique a été réécrit pour retirer `tools/scrub-credentials.py` (qui embarquait des vrais secrets en regex). Les clés concernées (Google Maps, Apify token, 2 Sheet IDs, ref Supabase) sont **à rotater** dans leurs dashboards respectifs :
+
+- Google Cloud Console → API key `AIzaSyABYl...` → Regenerate
+- Apify Console → token `apify_api_dLHV...` (key `_NICOLAS` dans global.env) → Revoke + new
+- Supabase → projet `ylvkvlzq...` → rotate `service_role_key` si exposé
+- Google Sheets → vérifier les permissions sur les 2 Sheet IDs leakés (les retirer du public si applicable)
+
+### Onboarding du dev (à lui forwarder)
+
+```
+git clone https://github.com/YooUhl/taiyka-workshop.git
+cd taiyka-workshop
+
+# 1. Lire dans l'ordre :
+#    - CLAUDE.md (règles projet)
+#    - web/AGENTS.md (Next.js 16 breaking changes — IMPORTANT)
+#    - funnel/n8n-workflows/README-ai-news.md (pipeline newsletter)
+#    - C:/Users/yoanu/.claude/plans/we-need-to-work-parallel-kay.md
+#      (plan de la dernière session — workflow non encore importé)
+
+# 2. Setup web
+cp web/.env.local.example web/.env.local
+# Remplir avec ses propres clés Supabase / DATABASE_URL / LEADMAGNET_WEBHOOK_URL
+cd web && npm install && npm run dev
+# Page hub sur http://localhost:3000 ; newsletter sur /brief
+
+# 3. Setup n8n (pour bosser sur la newsletter)
+# Importer dans son propre n8n :
+#   funnel/n8n-workflows/ai-news-daily.json
+#   funnel/n8n-workflows/brief-unsubscribe.json
+#   funnel/n8n-workflows/lead-magnet-delivery.json
+# Mapper credentials Gmail + Google Sheets + Anthropic + Apify
+# Suivre README-ai-news.md pour les env vars + sheet ID
+```
+
+### Fichiers clés newsletter (par où commencer)
+
+- `web/app/brief/page.tsx` — landing newsletter (FR/EN)
+- `web/components/SampleIssuePreview.tsx` — aperçu visuel d'un numéro (doit matcher le rendu email)
+- `funnel/n8n-workflows/ai-news-daily.json` — workflow quotidien (nœud `Render Email HTML` = source du template)
+- `funnel/n8n-workflows/send_test_brief.py` — script Python pour preview email local
+- `funnel/n8n-workflows/README-ai-news.md` — doc opérateur complète
+
+### Statut newsletter au moment du handoff
+
+- ✅ Page `/brief` shippée avec sample preview
+- ✅ Page `/brief/unsubscribe` shippée (RGPD)
+- ✅ Workflow `ai-news-daily.json` codé mais **non importé** dans n8n
+- ✅ Workflow `brief-unsubscribe.json` codé mais **non importé**
+- ✅ Test email envoyé une fois (preview HTML ouvert dans navigateur)
+- ⏳ Manu (toi) avait demandé une pause newsletter pour rassembler une **punch list d'améliorations email** avant la prochaine vague dev
+
+---
+
 ## 🐛 Si quelque chose casse
 
 - **Site ne build pas :** `cd web && rm -rf .next && npm run build`
