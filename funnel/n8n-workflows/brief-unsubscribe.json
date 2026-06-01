@@ -1,0 +1,100 @@
+{
+  "name": "Taiyka — Brief Unsubscribe",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "brief-unsubscribe",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "uns-001",
+      "name": "Webhook (Unsubscribe Request)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 400]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "u-1",
+              "name": "email",
+              "value": "={{ ($json.body.email || '').toLowerCase().trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "u-2",
+              "name": "unsubscribed_at",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "uns-002",
+      "name": "Normalize Email",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_YOUR_LEADS_SHEET_ID_HERE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $json.email }}",
+            "status": "unsubscribed",
+            "unsubscribed_at": "={{ $json.unsubscribed_at }}"
+          },
+          "matchingColumns": ["email"]
+        },
+        "options": {}
+      },
+      "id": "uns-003",
+      "name": "Flag Row Unsubscribed",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [680, 400],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REPLACE_WITH_YOUR_SHEETS_CREDENTIAL_ID",
+          "name": "Google Sheets"
+        }
+      },
+      "notes": "Uses appendOrUpdate matching on email. Make sure the leads sheet has a 'status' and 'unsubscribed_at' column (add if missing). New unknown emails create a row with status=unsubscribed only (safe no-op)."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"ok\", \"email\": \"{{ $('Normalize Email').item.json.email }}\" }",
+        "options": {}
+      },
+      "id": "uns-004",
+      "name": "Respond OK",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "Webhook (Unsubscribe Request)": { "main": [[{ "node": "Normalize Email", "type": "main", "index": 0 }]] },
+    "Normalize Email": { "main": [[{ "node": "Flag Row Unsubscribed", "type": "main", "index": 0 }]] },
+    "Flag Row Unsubscribed": { "main": [[{ "node": "Respond OK", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "newsletter" }, { "name": "rgpd" }, { "name": "taiyka" }]
+}
