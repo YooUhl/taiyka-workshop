@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Fragment } from "react";
 import type { Metadata } from "next";
+import type { LucideIcon } from "lucide-react";
+import { Phone, Download, Users, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { withLang } from "@/lib/lang-utils";
 
@@ -9,7 +11,7 @@ type Lang = "fr" | "en";
 type ButtonSpec = {
   label: string;
   href: string;
-  index: string;
+  icon: LucideIcon;
   primary?: boolean;
 };
 
@@ -38,10 +40,10 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "EN",
     langSwitchHref: "/?lang=en",
     buttons: [
-      { label: "Réserver un appel", href: withLang("/book", "fr"), index: "APPEL", primary: true },
-      { label: "Ressources gratuites", href: withLang("/resources", "fr"), index: "01" },
-      { label: "Mon Skool", href: withLang("/skool", "fr"), index: "02" },
-      { label: "Ma boutique", href: withLang("/shop", "fr"), index: "03" },
+      { label: "Réserver un appel", href: withLang("/book", "fr"), icon: Phone, primary: true },
+      { label: "Ressources gratuites", href: withLang("/resources", "fr"), icon: Download },
+      { label: "Mon Skool", href: withLang("/skool", "fr"), icon: Users },
+      { label: "Ma boutique", href: withLang("/shop", "fr"), icon: ShoppingBag },
     ],
   },
   en: {
@@ -54,10 +56,10 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "FR",
     langSwitchHref: "/?lang=fr",
     buttons: [
-      { label: "Book a call", href: withLang("/book", "en"), index: "CALL", primary: true },
-      { label: "Free resources", href: withLang("/resources", "en"), index: "01" },
-      { label: "My Skool", href: withLang("/skool", "en"), index: "02" },
-      { label: "My Shop", href: withLang("/shop", "en"), index: "03" },
+      { label: "Book a call", href: withLang("/book", "en"), icon: Phone, primary: true },
+      { label: "Free resources", href: withLang("/resources", "en"), icon: Download },
+      { label: "My Skool", href: withLang("/skool", "en"), icon: Users },
+      { label: "My Shop", href: withLang("/shop", "en"), icon: ShoppingBag },
     ],
   },
 };
@@ -203,22 +205,18 @@ export default async function Home({
                   <span aria-hidden className={bracketCls("lb")} />
                   <span aria-hidden className={bracketCls("rb")} />
 
-                  <span className="flex items-center gap-4">
-                    {/* Index code */}
-                    <span
+                  <span className="flex items-center gap-3">
+                    {/* Icon */}
+                    <btn.icon
+                      aria-hidden
                       className={cn(
-                        "inline-flex items-center gap-1.5 font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase shrink-0 transition-colors",
+                        "h-4 w-4 shrink-0 transition-colors",
                         btn.primary
                           ? "text-primary"
                           : "text-muted-foreground/80 group-hover:text-primary",
                       )}
-                    >
-                      <span
-                        aria-hidden
-                        className="inline-block h-1 w-1 rounded-full bg-[var(--hud-tick)] opacity-70 group-hover:opacity-100 transition-opacity"
-                      />
-                      {btn.index}
-                    </span>
+                      strokeWidth={2}
+                    />
 
                     {/* Divider hairline */}
                     <span
@@ -226,10 +224,10 @@ export default async function Home({
                       className="hidden sm:block h-px flex-1 bg-border/60 group-hover:bg-primary/40 transition-colors"
                     />
 
-                    {/* Label */}
+                    {/* Label — centered between hairlines */}
                     <span
                       className={cn(
-                        "flex-1 sm:flex-none text-left text-[0.95rem] md:text-base font-medium leading-snug transition-colors",
+                        "flex-1 sm:flex-none text-center text-[0.95rem] md:text-base font-medium leading-snug transition-colors",
                         btn.primary
                           ? "text-foreground"
                           : "text-foreground group-hover:text-primary",
