@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { COPY, type Lang } from "@/lib/skool/content";
-import SkoolClient from "./skool-client";
+import { COPY, type Lang } from "@/lib/shop/content";
+import ShopClient from "./shop-client";
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
@@ -18,15 +18,15 @@ export async function generateMetadata({
     description: c.metaDescription,
     robots: { index: false, follow: false },
     alternates: {
-      canonical: `${SITE}/skool`,
+      canonical: `${SITE}/shop`,
       languages: {
-        "fr-FR": "/skool",
-        "en-US": "/skool?lang=en",
+        "fr-FR": "/shop",
+        "en-US": "/shop?lang=en",
       },
     },
     openGraph: {
       type: "website",
-      url: `${SITE}/skool`,
+      url: `${SITE}/shop`,
       siteName: "My Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title: c.title,
@@ -35,12 +35,12 @@ export async function generateMetadata({
   };
 }
 
-export default async function SkoolPage({
+export default async function ShopPage({
   searchParams,
 }: {
   searchParams: Promise<{ lang?: string }>;
 }) {
   const sp = await searchParams;
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
-  return <SkoolClient lang={lang} />;
+  return <ShopClient lang={lang} />;
 }

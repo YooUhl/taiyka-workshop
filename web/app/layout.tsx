@@ -98,6 +98,9 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="fr" className={`${inter.variable} ${jetbrainsMono.variable} ${vt323.variable} h-full antialiased`}>
+      <head>
+        <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
+      </head>
       <body className="min-h-full flex flex-col">
         <Script id="lang-sync" strategy="beforeInteractive">
           {langSyncScript}
