@@ -19,16 +19,22 @@ function makePool(): Pool {
   });
 }
 
-export const pool: Pool = global.__pgPool ?? makePool();
-if (process.env.NODE_ENV !== "production") {
-  global.__pgPool = pool;
+// Lazy: build-time page-data collection imports this module without ever calling
+// query(), so we must not throw at module load. Pool created on first call.
+function getPool(): Pool {
+  if (global.__pgPool) return global.__pgPool;
+  const p = makePool();
+  if (process.env.NODE_ENV !== "production") {
+    global.__pgPool = p;
+  }
+  return p;
 }
 
 export async function query<T = unknown>(
   text: string,
   params: unknown[] = [],
 ): Promise<T[]> {
-  const res = await pool.query(text, params);
+  const res = await getPool().query(text, params);
   return res.rows as T[];
 }
 
