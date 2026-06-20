@@ -166,8 +166,10 @@ export async function POST(request: Request) {
       code: (err as { code?: string })?.code,
       message: err instanceof Error ? err.message : String(err),
     });
+    const detail = err instanceof Error ? err.message : String(err);
+    const code = (err as { code?: string })?.code;
     return NextResponse.json(
-      { ok: false, error: "Database insert failed." },
+      { ok: false, error: "Database insert failed.", detail, code },
       { status: 500 },
     );
   }
