@@ -14,6 +14,8 @@ type ButtonSpec = {
 type Copy = {
   h1: string;
   semanticH1: string;
+  visualLead: string;
+  visualAccent: string;
   langSwitch: string;
   langSwitchHref: string;
   buttons: ButtonSpec[];
@@ -23,8 +25,10 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
 const COPY: Record<Lang, Copy> = {
   fr: {
-    h1: "My Workshop",
-    semanticH1: "My Workshop — liens et ressources de Manu (@manu_ai.to)",
+    h1: "L'Atelier",
+    semanticH1: "L'Atelier — liens et ressources de Manu (@manu_ai.to)",
+    visualLead: "L'",
+    visualAccent: "Atelier",
     langSwitch: "EN",
     langSwitchHref: "/?lang=en",
     buttons: [
@@ -35,8 +39,10 @@ const COPY: Record<Lang, Copy> = {
     ],
   },
   en: {
-    h1: "My Workshop",
-    semanticH1: "My Workshop — Manu's links and resources (@manu_ai.to)",
+    h1: "The Workshop",
+    semanticH1: "The Workshop — Manu's links and resources (@manu_ai.to)",
+    visualLead: "The ",
+    visualAccent: "Workshop",
     langSwitch: "FR",
     langSwitchHref: "/?lang=fr",
     buttons: [
@@ -56,7 +62,10 @@ export async function generateMetadata({
   const sp = await searchParams;
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
 
-  const title = "My Workshop — Manu (@manu_ai.to)";
+  const title =
+    lang === "fr"
+      ? "L'Atelier — Manu (@manu_ai.to)"
+      : "The Workshop — Manu (@manu_ai.to)";
   const description =
     lang === "fr"
       ? "Tous mes liens : appel, ressources gratuites, communauté Skool, boutique."
@@ -75,7 +84,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: SITE,
-      siteName: "My Workshop",
+      siteName: lang === "fr" ? "L'Atelier" : "The Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title,
       description,
@@ -115,12 +124,13 @@ export default async function Home({
         {/* Semantic H1 for SEO — visually replaced by display H1 below */}
         <h1 className="sr-only">{c.semanticH1}</h1>
 
-        {/* Display H1 — "My Workshop" */}
+        {/* Display H1 — "L'Atelier" / "The Workshop" */}
         <p
           role="presentation"
           className="self-center mb-14 md:mb-16 text-center font-bold tracking-[-0.03em] leading-[1] whitespace-nowrap text-[clamp(1.75rem,8vw,3.25rem)]"
         >
-          My <span className="text-gradient-hero">Workshop</span>
+          {c.visualLead}
+          <span className="text-gradient-hero">{c.visualAccent}</span>
         </p>
 
         {/* Button stack */}
