@@ -1,10 +1,11 @@
--- IMPORTANT: run against DATABASE_URL (web/.env.local), NOT the MCP server's
--- default connection. The MCP default may point at a different Supabase project.
--- Use mcp__supabase__pg_execute_sql with explicit connectionString=$DATABASE_URL.
 -- /book qualification + booking flow
--- Run once via mcp__supabase__pg_execute_sql or pgAdmin against the same project as /tools/*.
--- Schema isolation: keeps these rows out of `calisthenics` and `content` schemas.
--- RLS stays OFF — inserts only via server-side route /api/book using DATABASE_URL pool.
+--
+-- IMPORTANT: run this migration against the DEDICATED /book Supabase project,
+-- the one whose connection string is set in BOOK_DATABASE_URL (web/.env.local).
+-- Do NOT run it against the /tools/* Supabase (Outreach Machine project).
+--
+-- RLS stays OFF — inserts only via server-side route /api/book using the
+-- BOOK_DATABASE_URL pool (web/lib/book/db.ts).
 
 create schema if not exists book;
 

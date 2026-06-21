@@ -1,6 +1,6 @@
 import "server-only";
 import { NextResponse } from "next/server";
-import { query } from "@/lib/db";
+import { BookDbNotConfigured, query } from "@/lib/book/db";
 import {
   isValidEmail,
   NAME_MAX,
@@ -162,14 +162,22 @@ export async function POST(request: Request) {
       ],
     );
   } catch (err) {
+    if (err instanceof BookDbNotConfigured) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error:
+            "Booking backend not yet configured. The form is live but submissions are paused. Please retry later or contact directly.",
+        },
+        { status: 503 },
+      );
+    }
     console.error("[/api/book] insert failed", {
       code: (err as { code?: string })?.code,
       message: err instanceof Error ? err.message : String(err),
     });
-    const detail = err instanceof Error ? err.message : String(err);
-    const code = (err as { code?: string })?.code;
     return NextResponse.json(
-      { ok: false, error: "Database insert failed.", detail, code },
+      { ok: false, error: "Database insert failed." },
       { status: 500 },
     );
   }
