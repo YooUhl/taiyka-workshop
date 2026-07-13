@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { withLang } from "@/lib/lang-utils";
+import { SITE } from "@/lib/site";
 
 type Lang = "fr" | "en";
 
@@ -43,7 +44,7 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "EN",
     langSwitchHref: "/qcm?lang=en",
     ogLocale: "fr_FR",
-    metaTitle: "QCM — Quel type d’entrepreneur tu es vraiment ? · Taiyka",
+    metaTitle: "QCM — Quel type d’entrepreneur tu es vraiment ? · L'Atelier",
     metaDescription:
       "9 questions, 2 minutes. Découvre ton profil d’entrepreneur et la prochaine étape concrète pour faire bouger ton business avec l’IA.",
   },
@@ -65,7 +66,7 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "FR",
     langSwitchHref: "/qcm",
     ogLocale: "en_US",
-    metaTitle: "Quiz — What kind of entrepreneur are you really? · Taiyka",
+    metaTitle: "Quiz — What kind of entrepreneur are you really? · The Workshop",
     metaDescription:
       "9 questions, 2 minutes. Discover your entrepreneur profile and the concrete next step to move your business forward with AI.",
   },
@@ -122,8 +123,8 @@ function buildQcmSchema(c: Copy) {
     description: c.metaDescription,
     provider: {
       "@type": "Organization",
-      name: "Taiyka",
-      url: "https://taiyka.com",
+      name: c.ogLocale === "fr_FR" ? "L'Atelier" : "The Workshop",
+      url: SITE,
     },
     hasCourseInstance: {
       "@type": "CourseInstance",
@@ -131,7 +132,7 @@ function buildQcmSchema(c: Copy) {
       courseWorkload: "PT2M",
       location: {
         "@type": "VirtualLocation",
-        url: "https://taiyka.com/qcm/quiz",
+        url: `${SITE}/qcm/quiz`,
       },
     },
   };
@@ -237,7 +238,7 @@ export default async function QcmLandingPage({
 
         {/* Footer */}
         <footer className="mt-24 md:mt-32 pt-8 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
-          <span>© {new Date().getFullYear()} Taiyka</span>
+          <span>© {new Date().getFullYear()}</span>
           <span aria-hidden>·</span>
           <span>@manu_ai.to</span>
         </footer>

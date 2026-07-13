@@ -13,28 +13,55 @@ export class BookDbNotConfigured extends Error {
   }
 }
 
+// Postgres SQLSTATE codes we surface to handlers.
+export const PG_UNIQUE_VIOLATION = "23505";
+
+const TRANSIENT_CODES = new Set([
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "ETIMEDOUT",
+  "EAI_AGAIN",
+  "57P01", // admin_shutdown
+  "57P02", // crash_shutdown
+  "57P03", // cannot_connect_now
+  "08000", // connection_exception
+  "08003", // connection_does_not_exist
+  "08006", // connection_failure
+  "08001", // sqlclient_unable_to_establish_sqlconnection
+  "08004", // sqlserver_rejected_establishment_of_sqlconnection
+]);
+
+export function isTransientDbError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return false;
+  const code = (err as { code?: string }).code;
+  return typeof code === "string" && TRANSIENT_CODES.has(code);
+}
+
 function makePool(): Pool {
   const connectionString = process.env.BOOK_DATABASE_URL;
   if (!connectionString) {
     throw new BookDbNotConfigured();
   }
+  // Supabase pooler presents Amazon RDS certificate chain. We accept the
+  // pooler's TLS without local CA bundle — MITM mitigated by the dedicated
+  // VPC peering between Vercel and Supabase. Tracked as P1-5 in
+  // AUDIT-BOOK-V3.md: pin the CA bundle once Supabase exposes a stable URL
+  // for it (current dashboard link rotates).
   return new Pool({
     connectionString,
     ssl: { rejectUnauthorized: false },
     max: 5,
     idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 5_000,
   });
 }
 
-// Lazy: build-time page-data collection must not throw if env missing.
-// Pool created on first query() call.
+// Pool is process-scoped — cache across hot requests in any environment.
+// Vercel cold start still pays the first-connection cost (~200-500ms).
 function getPool(): Pool {
   if (global.__bookPgPool) return global.__bookPgPool;
-  const p = makePool();
-  if (process.env.NODE_ENV !== "production") {
-    global.__bookPgPool = p;
-  }
-  return p;
+  global.__bookPgPool = makePool();
+  return global.__bookPgPool;
 }
 
 export async function query<T = unknown>(

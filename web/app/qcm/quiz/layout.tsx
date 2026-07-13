@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Question — QCM · Taiyka",
+  title: "Question — QCM · L'Atelier",
   description: "Réponds à 9 questions et découvre ton profil d'entrepreneur.",
 };
 

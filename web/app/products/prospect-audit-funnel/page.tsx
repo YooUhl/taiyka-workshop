@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import EmailCaptureForm from "@/components/EmailCaptureForm";
 import { withLang } from "@/lib/lang-utils";
+import { SITE } from "@/lib/site";
 
 export async function generateMetadata({
   searchParams,
@@ -12,8 +13,8 @@ export async function generateMetadata({
   const isEn = sp?.lang === "en";
   return {
     title: isEn
-      ? "Smart Prospect Audit Funnel — 49€ · Taiyka"
-      : "Smart Prospect Audit Funnel — 49€ · Taiyka",
+      ? "Smart Prospect Audit Funnel — 49€ · The Workshop"
+      : "Smart Prospect Audit Funnel — 49€ · L'Atelier",
     description: isEn
       ? "The AI audit funnel I use at Taiyka to qualify prospects before a call. Form + Claude + auto debrief. 49€, plug-and-play."
       : "Le funnel d'audit IA que j'utilise chez Taiyka pour qualifier mes prospects avant un call. Form + Claude + debrief auto. 49€, plug-and-play.",
@@ -31,7 +32,7 @@ export async function generateMetadata({
 }
 
 const GUMROAD_URL = process.env.NEXT_PUBLIC_PROSPECT_AUDIT_FUNNEL_URL || null;
-const CANONICAL_URL = "https://taiyka.com/products/prospect-audit-funnel";
+const CANONICAL_URL = `${SITE}/products/prospect-audit-funnel`;
 
 type Lang = "fr" | "en";
 
@@ -256,10 +257,10 @@ export default async function ProspectAuditFunnelPage({
     description: t.productDescription,
     brand: {
       "@type": "Brand",
-      name: "Taiyka",
+      name: lang === "fr" ? "L'Atelier" : "The Workshop",
     },
     category: "Business / Sales Automation Template",
-    image: "https://taiyka.com/og/prospect-audit-funnel.png",
+    image: `${SITE}/og/prospect-audit-funnel.png`,
     offers: {
       "@type": "Offer",
       price: "49",
@@ -269,8 +270,8 @@ export default async function ProspectAuditFunnelPage({
         : "https://schema.org/PreOrder",
       seller: {
         "@type": "Organization",
-        name: "Taiyka",
-        url: "https://taiyka.com",
+        name: lang === "fr" ? "L'Atelier" : "The Workshop",
+        url: SITE,
       },
       url: GUMROAD_URL ?? CANONICAL_URL,
     },
@@ -471,7 +472,7 @@ export default async function ProspectAuditFunnelPage({
 
         {/* Footer */}
         <footer className="mt-auto pt-12 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
-          <span>© {new Date().getFullYear()} Taiyka · @manu_ai.to</span>
+          <span>© {new Date().getFullYear()} · @manu_ai.to</span>
           <span aria-hidden>·</span>
           <span>{t.footerRights}</span>
         </footer>

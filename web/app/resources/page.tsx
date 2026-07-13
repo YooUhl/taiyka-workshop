@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { COPY, type Lang } from "@/lib/resources/content";
+import { SITE } from "@/lib/site";
 import ResourcesClient from "./resources-client";
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
 export async function generateMetadata({
   searchParams,
@@ -19,15 +18,11 @@ export async function generateMetadata({
     robots: { index: false, follow: false },
     alternates: {
       canonical: `${SITE}/resources`,
-      languages: {
-        "fr-FR": "/resources",
-        "en-US": "/resources?lang=en",
-      },
     },
     openGraph: {
       type: "website",
       url: `${SITE}/resources`,
-      siteName: "My Workshop",
+      siteName: lang === "fr" ? "L'Atelier" : "The Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title: c.title,
       description: c.metaDescription,

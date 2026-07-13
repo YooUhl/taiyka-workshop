@@ -376,4 +376,20 @@
     display: none;
     background: none;
   }
+  /* Gradient text can wash out at high contrast — restore a solid brand color. */
+  .text-gradient-hero {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: var(--primary);
+  }
+}
+
+/* Forced-colors (Windows High Contrast): the background image is dropped but
+   color:transparent would remain, making gradient text vanish. Force it visible. */
+@media (forced-colors: active) {
+  .text-gradient-hero {
+    color: CanvasText;
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
 }

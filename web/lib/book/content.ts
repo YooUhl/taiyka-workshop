@@ -1,29 +1,51 @@
 export type Lang = "fr" | "en";
 
-export type RoleKey = "business_owner" | "employee" | "student" | "other";
-export type ProjectTypeKey = "business" | "personal" | "collab";
+// New role enum after AUDIT-BOOK-V3 audience tightening (P0-12).
+// Old keys removed: "business_owner" → "founder", "employee" removed,
+// "student" → "early" (re-purposed). Existing rows in book.qualifications
+// retain their original values; the CHECK constraint was relaxed in
+// sql/005_book_fixes.sql to accept both old + new during transition.
+export type RoleKey = "founder" | "freelance" | "early" | "other";
+export type ProjectTypeKey = "business" | "side_project" | "partnership";
 
 export const ROLE_KEYS: readonly RoleKey[] = [
-  "business_owner",
-  "employee",
-  "student",
+  "founder",
+  "freelance",
+  "early",
   "other",
 ] as const;
 
 export const PROJECT_TYPE_KEYS: readonly ProjectTypeKey[] = [
   "business",
-  "personal",
-  "collab",
+  "side_project",
+  "partnership",
 ] as const;
 
 type Choice<T extends string> = { key: T; label: string };
 
+type HeroCopy = {
+  outcome: string;
+  deliverable: string;
+  logistics: string;
+  riskReversal: string;
+  authorName: string;
+  authorCredential: string;
+  agendaTitle: string;
+  agendaSteps: string[];
+  notReadyLabel: string;
+  notReadyHref: string;
+};
+
 type Copy = {
   title: string;
   metaDescription: string;
+  ogSiteName: string;
   step: (current: number, total: number) => string;
   langSwitch: string;
   langSwitchHref: string;
+  homeLabel: string;
+
+  hero: HeroCopy;
 
   q1Question: string;
   q1Choices: Choice<RoleKey>[];
@@ -33,7 +55,8 @@ type Copy = {
 
   q3Question: string;
   q3Placeholder: string;
-  q3MinChars: string;
+  q3Hint: string;
+  q3Examples: string[];
 
   contactKicker: string;
   contactTitle: string;
@@ -42,19 +65,29 @@ type Copy = {
   namePlaceholder: string;
   emailLabel: string;
   emailPlaceholder: string;
+  emailTrustHint: string;
   locationLabel: string;
   locationPlaceholder: string;
   locationHint: string;
+  locationOptional: string;
 
   next: string;
   back: string;
   submit: string;
   submitting: string;
+  submittingLong: string;
   retry: string;
 
   calendlyKicker: string;
   calendlyTitle: string;
   calendlyBlurb: string;
+  calendlyTimezoneHint: string;
+  calendlyLoadingTitle: string;
+  calendlyFallbackTitle: string;
+  calendlyFallbackBlurb: string;
+  calendlyOpenInNewTab: string;
+  calendlyScriptFailedTitle: string;
+  calendlyScriptFailedBlurb: string;
   calendlyMissingTitle: string;
   calendlyMissingBlurb: string;
 
@@ -62,155 +95,301 @@ type Copy = {
   bookedTitle: string;
   bookedBlurb: string;
   backHomeCta: string;
+  bookedUpsellTitle: string;
+  bookedUpsells: { label: string; href: string; external?: boolean }[];
 
   errorGeneric: string;
+  errorRateLimit: string;
   errorRequired: string;
   errorEmail: string;
   errorLength: (min: number, max: number) => string;
+  draftRestoreFailed: string;
+  storageDisabled: string;
 };
 
 export const COPY: Record<Lang, Copy> = {
   fr: {
-    title: "Réserver un appel — My Workshop",
+    title: "Réserver un appel avec Manu — L'Atelier",
     metaDescription:
-      "3 questions courtes pour préparer notre appel, puis choisis ton créneau.",
+      "30 min en visio pour cadrer ton projet d'automatisation IA. 3 questions rapides, puis ton créneau. Gratuit, sans engagement.",
+    ogSiteName: "L'Atelier",
     step: (current, total) => `Étape ${current} / ${total}`,
     langSwitch: "EN",
     langSwitchHref: "/book?lang=en",
+    homeLabel: "Accueil",
 
-    q1Question: "Tu es ?",
+    hero: {
+      outcome:
+        "30 min avec Manu — on cadre ta première (ou prochaine) automatisation IA.",
+      deliverable:
+        "Tu repars avec un plan concret : quel workflow attaquer en premier, quels outils, et un ordre de grandeur de temps/budget.",
+      logistics: "3 questions courtes (45 s), puis tu choisis ton créneau.",
+      riskReversal:
+        "Pas un appel de vente. Si je peux pas t'aider, je te pointe vers une ressource gratuite et on se sépare bons amis.",
+      authorName: "Manu",
+      authorCredential:
+        "J'ai construit l'automatisation concurrentielle de Polymaker, le SaaS gym UFC Wallis & Futuna, et le système d'outreach IA derrière @manu_ai.to.",
+      agendaTitle: "Au programme",
+      agendaSteps: [
+        "5 min : tu me racontes où tu en es",
+        "15 min : on mappe ton workflow ou agent prioritaire",
+        "10 min : tu repars avec un plan d'attaque (outils + ordre de grandeur)",
+      ],
+      notReadyLabel: "Pas encore prêt ? Récupère mes 5 workflows n8n gratuits →",
+      notReadyHref: "/resources",
+    },
+
+    q1Question: "D'abord, tu fais quoi ?",
     q1Choices: [
-      { key: "business_owner", label: "Chef d'entreprise" },
-      { key: "employee", label: "Salarié" },
-      { key: "student", label: "Étudiant" },
+      { key: "founder", label: "Chef d'entreprise" },
+      { key: "freelance", label: "Indépendant ou freelance" },
+      { key: "early", label: "Je lance mon projet" },
       { key: "other", label: "Autre" },
     ],
 
-    q2Question: "Quel type de projet ?",
+    q2Question: "C'est pour quel projet ?",
     q2Choices: [
       { key: "business", label: "Pour mon entreprise" },
-      { key: "personal", label: "Perso" },
-      { key: "collab", label: "Collaboration" },
+      { key: "side_project", label: "Pour un side-project" },
+      { key: "partnership", label: "Un partenariat ou collab pro" },
     ],
 
     q3Question: "Décris ton projet en quelques lignes",
     q3Placeholder:
-      "Par exemple : automatiser ma prospection LinkedIn → CRM, ou créer un agent qui répond aux DMs Instagram…",
-    q3MinChars: "Minimum 20 caractères",
+      "Par exemple : automatiser le suivi de mes devis et factures, qualifier mes leads entrants, ou créer un agent qui répond aux demandes clients la nuit…",
+    q3Hint: "Quelques lignes suffisent.",
+    q3Examples: [
+      "Automatiser ma prospection",
+      "Agent IA pour mes DMs",
+      "Pas encore sûr — je veux explorer",
+    ],
 
-    contactKicker: "Dernière étape",
+    contactKicker: "",
     contactTitle: "Tes coordonnées",
     contactBlurb:
-      "On t'envoie la confirmation du rendez-vous et je prépare l'appel avec tes réponses.",
+      "Je prépare ton appel à partir de tes réponses. La confirmation arrive par email juste après.",
     nameLabel: "Nom",
-    namePlaceholder: "Manu Uhila",
+    namePlaceholder: "Jean Dupont",
     emailLabel: "Email",
-    emailPlaceholder: "tonemail@exemple.com",
+    emailPlaceholder: "prenom@exemple.com",
+    emailTrustHint: "Pas de spam, pas de revente. Je réponds en personne.",
     locationLabel: "Localisation",
     locationPlaceholder: "Paris, France",
-    locationHint: "Ville et pays — pour gérer le décalage horaire.",
+    locationHint: "Ville et pays — pour que je cale le bon fuseau horaire.",
+    locationOptional: "(optionnel)",
 
-    next: "Suivant",
+    next: "Continuer → dernière étape",
     back: "Retour",
-    submit: "Choisir un créneau",
-    submitting: "Envoi…",
+    submit: "Voir les créneaux dispo",
+    submitting: "Je note ça…",
+    submittingLong: "Préparation de tes créneaux…",
     retry: "Réessayer",
 
-    calendlyKicker: "Choisis ton créneau",
-    calendlyTitle: "Réserve l'appel",
-    calendlyBlurb: "Tes infos sont déjà pré-remplies. Plus qu'à choisir l'heure.",
-    calendlyMissingTitle: "Réservé reçu ✅",
+    calendlyKicker: "Étape finale",
+    calendlyTitle: "Choisis ton créneau",
+    calendlyBlurb:
+      "Tes infos sont déjà pré-remplies. Choisis l'heure qui t'arrange — 30 min, en visio, on parle vrai.",
+    calendlyTimezoneHint:
+      "Les créneaux s'affichent dans ton fuseau horaire (modifiable en haut du calendrier).",
+    calendlyLoadingTitle: "Préparation de tes créneaux…",
+    calendlyFallbackTitle: "Ça prend plus de temps que prévu",
+    calendlyFallbackBlurb:
+      "Ouvre Calendly directement dans un nouvel onglet — tes réponses sont déjà enregistrées.",
+    calendlyOpenInNewTab: "Ouvrir Calendly dans un nouvel onglet",
+    calendlyScriptFailedTitle: "Calendly se charge pas",
+    calendlyScriptFailedBlurb:
+      "Ton ad-blocker peut bloquer le widget. Désactive-le pour ce site, ou écris-moi à manu.uhila@taiyka.com pour le lien direct.",
+    calendlyMissingTitle: "Bien reçu",
     calendlyMissingBlurb:
-      "On t'a bien enregistré. Je reviens vers toi par email avec un lien Calendly dans la journée.",
+      "Tes réponses sont enregistrées. Je t'envoie un lien de réservation manuellement sous 24h ouvrées — check tes spams.",
 
-    bookedKicker: "C'est noté",
-    bookedTitle: "Rendez-vous confirmé",
+    bookedKicker: "Bien joué",
+    bookedTitle: "On est calés",
     bookedBlurb:
-      "On se voit bientôt. Tu reçois la confirmation par email avec le lien d'appel.",
+      "À très vite. Le mail de confirmation arrive avec le lien — check tes spams au cas où. Prépare 1 ou 2 questions concrètes, on attaque direct.",
     backHomeCta: "Retour à l'accueil",
+    bookedUpsellTitle: "En attendant l'appel",
+    bookedUpsells: [
+      {
+        label: "Télécharge mes 5 workflows n8n gratuits (5 min de prépa pour notre appel)",
+        href: "/resources",
+      },
+      {
+        label: "Rejoins ma communauté Skool pour échanger avec d'autres entrepreneurs IA",
+        href: "/skool",
+      },
+      {
+        label: "Suis-moi sur Instagram @manu_ai.to pour du contenu quotidien",
+        href: "https://instagram.com/manu_ai.to",
+        external: true,
+      },
+    ],
 
-    errorGeneric: "Une erreur est survenue. Réessaie dans un instant.",
+    errorGeneric:
+      "Ça a coincé de notre côté. Réessaie dans 30 secondes — ou écris-moi direct à manu.uhila@taiyka.com.",
+    errorRateLimit:
+      "Tu as déjà envoyé ta demande. Si tu n'as rien reçu dans 5 min, écris-moi à manu.uhila@taiyka.com.",
     errorRequired: "Ce champ est requis.",
-    errorEmail: "Email invalide.",
+    errorEmail:
+      "Cet email a l'air cassé — vérifie le @ et le point com.",
     errorLength: (min, max) =>
-      `Doit faire entre ${min} et ${max} caractères.`,
+      `Entre ${min} et ${max} caractères, stp.`,
+    draftRestoreFailed:
+      "Impossible de restaurer ton brouillon — repars de zéro.",
+    storageDisabled:
+      "Ton navigateur bloque le stockage local. Évite de rafraîchir, sinon tu perds tes réponses.",
   },
   en: {
-    title: "Book a call — My Workshop",
+    title: "Book a call with Manu — The Workshop",
     metaDescription:
-      "3 short questions to prep the call, then pick your slot.",
+      "30 min video call to scope your AI automation project. 3 quick questions, then your slot. Free, no commitment.",
+    ogSiteName: "The Workshop",
     step: (current, total) => `Step ${current} / ${total}`,
     langSwitch: "FR",
     langSwitchHref: "/book?lang=fr",
+    homeLabel: "Home",
 
-    q1Question: "You are?",
+    hero: {
+      outcome:
+        "30 min with Manu — let's scope your first (or next) AI automation.",
+      deliverable:
+        "You leave with a concrete plan: which workflow to tackle first, which tools, and a rough effort/budget estimate.",
+      logistics: "3 short questions (45 s), then pick your slot.",
+      riskReversal:
+        "Not a sales call. If I can't help, I'll point you to a free resource and we part ways friends.",
+      authorName: "Manu",
+      authorCredential:
+        "I built Polymaker's competitive intelligence system, the UFC Wallis & Futuna gym SaaS, and the AI outreach system behind @manu_ai.to.",
+      agendaTitle: "Agenda",
+      agendaSteps: [
+        "5 min: you tell me where you're at",
+        "15 min: we map your priority workflow or agent",
+        "10 min: you leave with an action plan (tools + ballpark estimate)",
+      ],
+      notReadyLabel: "Not ready? Grab my 5 free n8n workflows →",
+      notReadyHref: "/resources?lang=en",
+    },
+
+    q1Question: "First — what do you do?",
     q1Choices: [
-      { key: "business_owner", label: "Business owner" },
-      { key: "employee", label: "Employee" },
-      { key: "student", label: "Student" },
+      { key: "founder", label: "Business owner" },
+      { key: "freelance", label: "Freelance or independent" },
+      { key: "early", label: "Launching my project" },
       { key: "other", label: "Other" },
     ],
 
-    q2Question: "Project type?",
+    q2Question: "What's this project for?",
     q2Choices: [
       { key: "business", label: "For my business" },
-      { key: "personal", label: "Personal" },
-      { key: "collab", label: "Collaboration" },
+      { key: "side_project", label: "For a side project" },
+      { key: "partnership", label: "Partnership or pro collab" },
     ],
 
     q3Question: "Describe your project in a few lines",
     q3Placeholder:
-      "For example: automate my LinkedIn prospecting → CRM, or build an agent that replies to Instagram DMs…",
-    q3MinChars: "20 characters minimum",
+      "For example: automate quote and invoice follow-ups, qualify inbound leads, or build an agent that handles customer questions overnight…",
+    q3Hint: "A few lines are enough.",
+    q3Examples: [
+      "Automate my outreach",
+      "AI agent for my DMs",
+      "Not sure yet — I want to explore",
+    ],
 
-    contactKicker: "Final step",
+    contactKicker: "",
     contactTitle: "Your details",
     contactBlurb:
-      "We send the booking confirmation and I prep the call with your answers.",
+      "I prep your call from your answers. Confirmation lands in your inbox right after.",
     nameLabel: "Name",
-    namePlaceholder: "Manu Uhila",
+    namePlaceholder: "Jane Doe",
     emailLabel: "Email",
     emailPlaceholder: "you@example.com",
+    emailTrustHint: "No spam, no resale. I reply personally.",
     locationLabel: "Location",
     locationPlaceholder: "Paris, France",
-    locationHint: "City and country — so I handle the timezone before the call.",
+    locationHint: "City and country — so I lock the right timezone before the call.",
+    locationOptional: "(optional)",
 
-    next: "Next",
+    next: "Continue → final step",
     back: "Back",
-    submit: "Pick a slot",
-    submitting: "Sending…",
+    submit: "See available slots",
+    submitting: "Saving your answers…",
+    submittingLong: "Loading your slots…",
     retry: "Retry",
 
-    calendlyKicker: "Pick your slot",
-    calendlyTitle: "Book the call",
-    calendlyBlurb: "Your info is already prefilled. Just pick a time.",
-    calendlyMissingTitle: "Got it ✅",
+    calendlyKicker: "Final step",
+    calendlyTitle: "Pick your slot",
+    calendlyBlurb:
+      "Your info is already prefilled. Pick the time that works — 30 min, on video, straight talk.",
+    calendlyTimezoneHint:
+      "Slots show in your local timezone (you can change it at the top of the calendar).",
+    calendlyLoadingTitle: "Loading your slots…",
+    calendlyFallbackTitle: "Taking longer than expected",
+    calendlyFallbackBlurb:
+      "Open Calendly directly in a new tab — your answers are already saved.",
+    calendlyOpenInNewTab: "Open Calendly in a new tab",
+    calendlyScriptFailedTitle: "Calendly didn't load",
+    calendlyScriptFailedBlurb:
+      "Your ad-blocker may be blocking the widget. Disable it for this site, or email me at manu.uhila@taiyka.com for the direct link.",
+    calendlyMissingTitle: "Got it",
     calendlyMissingBlurb:
-      "You're saved. I'll email you a Calendly link within the day.",
+      "Your answers are saved. I'll send you a booking link manually within 24 business hours — keep an eye on your spam folder.",
 
-    bookedKicker: "Confirmed",
-    bookedTitle: "Your call is booked",
+    bookedKicker: "Nice",
+    bookedTitle: "We're locked in",
     bookedBlurb:
-      "See you soon. You'll get the confirmation by email with the call link.",
+      "Talk soon. Confirmation email is on the way with the call link — check spam just in case. Bring 1 or 2 concrete questions, we'll get straight to it.",
     backHomeCta: "Back to home",
+    bookedUpsellTitle: "While you wait",
+    bookedUpsells: [
+      {
+        label: "Grab my 5 free n8n workflows (5 min of call prep)",
+        href: "/resources?lang=en",
+      },
+      {
+        label: "Join my Skool community to talk with other AI entrepreneurs",
+        href: "/skool?lang=en",
+      },
+      {
+        label: "Follow me on Instagram @manu_ai.to for daily content",
+        href: "https://instagram.com/manu_ai.to",
+        external: true,
+      },
+    ],
 
-    errorGeneric: "Something went wrong. Try again in a moment.",
+    errorGeneric:
+      "Something jammed on our end. Try again in 30 seconds — or email me directly at manu.uhila@taiyka.com.",
+    errorRateLimit:
+      "You've already submitted this. If nothing landed in 5 min, email me at manu.uhila@taiyka.com.",
     errorRequired: "This field is required.",
-    errorEmail: "Invalid email.",
+    errorEmail:
+      "That email looks off — double-check the @ and the .com.",
     errorLength: (min, max) =>
-      `Must be between ${min} and ${max} characters.`,
+      `Between ${min} and ${max} characters, please.`,
+    draftRestoreFailed:
+      "Couldn't restore your saved progress — starting fresh.",
+    storageDisabled:
+      "Your browser blocks local storage. Don't refresh — your answers will be lost.",
   },
 };
 
 export const PROJECT_DESCRIPTION_MIN = 20;
 export const PROJECT_DESCRIPTION_MAX = 2000;
-export const NAME_MIN = 1;
+export const NAME_MIN = 2;
 export const NAME_MAX = 120;
-export const LOCATION_MIN = 1;
+export const LOCATION_MIN = 3;
 export const LOCATION_MAX = 200;
+export const EMAIL_MIN = 5;
+export const EMAIL_MAX = 320;
 
+// Intentional permissive regex — catches typos, not RFC-compliant.
+// Calendly + the user's own inbox are the true verification.
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 export function isValidEmail(value: string): boolean {
+  if (value.length < EMAIL_MIN || value.length > EMAIL_MAX) return false;
   return EMAIL_REGEX.test(value);
+}
+
+export function hasLetterChar(value: string): boolean {
+  return /\p{L}/u.test(value);
 }

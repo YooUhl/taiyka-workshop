@@ -6,6 +6,7 @@ import { isValidProfile } from "@/lib/quiz-scoring";
 import type { ProfileSlug } from "@/lib/quiz-questions";
 import ProfileEmailForm from "@/components/ProfileEmailForm";
 import { withLang } from "@/lib/lang-utils";
+import { SITE } from "@/lib/site";
 
 type RouteParams = { profil: string };
 type SearchParams = { [key: string]: string | string[] | undefined };
@@ -34,15 +35,15 @@ export async function generateMetadata({
   const { profil } = await params;
   const sp = await searchParams;
   const lang = pickLang(sp);
-  if (!isValidProfile(profil)) return { title: "Résultat — Taiyka" };
+  if (!isValidProfile(profil)) return { title: "Résultat — L'Atelier" };
   const r = RESULTS[profil][lang];
   const path = `/qcm/resultat/${profil}`;
   const ogTitle =
     lang === "fr"
-      ? `Je suis ${r.name} sur le QCM Taiyka. Et toi ?`
-      : `I'm ${r.name} on the Taiyka quiz. What about you?`;
+      ? `Je suis ${r.name} sur le QCM de L'Atelier. Et toi ?`
+      : `I'm ${r.name} on The Workshop quiz. What about you?`;
   return {
-    title: `${r.name} — ${lang === "fr" ? "Ton profil" : "Your profile"} · Taiyka QCM`,
+    title: `${r.name} — ${lang === "fr" ? "Ton profil" : "Your profile"} · ${lang === "fr" ? "L'Atelier QCM" : "The Workshop quiz"}`,
     description: r.tagline,
     alternates: {
       canonical: path,
@@ -150,7 +151,7 @@ export default async function ResultPage({
     inLanguage: lang === "fr" ? "fr-FR" : "en-US",
     headline: r.name,
     description: r.tagline,
-    image: `https://taiyka.com/og/profil-${profil}.png`,
+    image: `${SITE}/og/profil-${profil}.png`,
     author: {
       "@type": "Person",
       name: "Manu (Yoan-Manuulutea Uhila)",
@@ -158,11 +159,7 @@ export default async function ResultPage({
     },
     publisher: {
       "@type": "Organization",
-      name: "Taiyka",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://taiyka.com/logo-512.png",
-      },
+      name: lang === "fr" ? "L'Atelier" : "The Workshop",
     },
     datePublished: RESULTS_DATE_PUBLISHED,
     dateModified: RESULTS_DATE_PUBLISHED,
@@ -368,7 +365,7 @@ export default async function ResultPage({
 
         {/* Footer */}
         <footer className="mt-8 pt-8 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
-          <span>© {new Date().getFullYear()} Taiyka · @manu_ai.to</span>
+          <span>© {new Date().getFullYear()} · @manu_ai.to</span>
           <span aria-hidden>·</span>
           <span>{t.rights}</span>
         </footer>

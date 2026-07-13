@@ -2,60 +2,90 @@ import { cn } from "@/lib/utils";
 
 type Lang = "fr" | "en";
 
-type Story = {
-  headline: string;
+type Featured = {
+  title: string;
   take: string;
+  source: string;
+};
+
+type Quick = {
+  text: string;
   source: string;
 };
 
 type Copy = {
   cardKicker: string;
   issueLabel: string;
-  stories: [Story, Story];
-  moreLine: string;
+  featuredLabel: string;
+  briefLabel: string;
+  featured: Featured[];
+  quick: Quick[];
   footerLine: string;
 };
 
+// Format C: 3-4 "À la une" featured stories (title + 2-line take) followed by
+// an "En bref" quick-hits list. Mirrors what the every-2-days pipeline renders
+// (see funnel/n8n-workflows/le-brief-every2days.json).
 const COPY: Record<Lang, Copy> = {
   fr: {
-    cardKicker: "AI NEWS · #042",
-    issueLabel: "Mardi 12 nov · 7h00",
-    stories: [
+    cardKicker: "LE BRIEF · #042",
+    issueLabel: "Numéro type",
+    featuredLabel: "À la une",
+    briefLabel: "En bref",
+    featured: [
       {
-        headline: "Anthropic sort Claude Opus 4.7 — 1M tokens de contexte",
-        take:
-          "Pour la première fois un modèle frontier accepte des codebases entières d'un seul coup. Si tu codes avec Claude Code, tes sessions vont durer 3x plus longtemps sans /compact.",
+        title: "Anthropic sort Claude Opus 4.8",
+        take: "Contexte 1M tokens, moins cher. Taillé pour les workflows longs et l'analyse de gros documents.",
         source: "anthropic.com",
       },
       {
-        headline: "OpenAI lance les Agents Apps — un App Store pour GPT",
-        take:
-          "Sam Altman dévoile un marketplace où n'importe qui peut publier un agent monétisable. C'est le moment de bâtir le tien — la fenêtre va se fermer vite.",
-        source: "openai.com",
+        title: "n8n ajoute un node agent IA natif",
+        take: "Un vrai node agent, sans bricolage. Simplifie les automatisations multi-étapes.",
+        source: "n8n.io",
+      },
+      {
+        title: "OpenAI rachète une startup d'agents",
+        take: "Deal à 2 Md$ pour accélérer sur les agents autonomes. Signal fort sur la direction du marché.",
+        source: "reuters.com",
       },
     ],
-    moreLine: "+ 3 autres news ce matin-là",
-    footerLine: "→ 5 min de lecture · pas de pub · pas de spam",
+    quick: [
+      { text: "Un prompt pour automatiser ta veille concurrentielle.", source: "manu_ai.to" },
+      { text: "Mistral sort un modèle open 24B qui bat GPT-4o-mini.", source: "mistral.ai" },
+      { text: "Cursor 2.0 arrive avec un mode multi-agent.", source: "cursor.sh" },
+      { text: "Perplexity lève 500M$ pour son moteur de recherche IA.", source: "techcrunch.com" },
+    ],
+    footerLine: "→ 2 min de lecture · pas de pub · pas de spam",
   },
   en: {
-    cardKicker: "AI NEWS · #042",
-    issueLabel: "Tue Nov 12 · 7:00 AM",
-    stories: [
+    cardKicker: "LE BRIEF · #042",
+    issueLabel: "Sample issue",
+    featuredLabel: "Featured",
+    briefLabel: "In brief",
+    featured: [
       {
-        headline: "Anthropic ships Claude Opus 4.7 — 1M token context",
-        take:
-          "For the first time a frontier model takes entire codebases in one shot. If you code with Claude Code, your sessions just got 3x longer without /compact.",
+        title: "Anthropic ships Claude Opus 4.8",
+        take: "1M token context, cheaper. Built for long workflows and large-document analysis.",
         source: "anthropic.com",
       },
       {
-        headline: "OpenAI launches Agent Apps — an App Store for GPTs",
-        take:
-          "Sam Altman unveils a marketplace where anyone can publish a monetizable agent. Now is the moment to build yours — the window closes fast.",
-        source: "openai.com",
+        title: "n8n adds a native AI agent node",
+        take: "A real agent node, no hacks. Simplifies multi-step automations.",
+        source: "n8n.io",
+      },
+      {
+        title: "OpenAI acquires an agents startup",
+        take: "$2B deal to accelerate on autonomous agents. A strong signal on where the market is heading.",
+        source: "reuters.com",
       },
     ],
-    moreLine: "+ 3 more stories that morning",
-    footerLine: "→ 5 min read · no ads · no spam",
+    quick: [
+      { text: "A prompt to automate your competitor watch.", source: "manu_ai.to" },
+      { text: "Mistral drops an open 24B model that beats GPT-4o-mini.", source: "mistral.ai" },
+      { text: "Cursor 2.0 lands with a multi-agent mode.", source: "cursor.sh" },
+      { text: "Perplexity raises $500M for its AI search engine.", source: "techcrunch.com" },
+    ],
+    footerLine: "→ 2-min read · no ads · no spam",
   },
 };
 
@@ -86,38 +116,56 @@ export default function SampleIssuePreview({ lang }: { lang: Lang }) {
         </span>
       </header>
 
-      {/* Stories */}
-      <ol className="flex flex-col gap-5">
-        {c.stories.map((story, idx) => (
-          <li key={story.headline} className="flex gap-3">
+      {/* À la une — featured stories with a short take */}
+      <p className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-primary/80 mb-3">
+        {c.featuredLabel}
+      </p>
+      <ol className="flex flex-col gap-3.5">
+        {c.featured.map((item, idx) => (
+          <li key={item.title} className="flex gap-3">
             <span
               aria-hidden
-              className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/70 pt-1 shrink-0"
+              className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/70 pt-0.5 shrink-0"
             >
               {String(idx + 1).padStart(2, "0")}
             </span>
-            <div className="flex flex-col gap-1.5 min-w-0">
-              <h3 className="text-[0.95rem] md:text-[1rem] leading-snug font-semibold text-[#e8f0fe]">
-                {story.headline}
-              </h3>
-              <p className="text-[0.875rem] leading-[1.55] text-muted-foreground">
-                {story.take}
+            <div className="flex flex-col gap-0.5 min-w-0">
+              <p className="text-[0.9rem] md:text-[0.95rem] font-semibold leading-snug text-[#e8f0fe]">
+                {item.title}
               </p>
-              <span className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground/70">
-                {story.source}
+              <p className="text-[0.8rem] leading-snug text-muted-foreground">
+                {item.take}
+              </p>
+              <span className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-primary/60">
+                {item.source}
               </span>
             </div>
           </li>
         ))}
       </ol>
 
-      {/* + more line */}
-      <p className="mt-5 pt-4 border-t border-border/60 font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground/80 text-center">
-        {c.moreLine}
+      {/* En bref — quick hits */}
+      <p className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-primary/80 mt-5 mb-3 pt-4 border-t border-border/60">
+        {c.briefLabel}
       </p>
+      <ul className="flex flex-col gap-2.5">
+        {c.quick.map((item) => (
+          <li key={item.text} className="flex gap-2.5">
+            <span aria-hidden className="text-primary/70 text-[0.85rem] leading-snug shrink-0">
+              •
+            </span>
+            <p className="text-[0.82rem] leading-snug text-[#cdd8ea] min-w-0">
+              {item.text}{" "}
+              <span className="font-mono-hud text-[10px] tracking-[0.14em] uppercase text-muted-foreground/70">
+                — {item.source}
+              </span>
+            </p>
+          </li>
+        ))}
+      </ul>
 
       {/* Footer meta */}
-      <p className="mt-3 text-[11px] text-muted-foreground/70 text-center">
+      <p className="mt-5 pt-4 border-t border-border/60 text-[11px] text-muted-foreground/70 text-center">
         {c.footerLine}
       </p>
     </article>

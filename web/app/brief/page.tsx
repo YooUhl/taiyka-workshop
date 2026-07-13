@@ -3,10 +3,9 @@ import type { Metadata } from "next";
 import BriefSignupForm from "@/components/BriefSignupForm";
 import SampleIssuePreview from "@/components/SampleIssuePreview";
 import { withLang } from "@/lib/lang-utils";
+import { SITE } from "@/lib/site";
 
 type Lang = "fr" | "en";
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
 type Copy = {
   htmlLang: string;
@@ -36,60 +35,62 @@ type Copy = {
 const COPY: Record<Lang, Copy> = {
   fr: {
     htmlLang: "fr",
-    topHome: "← TAIYKA · Accueil",
+    topHome: "← L'Atelier · Accueil",
     langSwitchLabel: "EN",
     langSwitchHref: "/brief?lang=en",
-    statusPill: "Newsletter · 7h · 5 min",
-    kickerHero: "AI NEWS · 7H DU MAT'",
+    statusPill: "Newsletter · tous les 2 jours · 2 min",
+    kickerHero: "LE BRIEF · 1 JOUR SUR 2",
     h1Lead: "L'IA qui bouge,",
-    h1Accent: "tous les matins.",
-    h1Tail: "En français. Sans bullshit.",
+    h1Accent: "un jour sur deux.",
+    h1Tail: "En français. En 2 minutes.",
     kickerManifesto: "MANIFESTE",
     manifestoLead:
       "Tu veux suivre l'IA mais t'as pas 2h par jour à lire TechCrunch, The Verge, MIT, X, Reddit, et 12 newsletters.",
     manifestoTail:
-      "Je le fais à ta place. Chaque matin 7h. Les news qui comptent, mes prises rapides dessus, en français. 5 min de lecture max. C'est tout.",
+      "Je le fais à ta place. Tous les 2 jours : les news IA qui comptent, triées. Les 3-4 grosses décryptées en quelques lignes, le reste en bref, avec les liens. 2 minutes de lecture. C'est tout.",
     kickerInside: "DEDANS · FORMAT",
     feature1:
-      "Les 3-5 news IA qui ont bougé hier — agents, modèles, outils, business.",
+      "3-4 news décryptées + le reste en bref — agents, modèles, outils, business.",
     feature2:
-      "Ma prise rapide sur chaque news — ce qui compte, ce qui est du bruit.",
+      "Les grosses en 2-3 lignes : ce que c'est, pourquoi ça compte. Le reste en une ligne, avec le lien.",
     feature3:
-      "Un outil ou workflow concret à tester quand c'est pertinent.",
+      "Que ce que je trouve pertinent. Le reste, je le coupe.",
     featureMeta: "Pas de pitch. Pas de pub. Pas de spam.",
     kickerSample: "EXEMPLE · UN NUMÉRO",
-    sampleLead: "Voilà à quoi ressemble un matin dans ta boîte.",
+    sampleLead: "Voilà à quoi ressemble un numéro dans ta boîte.",
     kickerSignup: "S'INSCRIRE",
-    signupLead: "Entre ton email. Premier numéro demain matin, 7h.",
+    signupLead:
+      "Entre ton email. Confirme en un clic. Ton premier numéro au prochain envoi.",
     footerRights: "Tous droits réservés.",
   },
   en: {
     htmlLang: "en",
-    topHome: "← TAIYKA · Home",
+    topHome: "← The Workshop · Home",
     langSwitchLabel: "FR",
     langSwitchHref: "/brief",
-    statusPill: "Newsletter · 7am · 5 min",
-    kickerHero: "AI NEWS · DAILY @ 7AM",
+    statusPill: "Newsletter · every 2 days · 2 min",
+    kickerHero: "LE BRIEF · EVERY 2 DAYS",
     h1Lead: "The AI that's actually moving,",
-    h1Accent: "every morning.",
-    h1Tail: "In French. No bullshit.",
+    h1Accent: "every 2 days.",
+    h1Tail: "In French. In 2 minutes.",
     kickerManifesto: "MANIFESTO",
     manifestoLead:
       "You want to follow AI but you don't have 2 hours a day to read TechCrunch, The Verge, MIT, X, Reddit, and 12 newsletters.",
     manifestoTail:
-      "I do it for you. Every morning at 7am. The news that matters, my quick takes on it, in French. 5 minutes max. That's it.",
+      "I do it for you. Every 2 days: the AI news that matters, filtered. The 3-4 big ones broken down in a few lines, the rest in brief, with the links. 2-minute read. That's it.",
     kickerInside: "INSIDE · FORMAT",
     feature1:
-      "The 3-5 AI stories that moved the needle yesterday — agents, models, tools, business.",
+      "3-4 stories broken down + the rest in brief — agents, models, tools, business.",
     feature2:
-      "My quick take on each one — what matters, what's noise.",
+      "The big ones in 2-3 lines: what it is, why it matters. The rest in one line, with the link.",
     feature3:
-      "A concrete tool or workflow to try when it's relevant.",
+      "Only what I find relevant. The rest, I cut.",
     featureMeta: "No pitch. No ads. No spam.",
     kickerSample: "SAMPLE · ONE ISSUE",
-    sampleLead: "Here's what one morning looks like in your inbox.",
+    sampleLead: "Here's what one issue looks like in your inbox.",
     kickerSignup: "SIGN UP",
-    signupLead: "Drop your email. First issue tomorrow morning, 7am.",
+    signupLead:
+      "Drop your email. Confirm in one click. Your first issue on the next send.",
     footerRights: "All rights reserved.",
   },
 };
@@ -104,13 +105,13 @@ export async function generateMetadata({
 
   const title =
     lang === "fr"
-      ? "AI NEWS — L'IA qui bouge, tous les matins · Taiyka"
-      : "AI NEWS — AI that moves, every morning · Taiyka";
+      ? "Le Brief — L'IA qui bouge, un jour sur deux · L'Atelier"
+      : "Le Brief — AI that moves, every 2 days · The Workshop";
 
   const description =
     lang === "fr"
-      ? "Newsletter quotidienne gratuite. 5 minutes de lecture, en français, les news IA qui comptent et mes prises rapides dessus. 7h du matin, dans ta boîte."
-      : "Free daily newsletter. 5-minute read, in French, the AI news that matters and my quick takes. 7am sharp, in your inbox.";
+      ? "Newsletter IA gratuite, tous les 2 jours. 2 minutes de lecture, en français : les news IA qui comptent, décryptées et avec le lien. Dans ta boîte."
+      : "Free AI newsletter, every 2 days. 2-minute read, in French: the AI news that matters, broken down, with the link. In your inbox.";
 
   return {
     title,
@@ -125,7 +126,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: `${SITE}/brief${lang === "en" ? "?lang=en" : ""}`,
-      siteName: "Taiyka",
+      siteName: lang === "fr" ? "L'Atelier" : "The Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title,
       description,
@@ -160,15 +161,15 @@ export default async function BriefLandingPage({
   const briefSchema = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    name: "AI NEWS",
+    name: "Le Brief",
     description:
       lang === "fr"
-        ? "Le brief quotidien de l'IA, sans bullshit."
-        : "The daily AI brief, no bullshit.",
+        ? "Le brief IA, un jour sur deux, sans bullshit."
+        : "The AI brief, every 2 days, no bullshit.",
     publisher: {
       "@type": "Organization",
-      name: "Taiyka",
-      url: "https://taiyka.com",
+      name: lang === "fr" ? "L'Atelier" : "The Workshop",
+      url: SITE,
     },
     inLanguage: lang === "fr" ? "fr-FR" : "en-US",
   };
@@ -297,7 +298,7 @@ export default async function BriefLandingPage({
 
         {/* Footer */}
         <footer className="mt-auto pt-12 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
-          <span>© {new Date().getFullYear()} Taiyka · @manu_ai.to</span>
+          <span>© {new Date().getFullYear()} · @manu_ai.to</span>
           <span aria-hidden>·</span>
           <span>{c.footerRights}</span>
         </footer>

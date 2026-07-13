@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build-data": "node scripts/copy-data.mjs && node scripts/build-portfolio-data.mjs",
+    "build-data": "node scripts/copy-data.mjs && node scripts/build-portfolio-data.mjs && node scripts/build-shop-workflows.mjs",
     "predev": "npm run build-data",
     "dev": "next dev",
     "prebuild": "npm run build-data",

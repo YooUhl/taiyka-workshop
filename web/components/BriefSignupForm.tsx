@@ -5,9 +5,12 @@ import { useState, type FormEvent } from "react";
 import { cn } from "@/lib/utils";
 import { withLang } from "@/lib/lang-utils";
 
-const WEBHOOK_URL = "https://n8n.srv1331551.hstgr.cloud/webhook/brief-signup";
+// New flow: post to our own API route (double-opt-in via Supabase + Resend),
+// not straight to an n8n webhook. The route creates a pending row and emails a
+// confirmation link; the user is only added to the list after they click it.
+const SUBSCRIBE_URL = "/api/brief/subscribe";
 
-type Status = "idle" | "loading" | "success" | "error";
+type Status = "idle" | "loading" | "pending" | "already" | "error";
 
 type Props = {
   lang?: "fr" | "en";
@@ -17,30 +20,43 @@ const T = {
   fr: {
     emailLabel: "Email",
     emailPlaceholder: "ton@email.com",
-    submit: "Je veux le brief de 7h",
+    submit: "Je veux Le Brief",
     submitting: "Envoi...",
-    note: "Premier mail demain matin 7h · Désinscription en 1 clic · Conforme RGPD",
-    successKicker: "✓ Inscrit",
-    successTitle: "T'es dedans. Vérifie ta boîte mail.",
-    successSub: "Premier numéro demain matin, 7h.",
+    note: "Confirme ton email en 1 clic · Désinscription en 1 clic · Conforme RGPD",
+    pendingKicker: "✓ Presque",
+    pendingTitle: "Vérifie ta boîte mail.",
+    pendingSub:
+      "Clique le lien de confirmation qu'on vient de t'envoyer. (Regarde dans les spams si tu ne vois rien.)",
+    alreadyKicker: "✓ Déjà inscrit",
+    alreadyTitle: "Tu reçois déjà Le Brief.",
+    alreadySub: "Rien à faire — à demain matin, 7h.",
     waitingKicker: "En attendant",
     ctaQcm: "Fais le QCM — 2 min, voir ton profil →",
     ctaSkool: "Entrer dans la communauté Skool →",
-    error: "Ça a pas pris. Réessaie, ou écris-moi : manu.uhila@taiyka.com.",
+    errInvalid: "Email invalide. Vérifie et réessaie.",
+    errRate: "Trop de tentatives. Attends une minute et réessaie.",
+    errGeneric:
+      "Ça a pas pris. Réessaie, ou écris-moi : manu.uhila@taiyka.com.",
   },
   en: {
     emailLabel: "Email",
     emailPlaceholder: "you@email.com",
-    submit: "Get the 7am brief",
+    submit: "Get Le Brief",
     submitting: "Sending...",
-    note: "First email tomorrow 7am · 1-click unsubscribe · No spam.",
-    successKicker: "✓ Subscribed",
-    successTitle: "You're in. Check your inbox.",
-    successSub: "First issue tomorrow at 7am.",
+    note: "Confirm your email in 1 click · 1-click unsubscribe · GDPR compliant",
+    pendingKicker: "✓ Almost",
+    pendingTitle: "Check your inbox.",
+    pendingSub:
+      "Click the confirmation link we just sent. (Check spam if you don't see it.)",
+    alreadyKicker: "✓ Already in",
+    alreadyTitle: "You already get Le Brief.",
+    alreadySub: "Nothing to do — see you tomorrow at 7am.",
     waitingKicker: "While you wait",
     ctaQcm: "Take the quiz — 2 min, see your profile →",
     ctaSkool: "Join the Skool community →",
-    error: "Didn't go through. Try again, or write me: manu.uhila@taiyka.com.",
+    errInvalid: "Invalid email. Check and try again.",
+    errRate: "Too many tries. Wait a minute and retry.",
+    errGeneric: "Didn't go through. Try again, or write me: manu.uhila@taiyka.com.",
   },
 } as const;
 
@@ -57,34 +73,54 @@ export default function BriefSignupForm({ lang = "fr" }: Props = {}) {
 
     try {
       const controller = new AbortController();
-      const timeoutId = window.setTimeout(() => controller.abort(), 8000);
-      const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
+      const timeoutId = window.setTimeout(() => controller.abort(), 10000);
 
+      let res: Response;
       try {
-        const res = await fetch(WEBHOOK_URL, {
+        res = await fetch(SUBSCRIBE_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            source: "brief-landing",
-            lang,
-            userAgent,
-          }),
+          body: JSON.stringify({ email, lang, source: "brief-landing" }),
           signal: controller.signal,
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
       } finally {
         window.clearTimeout(timeoutId);
       }
-      setStatus("success");
+
+      const data = (await res.json().catch(() => ({}))) as {
+        status?: string;
+      };
+
+      if (res.ok && data.status === "pending_confirmation") {
+        setStatus("pending");
+        return;
+      }
+      if (res.ok && data.status === "already_subscribed") {
+        setStatus("already");
+        return;
+      }
+      if (res.status === 429) {
+        setStatus("error");
+        setErrorMsg(t.errRate);
+        return;
+      }
+      if (data.status === "invalid_email") {
+        setStatus("error");
+        setErrorMsg(t.errInvalid);
+        return;
+      }
+      throw new Error(data.status ?? `HTTP ${res.status}`);
     } catch (err) {
       console.warn("Brief signup failed:", err);
       setStatus("error");
-      setErrorMsg(t.error);
+      setErrorMsg(t.errGeneric);
     }
   }
 
-  if (status === "success") {
+  if (status === "pending" || status === "already") {
+    const kicker = status === "pending" ? t.pendingKicker : t.alreadyKicker;
+    const title = status === "pending" ? t.pendingTitle : t.alreadyTitle;
+    const sub = status === "pending" ? t.pendingSub : t.alreadySub;
     return (
       <div
         role="status"
@@ -93,12 +129,12 @@ export default function BriefSignupForm({ lang = "fr" }: Props = {}) {
         style={{ animation: "qcm-fade-in 300ms ease-out forwards" }}
       >
         <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-primary mb-3">
-          {t.successKicker}
+          {kicker}
         </p>
         <p className="text-[1.0625rem] md:text-[1.125rem] leading-[1.6] text-[#e8f0fe] mb-2">
-          {t.successTitle}
+          {title}
         </p>
-        <p className="text-sm text-muted-foreground mb-6">{t.successSub}</p>
+        <p className="text-sm text-muted-foreground mb-6">{sub}</p>
         <div className="pt-5 border-t border-primary/20 flex flex-col gap-2 text-sm">
           <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground mb-1">
             {t.waitingKicker}
@@ -165,10 +201,6 @@ export default function BriefSignupForm({ lang = "fr" }: Props = {}) {
           {t.note}
         </p>
 
-        {/*
-          Always mount so aria-describedby resolves even when no error.
-          Toggle visibility with hidden; role="alert" announces on appearance.
-        */}
         <p
           id="brief-error"
           role="alert"

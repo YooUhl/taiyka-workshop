@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { COPY, type Lang } from "@/lib/shop/content";
+import { SITE } from "@/lib/site";
 import ShopClient from "./shop-client";
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
 export async function generateMetadata({
   searchParams,
@@ -16,7 +15,6 @@ export async function generateMetadata({
   return {
     title: c.title,
     description: c.metaDescription,
-    robots: { index: false, follow: false },
     alternates: {
       canonical: `${SITE}/shop`,
       languages: {
@@ -27,10 +25,25 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: `${SITE}/shop`,
-      siteName: "My Workshop",
+      siteName: lang === "fr" ? "L'Atelier" : "The Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title: c.title,
       description: c.metaDescription,
+      images: [
+        {
+          url: "/og/products.png",
+          width: 1200,
+          height: 630,
+          alt: c.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: c.title,
+      description: c.metaDescription,
+      images: ["/og/products.png"],
+      creator: "@manu_ai.to",
     },
   };
 }

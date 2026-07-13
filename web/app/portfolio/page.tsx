@@ -49,13 +49,13 @@ export async function generateMetadata({
 
   const title =
     lang === "fr"
-      ? "Portfolio — Systèmes d'automatisation IA en production · Taiyka"
-      : "Portfolio — AI Automation Systems Running in Production · Taiyka";
+      ? "Portfolio — Systèmes d'automatisation IA en production · L'Atelier"
+      : "Portfolio — AI Automation Systems Running in Production · The Workshop";
 
   const description =
     lang === "fr"
-      ? "Workflows n8n, agents IA et pipelines de données livrés chez des clients réels : Polymaker, UFC Wallis, content system @manu_ai.to, lead-gen multi-plateformes. Par Manu (Taiyka)."
-      : "n8n workflows, AI agents and data pipelines shipped for real clients: Polymaker, UFC Wallis, @manu_ai.to content system, multi-platform lead-gen. By Manu (Taiyka).";
+      ? "Workflows n8n, agents IA et pipelines de données livrés chez des clients réels : Polymaker, UFC Wallis, content system @manu_ai.to, lead-gen multi-plateformes. Par Manu."
+      : "n8n workflows, AI agents and data pipelines shipped for real clients: Polymaker, UFC Wallis, @manu_ai.to content system, multi-platform lead-gen. By Manu.";
 
   return {
     title,
@@ -70,7 +70,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: `${SITE}/portfolio`,
-      siteName: "Taiyka",
+      siteName: lang === "fr" ? "L'Atelier" : "The Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title,
       description,
@@ -126,7 +126,7 @@ export default async function PortfolioPage({
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Taiyka Portfolio",
+    name: lang === "fr" ? "L'Atelier" : "The Workshop",
     itemListElement: projects.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,

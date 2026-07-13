@@ -65,8 +65,8 @@ export async function generateMetadata({
 
   const description =
     lang === "fr"
-      ? "Le catalogue Taiyka : lead magnets gratuits, kits 10-25€, systèmes premium 25-50€ et la communauté Skool. Chaque pack résout un truc précis. Pas de remplissage."
-      : "The Taiyka catalog: free lead magnets, €10-25 kits, premium €25-50 systems and the Skool community. Every pack solves a real problem. No filler.";
+      ? "Le catalogue : lead magnets gratuits, kits 10-25€, systèmes premium 25-50€ et la communauté Skool. Chaque pack résout un truc précis. Pas de remplissage."
+      : "The catalog: free lead magnets, €10-25 kits, premium €25-50 systems and the Skool community. Every pack solves a real problem. No filler.";
 
   return {
     title,
@@ -81,7 +81,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: `${SITE}/products`,
-      siteName: "Taiyka",
+      siteName: lang === "fr" ? "L'Atelier" : "The Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title,
       description,
@@ -139,7 +139,7 @@ function buildItemListJsonLd(products: Product[], lang: Lang) {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Taiyka Products",
+    name: lang === "fr" ? "L'Atelier" : "The Workshop",
     itemListElement: products.map((p, i) => ({
       "@type": "ListItem",
       position: i + 1,
@@ -152,7 +152,7 @@ function buildItemListJsonLd(products: Product[], lang: Lang) {
         image: OG_PRODUCT_SLUGS.has(p.slug)
           ? `${SITE}/og/${p.slug}.png`
           : `${SITE}/og/products.png`,
-        brand: { "@type": "Brand", name: "Taiyka" },
+        brand: { "@type": "Brand", name: lang === "fr" ? "L'Atelier" : "The Workshop" },
         offers: {
           "@type": "Offer",
           price: priceToNumber(p.price),

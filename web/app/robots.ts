@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
+import { SITE } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,11 +7,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/manu-uhila-work-87k9"],
+        disallow: ["/api/"],
       },
     ],
     sitemap: `${SITE}/sitemap.xml`,
     // `host` is a Yandex-specific directive (ignored by Google/Bing). Low-risk noise.
-    host: "https://taiyka.com",
+    host: SITE,
   };
 }

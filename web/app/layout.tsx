@@ -1,37 +1,29 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Inter, JetBrains_Mono, VT323 } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
+// Inter is a variable font — one woff2 covers weights 400-900 (incl. 500).
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "700", "900"],
   display: "swap",
 });
 
+// JetBrains Mono renders above the fold on the hub, so preload it.
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono-hud",
   subsets: ["latin"],
   display: "swap",
-  preload: false,
+  preload: true,
 });
-
-const vt323 = VT323({
-  variable: "--font-display-hud",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: false,
-});
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://taiyka.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Taiyka — AI Automation Systems for Entrepreneurs",
-    template: "%s — Taiyka",
+    default: "L'Atelier — Systèmes d'automatisation IA pour entrepreneurs",
+    template: "%s — L'Atelier",
   },
   description:
     "Workflows n8n, agents IA, et systèmes d'automatisation pour entrepreneurs francophones. Par Manu (@manu_ai.to).",
@@ -42,16 +34,17 @@ export const metadata: Metadata = {
     "agent IA",
     "automatisation",
     "entrepreneur",
-    "Taiyka",
+    "L'Atelier",
     "manu_ai.to",
   ],
-  authors: [{ name: "Manu — Taiyka", url: "https://instagram.com/manu_ai.to" }],
-  creator: "Manu — Taiyka",
+  authors: [{ name: "Manu", url: "https://instagram.com/manu_ai.to" }],
+  creator: "Manu",
   alternates: {
     canonical: SITE,
     languages: {
       "fr-FR": "/",
       "en-US": "/?lang=en",
+      "x-default": "/",
     },
   },
   icons: {
@@ -62,8 +55,8 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     alternateLocale: ["en_US"],
     url: SITE,
-    siteName: "Taiyka",
-    title: "Taiyka — AI Automation Systems for Entrepreneurs",
+    siteName: "L'Atelier",
+    title: "L'Atelier — Systèmes d'automatisation IA pour entrepreneurs",
     description:
       "Workflows n8n, agents IA, et systèmes d'automatisation pour entrepreneurs francophones.",
     images: [
@@ -71,22 +64,26 @@ export const metadata: Metadata = {
         url: "/og/home.png",
         width: 1200,
         height: 630,
-        alt: "Taiyka — AI Automation",
+        alt: "L'Atelier",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Taiyka — AI Automation Systems",
+    title: "L'Atelier — Systèmes d'automatisation IA",
     description:
       "Workflows n8n, agents IA, et systèmes d'automatisation pour entrepreneurs.",
     images: ["/og/home.png"],
-    creator: "@manu_ai.to",
+    // twitter.creator omitted: @manu_ai.to is an IG/TikTok handle, not a valid X username.
   },
   robots: {
     index: true,
     follow: true,
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0A1628",
 };
 
 // Inline script: sync <html lang> with ?lang= query so SR pronunciation matches content.
@@ -97,10 +94,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" className={`${inter.variable} ${jetbrainsMono.variable} ${vt323.variable} h-full antialiased`}>
-      <head>
-        <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css" />
-      </head>
+    <html lang="fr" className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Script id="lang-sync" strategy="beforeInteractive">
           {langSyncScript}

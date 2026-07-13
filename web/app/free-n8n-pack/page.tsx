@@ -22,8 +22,8 @@ export async function generateMetadata({
 
   const title =
     lang === "fr"
-      ? "Pack n8n gratuit — 5 workflows à importer · Taiyka"
-      : "Free n8n pack — 5 workflows to import · Taiyka";
+      ? "Pack n8n gratuit — 5 workflows à importer · L'Atelier"
+      : "Free n8n pack — 5 workflows to import · The Workshop";
 
   const description =
     lang === "fr"
@@ -206,7 +206,7 @@ export default async function FreeN8nPackPage({
 
         {/* Footer */}
         <footer className="mt-auto pt-12 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
-          <span>© {new Date().getFullYear()} Taiyka · @manu_ai.to</span>
+          <span>© {new Date().getFullYear()} · @manu_ai.to</span>
         </footer>
       </div>
     </main>
