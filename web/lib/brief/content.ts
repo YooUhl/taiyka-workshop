@@ -33,8 +33,22 @@ export function buildConfirmEmail(
       ? {
           subject: "Confirm your subscription to Le Brief",
           preheader: "One click and you're in.",
-          heading: "Confirm your subscription",
-          body: "Click the button below to confirm your email and start receiving Le Brief — the AI news that matters, every 2 days, in French.",
+          heading: "One more click",
+          body: "Click the button to confirm your subscription to Le Brief — here's what's coming.",
+          expect: [
+            {
+              label: "📅 Every other day",
+              text: "the AI news that actually matters. Not every day — just when it's worth it.",
+            },
+            {
+              label: "⚡ 2 minutes flat",
+              text: "3-4 stories decoded in a few lines, the rest in brief. Not just links.",
+            },
+            {
+              label: "🇫🇷 In French, free",
+              text: "and one-click unsubscribe whenever you want, no hard feelings.",
+            },
+          ],
           button: "Confirm my subscription",
           nudge:
             "Tip: drag Le Brief into your Primary tab, or add brief@send.taiyka.com to your contacts, so no issue lands in Promotions.",
@@ -45,8 +59,22 @@ export function buildConfirmEmail(
       : {
           subject: "Confirme ton inscription à Le Brief",
           preheader: "Un clic et c'est bon.",
-          heading: "Confirme ton inscription",
-          body: "Clique sur le bouton ci-dessous pour confirmer ton email et commencer à recevoir Le Brief — les news IA qui comptent, tous les 2 jours, en français.",
+          heading: "Plus qu'un clic",
+          body: "Clique sur le bouton pour confirmer ton inscription à Le Brief — et voici ce qui t'attend.",
+          expect: [
+            {
+              label: "📅 Un jour sur deux",
+              text: "l'actu IA qui compte vraiment. Pas tous les jours — juste quand ça vaut le coup.",
+            },
+            {
+              label: "⚡ 2 minutes chrono",
+              text: "3-4 news décryptées en quelques lignes, le reste en bref. Pas juste des liens.",
+            },
+            {
+              label: "🇫🇷 En français, gratuit",
+              text: "et désinscription en un clic quand tu veux, sans rancune.",
+            },
+          ],
           button: "Confirmer mon inscription",
           nudge:
             "Astuce : glisse Le Brief dans ta boîte Principale, ou ajoute brief@send.taiyka.com à tes contacts, pour qu'aucun numéro ne finisse dans Promotions.",
@@ -54,6 +82,13 @@ export function buildConfirmEmail(
             "Si tu ne t'es pas inscrit, ignore cet email — rien ne se passe sans ta confirmation.",
           signoff: "À très vite dans ta boîte,",
         };
+
+  const expectHtml = copy.expect
+    .map(
+      (item) =>
+        `<tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.55;padding-bottom:14px;"><span style="color:${TEXT};font-weight:700;">${item.label}</span> <span style="color:${MUTED};">— ${item.text}</span></td></tr>`,
+    )
+    .join("");
 
   const html = `<!doctype html>
 <html lang="${lang}">
@@ -65,8 +100,9 @@ export function buildConfirmEmail(
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;">
         <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${MUTED};font-size:12px;letter-spacing:0.18em;text-transform:uppercase;padding-bottom:20px;">Le Brief</td></tr>
         <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${TEXT};font-size:22px;font-weight:700;line-height:1.3;padding-bottom:16px;">${copy.heading}</td></tr>
-        <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${MUTED};font-size:15px;line-height:1.6;padding-bottom:28px;">${copy.body}</td></tr>
-        <tr><td style="padding-bottom:28px;">
+        <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${MUTED};font-size:15px;line-height:1.6;padding-bottom:24px;">${copy.body}</td></tr>
+        ${expectHtml}
+        <tr><td style="padding-top:12px;padding-bottom:28px;">
           <a href="${confirmUrl}" style="display:inline-block;background:${BLUE};color:${NAVY};font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;text-decoration:none;padding:14px 28px;border-radius:8px;">${copy.button}</a>
         </td></tr>
         <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${TEXT};font-size:13px;line-height:1.6;padding-bottom:16px;">${copy.nudge}</td></tr>
@@ -78,7 +114,11 @@ export function buildConfirmEmail(
 </body>
 </html>`;
 
-  const text = `${copy.heading}\n\n${copy.body}\n\n${confirmUrl}\n\n${copy.nudge}\n\n${copy.ignore}\n\n${copy.signoff}\nManu · @manu_ai.to`;
+  const expectText = copy.expect
+    .map((item) => `${item.label} — ${item.text}`)
+    .join("\n");
+
+  const text = `${copy.heading}\n\n${copy.body}\n\n${expectText}\n\n${confirmUrl}\n\n${copy.nudge}\n\n${copy.ignore}\n\n${copy.signoff}\nManu · @manu_ai.to`;
 
   return { subject: copy.subject, html, text };
 }
