@@ -57,3 +57,10 @@ _build/
 # n8n test artifacts (may contain personal PII in rendered email previews)
 funnel/n8n-workflows/preview.html
 
+
+# local clutter
+*.png
+audit-tmp/
+.playwright-mcp/
+.vercel/
+research/
