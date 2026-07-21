@@ -40,7 +40,7 @@ export function ComingSoon({ copy }: { copy: Copy }) {
 
         <Link
           href={copy.backHref}
-          className="mt-10 md:mt-12 inline-flex items-center justify-center min-h-[44px] rounded-md bg-primary px-7 py-3 text-[0.9rem] font-mono tracking-[0.18em] uppercase text-primary-foreground font-semibold transition-colors duration-200 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+          className="mt-10 md:mt-12 inline-flex items-center justify-center min-h-[44px] rounded-none bg-primary px-7 py-3 text-[0.9rem] font-mono tracking-[0.18em] uppercase text-primary-foreground font-semibold transition-colors duration-200 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
         >
           {copy.backCta}
         </Link>

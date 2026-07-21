@@ -254,7 +254,7 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
           "py-12 md:py-20",
           "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
           "[perspective:1500px]",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-md"
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-none"
         )}
       >
         <ul
@@ -301,7 +301,7 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
           onClick={() => scrollToActual(actualIndex + 1)}
           aria-label={labels.next}
           className={cn(
-            "pointer-events-auto grid h-11 w-11 place-items-center rounded-md border transition-colors",
+            "pointer-events-auto grid h-11 w-11 place-items-center rounded-none border transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
             chevronPulsing
               ? "border-primary bg-primary text-primary-foreground"
@@ -313,7 +313,7 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
       </div>
 
       {/* Position dots — proper tablist structure + wider active dot */}
-      <div className="mt-6 flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
+      <div className="mt-6 flex items-center justify-center gap-2 font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground">
         <span className="tabular-nums">
           {String(displayIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
         </span>

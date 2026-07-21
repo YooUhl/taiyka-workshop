@@ -337,7 +337,7 @@ export default async function ProspectAuditFunnelPage({
             </span>
             <Link
               href={t.langSwitchHref}
-              className="inline-flex items-center min-h-[44px] rounded-md border border-border px-3 hover:border-primary hover:text-foreground transition-colors text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              className="inline-flex items-center min-h-[44px] rounded-none border border-border px-3 hover:border-primary hover:text-foreground transition-colors text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {t.langSwitch}
             </Link>
@@ -418,7 +418,7 @@ export default async function ProspectAuditFunnelPage({
               href={GUMROAD_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-none bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {t.ctaButton}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>

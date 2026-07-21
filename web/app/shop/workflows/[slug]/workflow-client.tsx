@@ -109,7 +109,7 @@ export default function WorkflowClient({
         {/* Hero — two-column at lg+ */}
         <section className="mt-12 md:mt-16 mb-14 md:mb-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-8 md:gap-10 items-start">
           {/* Cover — flat arctic-navy plate, single blue icon */}
-          <div className="relative aspect-square w-full overflow-hidden rounded-md border border-border bg-arctic-navy">
+          <div className="relative aspect-square w-full overflow-hidden rounded-none border border-border bg-arctic-navy">
             <div className="absolute inset-0 paper-grid" aria-hidden />
             <div className="absolute inset-0 flex items-center justify-center">
               <Icon
@@ -139,7 +139,7 @@ export default function WorkflowClient({
               </span>
               <span
                 aria-disabled="true"
-                className="inline-flex items-center gap-2 rounded-md px-5 py-3 font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground bg-muted border border-border cursor-not-allowed"
+                className="inline-flex items-center gap-2 rounded-none px-5 py-3 font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground bg-muted border border-border cursor-not-allowed"
               >
                 {t.ctaComingSoon}
               </span>
@@ -252,7 +252,7 @@ export default function WorkflowClient({
             <span
               aria-disabled="true"
               className={cn(
-                "inline-flex items-center gap-2 rounded-md px-5 py-3 font-mono-hud text-[11px] tracking-[0.18em] uppercase",
+                "inline-flex items-center gap-2 rounded-none px-5 py-3 font-mono-hud text-[11px] tracking-[0.18em] uppercase",
                 "text-muted-foreground bg-muted border border-border cursor-not-allowed",
               )}
             >

@@ -2,8 +2,11 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Ticker } from "@/components/site/Ticker";
+import { TrustStrip } from "@/components/site/TrustStrip";
+import { FaqAccordion } from "@/components/site/FaqAccordion";
 import { withLang } from "@/lib/lang-utils";
 import {
   COPY,
@@ -136,7 +139,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
             <a
               href="#catalogue"
               className={cn(
-                "mt-9 inline-flex items-center gap-3 rounded-md bg-primary px-7 py-4 text-[0.95rem] md:text-base font-semibold tracking-tight text-[#06131f] transition-colors hover:bg-[#33b8ff]",
+                "mt-9 inline-flex items-center gap-3 rounded-none bg-primary px-7 py-4 text-[0.95rem] md:text-base font-semibold tracking-tight text-[#06131f] transition-colors hover:bg-[#33b8ff]",
                 FOCUS_RING,
               )}
             >
@@ -226,7 +229,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
       {/* Category tiles — big type, topg's "CATEGORIES" strip */}
       <section className={cn(SHELL, "mb-16 md:mb-24")}>
         <p className="kicker kicker-accent mb-6">{c.tilesKicker}</p>
-        <ul className="grid gap-px bg-border border border-border rounded-md overflow-hidden sm:grid-cols-3">
+        <ul className="grid gap-px bg-border border border-border rounded-none overflow-hidden sm:grid-cols-3">
           {c.tiles.map((tile) => (
             <li key={tile.key} className="bg-background">
               <div className="relative flex h-40 md:h-52 items-center justify-center overflow-hidden bg-arctic-navy">
@@ -270,7 +273,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
               <Link
                 href={withLang(`/shop/workflows/${c.featureSlug}`, lang)}
                 className={cn(
-                  "inline-flex items-center gap-3 rounded-md bg-primary px-7 py-4 text-[0.95rem] font-semibold tracking-tight text-[#06131f] transition-colors hover:bg-[#33b8ff]",
+                  "inline-flex items-center gap-3 rounded-none bg-primary px-7 py-4 text-[0.95rem] font-semibold tracking-tight text-[#06131f] transition-colors hover:bg-[#33b8ff]",
                   FOCUS_RING,
                 )}
               >
@@ -286,46 +289,13 @@ export default function ShopClient({ lang }: { lang: Lang }) {
       {/* FAQ */}
       <section className={cn(SHELL, "mb-16 md:mb-24")}>
         <p className="kicker kicker-accent mb-6">{c.faqKicker}</p>
-        <h2 className="display-lg mb-8">{c.faqTitle}</h2>
-        <ul className="border-t border-border">
-          {c.faq.map((item) => (
-            <li key={item.q} className="border-b border-border">
-              <details className="group">
-                <summary
-                  className={cn(
-                    "flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-[0.95rem] md:text-base font-medium text-foreground transition-colors hover:text-primary",
-                    FOCUS_RING,
-                  )}
-                >
-                  {item.q}
-                  <Plus
-                    aria-hidden
-                    className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-45 group-hover:text-primary"
-                  />
-                </summary>
-                <p className="pb-6 pr-10 text-[0.9rem] md:text-[0.95rem] text-muted-foreground leading-relaxed max-w-3xl">
-                  {item.a}
-                </p>
-              </details>
-            </li>
-          ))}
-        </ul>
+        <h2 className="display-lg display-caps mb-8">{c.faqTitle}</h2>
+        <FaqAccordion items={c.faq} />
       </section>
 
       {/* Trust strip */}
-      <section className={cn(SHELL, "mb-16 md:mb-24")}>
-        <ul className="grid gap-px bg-border border border-border rounded-md overflow-hidden sm:grid-cols-3">
-          {c.trust.map((item) => (
-            <li key={item.label} className="bg-background px-6 py-7 text-center">
-              <p className="font-mono-hud text-[11px] tracking-[0.18em] uppercase text-primary mb-2">
-                {item.label}
-              </p>
-              <p className="text-[0.85rem] text-muted-foreground leading-snug">
-                {item.detail}
-              </p>
-            </li>
-          ))}
-        </ul>
+      <section className="mb-16 md:mb-24">
+        <TrustStrip items={c.trust} />
       </section>
 
       {/* Waitlist */}
@@ -360,7 +330,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
                   if (status === "error") setStatus("idle");
                 }}
                 placeholder={c.waitlistEmailPlaceholder}
-                className="flex-1 rounded-md border border-input bg-card px-4 py-3 text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary transition-colors"
+                className="flex-1 rounded-none border border-input bg-card px-4 py-3 text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/70 focus:outline-none focus:border-primary transition-colors"
                 aria-invalid={status === "error"}
                 required
               />
@@ -368,7 +338,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
                 type="submit"
                 disabled={!emailLooksValid || status === "submitting"}
                 className={cn(
-                  "rounded-md py-3 px-6 text-[0.95rem] md:text-base font-semibold tracking-tight transition-colors",
+                  "rounded-none py-3 px-6 text-[0.95rem] md:text-base font-semibold tracking-tight transition-colors",
                   FOCUS_RING,
                   emailLooksValid && status !== "submitting"
                     ? "bg-primary text-[#06131f] hover:bg-[#33b8ff]"
@@ -431,35 +401,6 @@ export default function ShopClient({ lang }: { lang: Lang }) {
 }
 
 /**
- * Announcement ticker. The track carries the list twice; the keyframe travels
- * exactly half its width so the seam never shows.
- */
-function Ticker({ items }: { items: string[] }) {
-  const run = [...items, ...items];
-  return (
-    <div className="w-full overflow-hidden border-b border-border bg-arctic-navy/60 py-2.5">
-      <div
-        className="flex w-max"
-        style={{ animation: "ticker-scroll 38s linear infinite" }}
-      >
-        {run.map((item, i) => (
-          <span
-            key={`${item}-${i}`}
-            aria-hidden={i >= items.length}
-            className="inline-flex items-center whitespace-nowrap font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground"
-          >
-            {item}
-            <span className="mx-5 text-primary" aria-hidden>
-              ·
-            </span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
  * Full-bleed product rail. Cards sit flush against each other with a single
  * hairline between them and the last one runs off the right edge, which is
  * what tells you there's more to scroll.
@@ -507,7 +448,7 @@ function ProductRail({
           onClick={() => nudge(-1)}
           aria-label={prevLabel}
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary",
+            "flex h-10 w-10 items-center justify-center rounded-none border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary",
             FOCUS_RING,
           )}
         >
@@ -518,7 +459,7 @@ function ProductRail({
           onClick={() => nudge(1)}
           aria-label={nextLabel}
           className={cn(
-            "flex h-10 w-10 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary",
+            "flex h-10 w-10 items-center justify-center rounded-none border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary",
             FOCUS_RING,
           )}
         >
@@ -573,7 +514,7 @@ function FeatureMark({
   const Icon = resolveIcon(featured.icon);
 
   return (
-    <div className="relative hidden lg:flex aspect-square items-center justify-center overflow-hidden rounded-md border border-border bg-arctic-navy">
+    <div className="relative hidden lg:flex aspect-square items-center justify-center overflow-hidden rounded-none border border-border bg-arctic-navy">
       <div className="absolute inset-0 paper-grid" aria-hidden />
       <Icon
         aria-hidden

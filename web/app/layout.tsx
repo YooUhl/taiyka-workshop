@@ -101,7 +101,7 @@ export default function RootLayout({
         </Script>
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-md focus:bg-ice-white focus:px-3 focus:py-2 focus:text-obsidian"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-none focus:bg-ice-white focus:px-3 focus:py-2 focus:text-obsidian"
         >
           Aller au contenu / Skip to content
         </a>

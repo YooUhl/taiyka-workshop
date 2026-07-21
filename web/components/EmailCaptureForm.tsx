@@ -134,7 +134,7 @@ export default function EmailCaptureForm({
           disabled={isBusy}
           aria-describedby="email-error"
           aria-invalid={isError}
-          className="h-14 w-full rounded-md border border-input bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/35"
+          className="h-14 w-full rounded-none border border-input bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/35"
         />
       </div>
 
@@ -152,7 +152,7 @@ export default function EmailCaptureForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={isBusy}
-            className="h-14 w-full rounded-md border border-input bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/35"
+            className="h-14 w-full rounded-none border border-input bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
         </div>
       )}
@@ -162,7 +162,7 @@ export default function EmailCaptureForm({
         disabled={isBusy}
         aria-busy={isBusy}
         className={cn(
-          "mt-1 h-14 w-full rounded-md bg-primary text-base font-semibold text-primary-foreground transition-colors",
+          "mt-1 h-14 w-full rounded-none bg-primary text-base font-semibold text-primary-foreground transition-colors",
           "hover:bg-primary/90",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
           "disabled:cursor-not-allowed disabled:opacity-60"

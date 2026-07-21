@@ -249,7 +249,7 @@ export function ProductCard({ product, lang }: Props) {
               </Link>
             )
           ) : (
-            <div className="w-full text-center text-xs min-h-[44px] flex items-center justify-center px-3 rounded-md border border-border bg-secondary/40 text-muted-foreground">
+            <div className="w-full text-center text-xs min-h-[44px] flex items-center justify-center px-3 rounded-none border border-border bg-secondary/40 text-muted-foreground">
               {T.comingSoon[lang]}
             </div>
           )}

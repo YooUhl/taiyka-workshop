@@ -216,6 +216,41 @@
     font-size: clamp(1.5rem, 3.5vw, 2.125rem);
   }
 
+  /* Heavy uppercase display — the topg voice. Pairs with .display-* for size. */
+  .display-caps {
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* Full-bleed band: escapes the page gutter to run edge to edge, ruled top
+     and bottom. The building block for flush sections. */
+  .band {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Flush row — stacked list items that butt together with one hairline
+     between them, no gaps, no card chrome. */
+  .row-flush {
+    border-bottom: 1px solid var(--border);
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+  .row-flush:last-child {
+    border-bottom: 0;
+  }
+  .row-flush:hover {
+    background-color: rgba(0, 166, 255, 0.06);
+  }
+  /* Selected/primary row — blue edge on the leading side. */
+  .row-flush-accent {
+    box-shadow: inset 3px 0 0 0 var(--accent);
+  }
+
   /* Mono kicker — quiet gray label, FounderOS style: "> SECTION NAME" */
   .kicker {
     font-family: var(--font-mono);
@@ -246,26 +281,27 @@
     background-size: 48px 48px;
   }
 
-  /* Editorial card — thin border, white fill, quiet hover */
+  /* The box. One definition, used by every boxed surface on the site — link
+     cards, answer boxes, product tiles, panels — so they cannot drift apart.
+     Flat and square: no radius, no glow, blue edge and faint wash on hover. */
   .card-line {
     background-color: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+    border-radius: 0;
+    transition: border-color 180ms ease, background-color 180ms ease;
   }
   .card-line:hover {
-    border-color: rgba(0, 166, 255, 0.5);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+    border-color: rgba(0, 166, 255, 0.6);
+    background-color: rgba(0, 166, 255, 0.04);
   }
-  /* Primary card — electric blue edge + wash. The one the eye lands on. */
+  /* Primary / selected box — electric blue edge + wash. */
   .card-line-accent {
     background-color: rgba(0, 166, 255, 0.08);
-    border-color: rgba(0, 166, 255, 0.55);
+    border-color: #00a6ff;
   }
   .card-line-accent:hover {
     border-color: #00a6ff;
     background-color: rgba(0, 166, 255, 0.12);
-    box-shadow: 0 2px 28px rgba(0, 166, 255, 0.18);
   }
   /* Light-panel overrides — card-line must invert inside .panel-light */
   .panel-light .card-line:hover {

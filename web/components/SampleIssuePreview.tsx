@@ -95,7 +95,7 @@ export default function SampleIssuePreview({ lang }: { lang: Lang }) {
   return (
     <article
       className={cn(
-        "panel-light w-full max-w-lg rounded-lg border border-border text-left",
+        "panel-light w-full max-w-lg rounded-none border border-border text-left",
         "p-6 md:p-8 shadow-[0_18px_50px_-24px_rgba(0,0,0,0.75)]"
       )}
       aria-label={lang === "fr" ? "Aperçu d'un numéro" : "Sample issue preview"}

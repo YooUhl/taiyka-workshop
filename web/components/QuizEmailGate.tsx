@@ -179,7 +179,7 @@ export default function QuizEmailGate({
 
       <span className="kicker kicker-accent">{t.kicker}</span>
 
-      <h2 className="display-xl mt-5 mb-8 text-balance text-foreground">
+      <h2 className="display-xl display-caps mt-5 mb-8 text-balance text-foreground">
         {t.headlineLine1}
         <br />
         <span className="text-primary">{t.headlineLine2}</span>
@@ -233,7 +233,7 @@ export default function QuizEmailGate({
                 disabled={isBusy}
                 aria-describedby="qcm-email-error"
                 aria-invalid={status === "error"}
-                className="h-14 w-full rounded-md border border-input bg-obsidian px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="h-14 w-full rounded-none border border-input bg-obsidian px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
 
@@ -241,7 +241,7 @@ export default function QuizEmailGate({
               type="submit"
               disabled={isBusy}
               className={cn(
-                "mt-1 h-14 w-full rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors",
+                "mt-1 h-14 w-full rounded-none bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors",
                 "hover:bg-[#33b8ff]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
                 "disabled:cursor-not-allowed disabled:opacity-60"

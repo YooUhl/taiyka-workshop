@@ -2,10 +2,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { withLang } from "@/lib/lang-utils";
 import { SITE } from "@/lib/site";
+import { Ticker } from "@/components/site/Ticker";
 
 type Lang = "fr" | "en";
 
 type Copy = {
+  ticker: string[];
   topLeftHome: string;
   metaPill: string;
   kickerTest: string;
@@ -27,6 +29,12 @@ type Copy = {
 
 const COPY: Record<Lang, Copy> = {
   fr: {
+    ticker: [
+      "9 questions · 2 minutes",
+      "5 profils d'entrepreneur",
+      "Résultat immédiat",
+      "Sans email avant la fin",
+    ],
     topLeftHome: "← TAIYKA · Accueil",
     metaPill: "9 questions · 2 min · 5 profils",
     kickerTest: "LE TEST",
@@ -49,6 +57,12 @@ const COPY: Record<Lang, Copy> = {
       "9 questions, 2 minutes. Découvre ton profil d’entrepreneur et la prochaine étape concrète pour faire bouger ton business avec l’IA.",
   },
   en: {
+    ticker: [
+      "9 questions · 2 minutes",
+      "5 entrepreneur profiles",
+      "Instant result",
+      "No email until the end",
+    ],
     topLeftHome: "← TAIYKA · Home",
     metaPill: "9 questions · 2 min · 5 profiles",
     kickerTest: "THE TEST",
@@ -154,6 +168,7 @@ export default async function QcmLandingPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(qcmSchema) }}
       />
+      <Ticker items={c.ticker} />
       <div
         className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-8 md:py-12 text-center"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
@@ -182,7 +197,7 @@ export default async function QcmLandingPage({
         <span className="kicker kicker-accent">{c.kickerTest}</span>
 
         {/* H1 — hook */}
-        <h1 className="display-xl mt-5 mb-10 md:mb-12 text-balance text-foreground">
+        <h1 className="display-xl display-caps mt-5 mb-10 md:mb-12 text-balance text-foreground">
           {c.h1Lead}{" "}
           <span className="text-primary">{c.h1Accent}</span>{" "}
           <span className="text-muted-foreground">{c.h1Trail}</span>
@@ -213,7 +228,7 @@ export default async function QcmLandingPage({
         <div className="flex flex-col items-center gap-6">
           <Link
             href={withLang("/qcm/quiz", lang)}
-            className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+            className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-none bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
           >
             {c.ctaButton}
             <span aria-hidden className="transition-transform group-hover:translate-x-1">

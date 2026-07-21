@@ -5,6 +5,10 @@ import Link from "next/link";
 import Script from "next/script";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Ticker } from "@/components/site/Ticker";
+import { TrustStrip } from "@/components/site/TrustStrip";
+import { ProgressBar } from "@/components/site/ProgressBar";
+import { ChoiceRow } from "@/components/site/ChoiceRow";
 import {
   COPY,
   EMAIL_MAX,
@@ -86,11 +90,11 @@ const CALENDLY_FALLBACK_MS = 8000;
 const FOCUS_RING =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]";
 const CTA_BASE =
-  "rounded-md font-semibold tracking-tight transition-colors duration-200 ease-out";
+  "rounded-none font-semibold tracking-tight transition-colors duration-200 ease-out";
 const CTA_ACTIVE = "bg-primary text-primary-foreground hover:bg-[#33b8ff]";
 const CTA_DISABLED = "bg-muted text-muted-foreground/70 cursor-not-allowed";
 const NOTICE =
-  "mb-4 rounded-md border border-amber-400/30 bg-amber-400/[0.06] px-4 py-3 text-xs leading-relaxed text-amber-200/90";
+  "mb-4 rounded-none border border-amber-400/30 bg-amber-400/[0.06] px-4 py-3 text-xs leading-relaxed text-amber-200/90";
 
 function stepIndex(phase: Phase): number {
   if (phase === "q1") return 1;
@@ -533,13 +537,15 @@ export default function BookClient({ lang }: { lang: Lang }) {
   const showHero = phase === "q1" && !booked;
 
   return (
-    <main className="paper-grid relative flex-1 w-full flex flex-col z-10 min-h-screen">
+    <main className="paper-grid relative flex-1 w-full flex flex-col z-10 min-h-screen overflow-x-hidden">
+      <Ticker items={c.ticker} />
+
       <div
-        className="relative mx-auto w-full max-w-xl px-6 pt-8 pb-16 flex flex-col flex-1"
+        className="relative mx-auto w-full max-w-xl px-6 pt-6 pb-16 flex flex-col flex-1"
         style={{ opacity: 1, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        {/* Top bar — home link + step indicator (lang switch demoted to footer per P2-23) */}
-        <div className="w-full flex items-center justify-between gap-4 mb-10 md:mb-14">
+        {/* Top bar — home link only; progress moved to the bar below */}
+        <div className="w-full flex items-center justify-between gap-4 mb-8 md:mb-10">
           <Link
             href={lang === "en" ? "/?lang=en" : "/"}
             className={cn(
@@ -550,13 +556,18 @@ export default function BookClient({ lang }: { lang: Lang }) {
             <span aria-hidden>←</span>
             {c.homeLabel}
           </Link>
-          {phase !== "calendly" && (
-            <span className="kicker kicker-bare kicker-accent">
-              {c.step(stepIndex(phase), TOTAL_STEPS)}
-            </span>
-          )}
           <span aria-hidden className="w-12" />
         </div>
+
+        {phase !== "calendly" && !booked && (
+          <div className="mb-10 md:mb-14">
+            <ProgressBar
+              current={stepIndex(phase)}
+              total={TOTAL_STEPS}
+              label={c.step(stepIndex(phase), TOTAL_STEPS)}
+            />
+          </div>
+        )}
 
         {!storageAvailable && <div className={NOTICE}>{c.storageDisabled}</div>}
         {draftRestoreFailed && <div className={NOTICE}>{c.draftRestoreFailed}</div>}
@@ -570,15 +581,19 @@ export default function BookClient({ lang }: { lang: Lang }) {
 
         {showHero && (
           <section aria-label={c.hero.outcome} className="mb-12 md:mb-16">
-            <h2 className="display-md text-balance mb-5">{c.hero.outcome}</h2>
+            <h2 className="display-md display-caps text-balance mb-6">
+              {c.hero.outcome}
+            </h2>
             <p className="text-base md:text-lg text-foreground/85 leading-relaxed mb-4">
               {c.hero.purpose}
             </p>
-            <p className="text-sm md:text-[0.95rem] text-muted-foreground leading-relaxed mb-8">
+            <p className="text-sm md:text-[0.95rem] text-muted-foreground leading-relaxed mb-10">
               {c.hero.logistics}
             </p>
 
-            <div className="hairline" />
+            <div className="band">
+              <TrustStrip items={c.trust} />
+            </div>
           </section>
         )}
 
@@ -643,7 +658,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                     key={ex}
                     onClick={() => applyExample(ex)}
                     className={cn(
-                      "inline-flex items-center min-h-[44px] px-4 rounded-md text-xs border border-border bg-card text-muted-foreground hover:border-primary/60 hover:text-foreground transition-colors",
+                      "inline-flex items-center min-h-[44px] px-4 rounded-none text-xs border border-border bg-card text-muted-foreground hover:border-primary/60 hover:text-foreground transition-colors",
                       FOCUS_RING,
                     )}
                   >
@@ -659,7 +674,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 placeholder={c.q3Placeholder}
                 rows={6}
                 aria-describedby="q3-counter"
-                className="w-full rounded-md border border-border bg-card px-4 py-3.5 text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors resize-y min-h-[180px]"
+                className="w-full rounded-none border border-border bg-card px-4 py-3.5 text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors resize-y min-h-[180px]"
               />
               <div className="flex items-center justify-between gap-4 font-mono text-[11px] tracking-[0.15em] uppercase">
                 <span className={cn(isQ3Valid ? "text-muted-foreground" : "text-steel-blue")}>{c.q3Hint}</span>
@@ -926,7 +941,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 <div className="w-full overflow-x-hidden">
                   <div
                     ref={calendlyMountRef}
-                    className="w-full rounded-md overflow-hidden border border-border bg-white"
+                    className="w-full rounded-none overflow-hidden border border-border bg-white"
                     style={{ minHeight: 600, height: "min(85vh, 820px)" }}
                   />
                 </div>
@@ -1002,7 +1017,7 @@ function Step({
       <h1
         ref={headingRef}
         tabIndex={-1}
-        className="display-md text-balance mb-8 md:mb-10 focus:outline-none"
+        className="display-md display-caps text-balance mb-8 md:mb-10 focus:outline-none"
       >
         {question}
       </h1>
@@ -1034,35 +1049,14 @@ function ChoiceList<T extends string>({
 }) {
   return (
     <ul className="flex flex-col gap-3">
-      {choices.map((choice) => {
-        const isSelected = selected === choice.key;
-        return (
-          <li key={choice.key}>
-            <button
-              type="button"
-              aria-label={choice.label}
-              onClick={() => onSelect(choice.key)}
-              className={cn(
-                "group flex w-full items-center justify-between gap-4 text-left py-4 px-5 min-h-[44px] text-[0.95rem] md:text-base font-medium tracking-tight text-foreground",
-                "card-line",
-                isSelected && "card-line-accent",
-                FOCUS_RING,
-              )}
-            >
-              <span>{choice.label}</span>
-              <span
-                aria-hidden
-                className={cn(
-                  "shrink-0 text-lg leading-none transition-colors",
-                  isSelected ? "text-primary" : "text-steel-blue group-hover:text-primary",
-                )}
-              >
-                →
-              </span>
-            </button>
-          </li>
-        );
-      })}
+      {choices.map((choice) => (
+        <ChoiceRow
+          key={choice.key}
+          label={choice.label}
+          selected={selected === choice.key}
+          onSelect={() => onSelect(choice.key)}
+        />
+      ))}
     </ul>
   );
 }
@@ -1124,7 +1118,7 @@ function Field({
         aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
         className={cn(
-          "w-full rounded-md border bg-card px-4 py-3.5 min-h-[48px] text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none transition-colors",
+          "w-full rounded-none border bg-card px-4 py-3.5 min-h-[48px] text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none transition-colors",
           error
             ? "border-destructive focus:border-destructive"
             : "border-border focus:border-primary",

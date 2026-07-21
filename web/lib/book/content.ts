@@ -36,9 +36,17 @@ type HeroCopy = {
   notReadyHref: string;
 };
 
+type TrustItem = {
+  label: string;
+  detail: string;
+};
+
 type Copy = {
   title: string;
   metaDescription: string;
+
+  ticker: string[];
+  trust: TrustItem[];
   ogSiteName: string;
   step: (current: number, total: number) => string;
   langSwitch: string;
@@ -113,6 +121,18 @@ export const COPY: Record<Lang, Copy> = {
     metaDescription:
       "30 min en visio pour cadrer ton projet d'automatisation IA. 3 questions rapides, puis ton créneau. Gratuit, sans engagement.",
     ogSiteName: "L'Atelier",
+
+    ticker: [
+      "Appel de 30 minutes",
+      "En visio",
+      "Gratuit, sans engagement",
+      "Réponse en personne",
+    ],
+    trust: [
+      { label: "30 minutes", detail: "Pas plus, pas moins" },
+      { label: "Gratuit", detail: "Sans engagement derrière" },
+      { label: "En direct", detail: "Avec moi, pas un commercial" },
+    ],
     step: (current, total) => `Étape ${current} / ${total}`,
     langSwitch: "EN",
     langSwitchHref: "/book?lang=en",
@@ -233,6 +253,18 @@ export const COPY: Record<Lang, Copy> = {
     metaDescription:
       "30 min video call to scope your AI automation project. 3 quick questions, then your slot. Free, no commitment.",
     ogSiteName: "The Workshop",
+
+    ticker: [
+      "30-minute call",
+      "Over video",
+      "Free, no strings",
+      "I reply in person",
+    ],
+    trust: [
+      { label: "30 minutes", detail: "No more, no less" },
+      { label: "Free", detail: "Nothing to sign after" },
+      { label: "Direct", detail: "With me, not a salesperson" },
+    ],
     step: (current, total) => `Step ${current} / ${total}`,
     langSwitch: "FR",
     langSwitchHref: "/book?lang=fr",

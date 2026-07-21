@@ -167,7 +167,7 @@ export default async function BriefConfirmedPage({
           <form method="post" action={confirmAction} className="mb-12 md:mb-16">
             <button
               type="submit"
-              className="inline-flex h-14 items-center justify-center rounded-md bg-primary px-8 text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              className="inline-flex h-14 items-center justify-center rounded-none bg-primary px-8 text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {t.confirm.button}
             </button>

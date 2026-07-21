@@ -120,14 +120,14 @@ export default function UnsubscribeClient({ initialEmail, lang, t }: Props) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={isBusy}
-          className="h-14 w-full rounded-md border border-input bg-card px-4 text-base text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="h-14 w-full rounded-none border border-input bg-card px-4 text-base text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
         <button
           type="submit"
           disabled={isBusy || !email}
           aria-busy={isBusy}
           className={cn(
-            "mt-1 h-14 w-full rounded-md bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors",
+            "mt-1 h-14 w-full rounded-none bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors",
             "hover:bg-[#33b8ff]",
             FOCUS_RING,
             "disabled:cursor-not-allowed disabled:opacity-60"

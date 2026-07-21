@@ -198,7 +198,7 @@ export default async function ResultPage({
             `useGradient` now selects the blue accent treatment rather than a
             gradient fill — the gradient look is gone from the design system. */}
         <div className="mt-5 mb-12">
-          <h1 className="display-xl text-balance">
+          <h1 className="display-xl display-caps text-balance">
             <span className={r.useGradient ? "text-primary" : "text-foreground"}>
               {r.name}
             </span>
@@ -241,7 +241,7 @@ export default async function ResultPage({
               href={r.cta.external ? r.cta.href : withLang(r.cta.href, lang)}
               target={r.cta.external ? "_blank" : undefined}
               rel={r.cta.external ? "noopener noreferrer" : undefined}
-              className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-none bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {r.cta.label}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">

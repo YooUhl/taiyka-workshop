@@ -116,14 +116,16 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
       aria-label={`${meta.codename} — ${content.title}`}
       aria-current={isActive ? "true" : undefined}
       className={cn(
-        "group relative block shrink-0 cursor-pointer overflow-hidden rounded-md border bg-card text-left",
+        "group relative block shrink-0 cursor-pointer overflow-hidden text-left",
+        // Site-wide box definition — see .card-line in globals.css.
+        "card-line",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
-        "motion-safe:transition-[transform,opacity,box-shadow,border-color] motion-safe:duration-[350ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "motion-safe:transition-[transform,opacity] motion-safe:duration-[350ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
         isActive
-          ? "z-10 border-primary"
+          ? "z-10 card-line-accent"
           : hoverActive
-            ? "border-primary/40 opacity-90"
-            : "border-border opacity-70"
+            ? "opacity-90"
+            : "opacity-70"
       )}
       style={{
         width: "min(72vw, 280px)",
@@ -158,7 +160,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
           individually — disabling the entire content div blocked hover affordances). */}
       <div className="relative z-10 flex h-full flex-col gap-4 p-4 md:p-5">
         {/* Top row: status + codename (dimmed/smaller per v3 hierarchy) */}
-        <div className="flex items-start justify-between gap-2 font-mono text-[9px] tracking-[0.22em] uppercase">
+        <div className="flex items-start justify-between gap-2 font-mono-hud text-[9px] tracking-[0.18em] uppercase">
           <span
             className={cn(
               "inline-flex items-center gap-1.5",
@@ -187,7 +189,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
           <div
             aria-hidden
             className={cn(
-              "relative grid place-items-center rounded-md border w-20 h-20 md:w-24 md:h-24 transition-[border-color,background-color] duration-300",
+              "relative grid place-items-center rounded-none border w-20 h-20 md:w-24 md:h-24 transition-[border-color,background-color] duration-300",
               isActive
                 ? "border-primary/50 bg-arctic-navy"
                 : "border-border bg-arctic-navy/60"
@@ -225,7 +227,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
                 >
                   {primary.value}
                 </span>
-                <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-muted-foreground">
+                <span className="font-mono-hud text-[9px] tracking-[0.18em] uppercase text-muted-foreground">
                   {primary.label}
                 </span>
               </>
@@ -240,7 +242,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         {/* Bottom hint — debounced */}
         <div
           className={cn(
-            "font-mono text-[9px] tracking-[0.22em] uppercase text-center min-h-3 transition-colors",
+            "font-mono-hud text-[9px] tracking-[0.18em] uppercase text-center min-h-3 transition-colors",
             isActive ? "text-primary" : "text-muted-foreground/70"
           )}
         >

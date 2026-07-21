@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
-import { Phone, Download, Users, ShoppingBag, Mail } from "lucide-react";
+import { Phone, Download, Users, ShoppingBag, Mail, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { withLang } from "@/lib/lang-utils";
 import { SITE } from "@/lib/site";
@@ -40,9 +40,10 @@ const COPY: Record<Lang, Copy> = {
     langSwitchAria: "Voir en anglais",
     buttons: [
       { label: "Réserver un appel", href: withLang("/book", "fr"), icon: Phone, primary: true },
-      { label: "Ma boutique", href: withLang("/shop", "fr"), icon: ShoppingBag },
       { label: "Mon Skool", href: withLang("/skool", "fr"), icon: Users },
+      { label: "Ma boutique", href: withLang("/shop", "fr"), icon: ShoppingBag },
       { label: "Le Brief", href: withLang("/brief", "fr"), icon: Mail },
+      { label: "Portfolio", href: withLang("/portfolio", "fr"), icon: Briefcase },
       { label: "Ressources gratuites", href: withLang("/resources", "fr"), icon: Download },
     ],
   },
@@ -58,9 +59,10 @@ const COPY: Record<Lang, Copy> = {
     langSwitchAria: "View in French",
     buttons: [
       { label: "Book a call", href: withLang("/book", "en"), icon: Phone, primary: true },
-      { label: "My Shop", href: withLang("/shop", "en"), icon: ShoppingBag },
       { label: "My Skool", href: withLang("/skool", "en"), icon: Users },
+      { label: "My Shop", href: withLang("/shop", "en"), icon: ShoppingBag },
       { label: "Le Brief", href: withLang("/brief", "en"), icon: Mail },
+      { label: "Portfolio", href: withLang("/portfolio", "en"), icon: Briefcase },
       { label: "Free resources", href: withLang("/resources", "en"), icon: Download },
     ],
   },

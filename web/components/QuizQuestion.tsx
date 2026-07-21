@@ -133,7 +133,7 @@ export default function QuizQuestion({
         tabIndex={-1}
         className={cn(
           "mt-2 mb-10 md:mb-14 text-balance text-foreground outline-none",
-          isMotivation ? "display-lg" : "display-md"
+          isMotivation ? "display-lg display-caps" : "display-md display-caps"
         )}
       >
         {questionText}
@@ -156,7 +156,9 @@ export default function QuizQuestion({
                 disabled={!!selectedId && !isSelected}
                 aria-pressed={isSelected}
                 className={cn(
-                  "card-line group relative w-full text-left flex items-center gap-4 sm:gap-5 px-5 md:px-6 py-5 md:py-6 min-h-[64px] overflow-hidden",
+                  "group relative w-full text-left flex items-center gap-4 sm:gap-5 px-5 md:px-6 py-5 md:py-6 min-h-[64px] overflow-hidden",
+                  // Site-wide box definition — see .card-line in globals.css.
+                  "card-line",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
                   isSelected && "card-line-accent",
                   selectedId && !isSelected && "opacity-50"
@@ -166,7 +168,7 @@ export default function QuizQuestion({
                     option reads at a glance, not just by border color. */}
                 <span
                   className={cn(
-                    "shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm tabular-nums motion-safe:transition-colors",
+                    "shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-none font-bold text-sm tabular-nums motion-safe:transition-colors",
                     isSelected
                       ? "bg-primary text-primary-foreground"
                       : "border border-border text-muted-foreground group-hover:border-primary/60 group-hover:text-primary"

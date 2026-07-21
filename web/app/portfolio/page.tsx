@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import MailtoButton from "@/components/MailtoButton";
+import { Ticker } from "@/components/site/Ticker";
 import { getProjectMeta } from "@/components/PortfolioDetail";
 import { getPortfolioProjects, type Lang } from "@/lib/portfolio";
 import { withLang } from "@/lib/lang-utils";
@@ -17,6 +18,7 @@ const COPY = {
     title: "DEPLOYED",
     tagline: "Workflows buildés, testés, en prod chez des clients.",
     toggleLabel: "EN",
+    ticker: ["Systèmes en production", "Clients réels", "n8n · Claude · Supabase"],
     ctaTitle: "Prêt à shipper ?",
     ctaBody: "Places limitées. Je prends 2-3 projets ce mois-ci.",
     ctaPrimary: "Réserver un call de 30 min",
@@ -30,6 +32,7 @@ const COPY = {
     title: "DEPLOYED",
     tagline: "Workflows built, tested, running in production.",
     toggleLabel: "FR",
+    ticker: ["Systems in production", "Real clients", "n8n · Claude · Supabase"],
     ctaTitle: "Ready to ship?",
     ctaBody: "Limited slots. I'm taking 2-3 projects this month.",
     ctaPrimary: "Book a 30-min call",
@@ -140,87 +143,91 @@ export default async function PortfolioPage({
   };
 
   return (
-    <main className="flex-1 w-full px-6 py-16 max-w-6xl mx-auto text-center relative z-10">
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
-      />
-      <div className="w-full flex items-center justify-between mb-16 font-mono text-[11px] tracking-[0.22em] uppercase">
-        <Link
-          href={withLang("/", lang)}
-          className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-        >
-          {copy.home}
-        </Link>
-        <Link
-          href={`/portfolio?lang=${otherLang}`}
-          className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-        >
-          {copy.toggleLabel} →
-        </Link>
-      </div>
-      <header className="mb-16 text-center flex flex-col items-center gap-5">
-        <span className="kicker kicker-accent">{copy.kicker}</span>
-        <h1 className="display-xl text-foreground">{copy.title}</h1>
-        <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          {copy.tagline}
-        </p>
-        {stripEntries.length > 0 && (
-          <div className="w-full max-w-3xl mx-auto mt-4">
-            <div className="hairline-strong" />
-            <p
-              className="py-4 font-mono text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-muted-foreground leading-relaxed"
-              aria-label={lang === "fr" ? "Indicateurs clés du portfolio" : "Portfolio key metrics"}
-            >
-              {stripEntries.map((entry, i) => (
-                <span key={entry.codename}>
-                  <span className="text-foreground">{entry.codename}</span> · {entry.metric}
-                  {i < stripEntries.length - 1 && (
-                    <span aria-hidden className="mx-2 text-primary/50">·</span>
-                  )}
-                </span>
-              ))}
-            </p>
-            <div className="hairline" />
-          </div>
-        )}
-      </header>
+    <main className="relative flex-1 w-full flex flex-col z-10">
+      <Ticker items={copy.ticker} />
 
-      <PortfolioClient projects={projects} lang={lang} />
-
-      <hr className="hairline mb-16 mt-24 border-0" />
-      <footer className="card-line card-line-accent text-center p-10 md:p-14">
-        <h2 className="display-md text-foreground mb-3">{copy.ctaTitle}</h2>
-        <p className="text-muted-foreground max-w-md mx-auto mb-8 leading-relaxed">
-          {copy.ctaBody}
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
-          <MailtoButton
-            href="mailto:manu.uhila@taiyka.com?subject=Call%20portfolio"
-            className="group inline-flex items-center justify-center gap-3 min-h-14 py-3 px-7 rounded-md bg-primary text-primary-foreground font-bold text-[0.9375rem] md:text-base tracking-tight hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
-            feedbackLabel={copy.ctaOpening}
-          >
-            {copy.ctaPrimary}
-            <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
-          </MailtoButton>
+      <div className="w-full px-6 py-16 max-w-6xl mx-auto text-center">
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+        />
+        <div className="w-full flex items-center justify-between mb-16 font-mono-hud text-[11px] tracking-[0.18em] uppercase">
           <Link
-            href={withLang("/products", lang)}
-            className="inline-flex items-center justify-center gap-2 min-h-14 py-3 px-6 rounded-md border border-border text-foreground hover:border-primary hover:text-primary transition-colors font-medium text-[0.9375rem] md:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+            href={withLang("/", lang)}
+            className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
-            {copy.ctaSecondary}
+            {copy.home}
+          </Link>
+          <Link
+            href={`/portfolio?lang=${otherLang}`}
+            className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
+          >
+            {copy.toggleLabel} →
           </Link>
         </div>
-        <Link
-          href={withLang("/skool", lang)}
-          className="inline-block text-sm text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-        >
-          {copy.ctaTertiary}
-        </Link>
-        <p className="mt-6 font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
-          manu.uhila@taiyka.com
-        </p>
-      </footer>
+        <header className="mb-16 text-center flex flex-col items-center gap-5">
+          <span className="kicker kicker-accent">{copy.kicker}</span>
+          <h1 className="display-xl display-caps text-foreground">{copy.title}</h1>
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            {copy.tagline}
+          </p>
+          {stripEntries.length > 0 && (
+            <div className="w-full max-w-3xl mx-auto mt-4">
+              <div className="hairline-strong" />
+              <p
+                className="py-4 font-mono-hud text-[10px] md:text-[11px] tracking-[0.18em] uppercase text-muted-foreground leading-relaxed"
+                aria-label={lang === "fr" ? "Indicateurs clés du portfolio" : "Portfolio key metrics"}
+              >
+                {stripEntries.map((entry, i) => (
+                  <span key={entry.codename}>
+                    <span className="text-foreground">{entry.codename}</span> · {entry.metric}
+                    {i < stripEntries.length - 1 && (
+                      <span aria-hidden className="mx-2 text-primary/50">·</span>
+                    )}
+                  </span>
+                ))}
+              </p>
+              <div className="hairline" />
+            </div>
+          )}
+        </header>
+
+        <PortfolioClient projects={projects} lang={lang} />
+
+        <hr className="hairline mb-16 mt-24 border-0" />
+        <footer className="border border-primary bg-primary/[0.08] rounded-none text-center p-10 md:p-14">
+          <h2 className="display-md display-caps text-foreground mb-3">{copy.ctaTitle}</h2>
+          <p className="text-muted-foreground max-w-md mx-auto mb-8 leading-relaxed">
+            {copy.ctaBody}
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
+            <MailtoButton
+              href="mailto:manu.uhila@taiyka.com?subject=Call%20portfolio"
+              className="group inline-flex items-center justify-center gap-3 min-h-14 py-3 px-7 rounded-none bg-primary text-primary-foreground font-bold text-[0.9375rem] md:text-base tracking-tight hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              feedbackLabel={copy.ctaOpening}
+            >
+              {copy.ctaPrimary}
+              <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
+            </MailtoButton>
+            <Link
+              href={withLang("/products", lang)}
+              className="inline-flex items-center justify-center gap-2 min-h-14 py-3 px-6 rounded-none border border-border text-foreground hover:border-primary hover:text-primary transition-colors font-medium text-[0.9375rem] md:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+            >
+              {copy.ctaSecondary}
+            </Link>
+          </div>
+          <Link
+            href={withLang("/skool", lang)}
+            className="inline-block text-sm text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
+          >
+            {copy.ctaTertiary}
+          </Link>
+          <p className="mt-6 font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground">
+            manu.uhila@taiyka.com
+          </p>
+        </footer>
+      </div>
     </main>
   );
 }

@@ -143,7 +143,7 @@ export default function PortfolioDetail({ project, lang }: Props) {
   const HeroIcon = meta.icon;
 
   return (
-    <article className="relative overflow-hidden rounded-md border border-border bg-card shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
+    <article className="relative overflow-hidden rounded-none border border-border bg-card shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
       {/* Accent edge — single blue rule across the top of the sheet */}
       <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-primary" />
 
@@ -157,7 +157,7 @@ export default function PortfolioDetail({ project, lang }: Props) {
       )}
 
       {/* Top meta bar */}
-      <div className="relative z-10 flex items-center justify-between gap-3 border-b border-border bg-arctic-navy/50 px-5 py-3 font-mono text-[10px] tracking-[0.22em] uppercase">
+      <div className="relative z-10 flex items-center justify-between gap-3 border-b border-border bg-arctic-navy/50 px-5 py-3 font-mono-hud text-[10px] tracking-[0.18em] uppercase">
         <span className="inline-flex items-center gap-2 text-primary">
           <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
           {meta.statusPill}
@@ -169,7 +169,7 @@ export default function PortfolioDetail({ project, lang }: Props) {
         <header className="flex items-start gap-4">
           <div
             aria-hidden
-            className="shrink-0 grid place-items-center rounded-md border border-primary/40 bg-arctic-navy w-14 h-14"
+            className="shrink-0 grid place-items-center rounded-none border border-primary/40 bg-arctic-navy w-14 h-14"
           >
             <HeroIcon className="text-primary" strokeWidth={1.4} size={32} />
           </div>
@@ -177,7 +177,7 @@ export default function PortfolioDetail({ project, lang }: Props) {
             <h2
               id="portfolio-detail-title"
               tabIndex={-1}
-              className="display-md text-foreground focus:outline-none"
+              className="display-md display-caps text-foreground focus:outline-none"
             >
               {content.title}
             </h2>
@@ -196,7 +196,7 @@ export default function PortfolioDetail({ project, lang }: Props) {
                 <span className="text-2xl md:text-3xl font-bold leading-none tracking-tight text-primary tabular-nums">
                   {m.value}
                 </span>
-                <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-muted-foreground">
+                <span className="font-mono-hud text-[9px] tracking-[0.18em] uppercase text-muted-foreground">
                   {m.label}
                 </span>
               </div>

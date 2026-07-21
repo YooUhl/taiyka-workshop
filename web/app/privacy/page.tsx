@@ -98,7 +98,7 @@ export default async function PrivacyPage({
 
         {/* The legal notice reads as a document: ice-white paper block on the
             obsidian page, comfortable measure, clear heading rhythm. */}
-        <article className="panel-light rounded-lg border border-border px-6 py-10 sm:px-10 md:px-14 md:py-16">
+        <article className="panel-light rounded-none border border-border px-6 py-10 sm:px-10 md:px-14 md:py-16">
           {/* Plain .kicker here, not .kicker-accent: electric blue text on the
               ice-white panel fails AA. The blue "›" prefix carries the accent. */}
           <span className="kicker">{t.kicker}</span>
