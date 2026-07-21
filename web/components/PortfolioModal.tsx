@@ -60,16 +60,13 @@ export default function PortfolioModal({
   const labels = LABELS[lang];
   const meta = getProjectMeta(project.slug);
 
-  const ctaHref = `mailto:manu.uhila@taiyka.com?subject=${encodeURIComponent(
-    `Projet similaire — ${meta.codename}`
-  )}`;
+  // Booking funnel, not a mailto — a mailto silently does nothing for anyone
+  // without a mail client wired up.
+  const ctaHref = withLang("/book", lang);
 
-  // Contextual secondary CTA → /products, mapped from project slug.
-  // Anchor (#competitor-intel) resolves once ProductCard renders id={slug} (Wave 3-B6).
-  // withLang preserves the ?lang=en query when applicable, keeping the hash fragment intact.
   const slugLower = project.slug.toLowerCase();
   const isIntel = slugLower.includes("polymaker") || slugLower.includes("intel");
-  const secondaryHref = withLang(isIntel ? "/products#competitor-intel" : "/products", lang);
+  const secondaryHref = withLang("/shop", lang);
   const secondaryLabel = isIntel ? labels.secondaryIntel : labels.secondaryDefault;
 
   // Mount → open after first paint

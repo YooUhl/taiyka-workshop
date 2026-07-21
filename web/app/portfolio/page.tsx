@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import MailtoButton from "@/components/MailtoButton";
 import { Ticker } from "@/components/site/Ticker";
 import { getProjectMeta } from "@/components/PortfolioDetail";
 import { getPortfolioProjects, type Lang } from "@/lib/portfolio";
@@ -202,16 +201,17 @@ export default async function PortfolioPage({
             {copy.ctaBody}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
-            <MailtoButton
-              href="mailto:manu.uhila@taiyka.com?subject=Call%20portfolio"
+            {/* Goes to the booking funnel, not a mailto — a mailto silently
+                does nothing on a machine with no mail client configured. */}
+            <Link
+              href={withLang("/book", lang)}
               className="group inline-flex items-center justify-center gap-3 min-h-14 py-3 px-7 rounded-none bg-primary text-primary-foreground font-bold text-[0.9375rem] md:text-base tracking-tight hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
-              feedbackLabel={copy.ctaOpening}
             >
               {copy.ctaPrimary}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
-            </MailtoButton>
+            </Link>
             <Link
-              href={withLang("/products", lang)}
+              href={withLang("/shop", lang)}
               className="inline-flex items-center justify-center gap-2 min-h-14 py-3 px-6 rounded-none border border-border text-foreground hover:border-primary hover:text-primary transition-colors font-medium text-[0.9375rem] md:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {copy.ctaSecondary}
