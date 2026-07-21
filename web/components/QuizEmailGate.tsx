@@ -167,7 +167,7 @@ export default function QuizEmailGate({
       className="w-full"
       style={{ animation: "qcm-fade-slide 400ms ease-out" }}
     >
-      <div className="w-full flex items-center justify-between mb-10 font-mono text-[11px] tracking-[0.22em] uppercase">
+      <div className="w-full flex items-center justify-between mb-10 font-mono-hud text-[11px] tracking-[0.18em] uppercase">
         <span className="inline-flex items-center gap-2 text-muted-foreground">
           <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
           {t.statusLabel}
@@ -179,7 +179,7 @@ export default function QuizEmailGate({
 
       <span className="kicker kicker-accent">{t.kicker}</span>
 
-      <h2 className="display-xl display-caps mt-5 mb-8 text-balance text-foreground">
+      <h2 className="display-xl display-caps max-sm:text-4xl! break-words mt-5 mb-8 text-balance text-foreground">
         {t.headlineLine1}
         <br />
         <span className="text-primary">{t.headlineLine2}</span>
@@ -195,10 +195,10 @@ export default function QuizEmailGate({
         </p>
       </blockquote>
 
-      {/* Conversion panel — blue edge marks it as the focal block. Static
-          (not .card-line-accent) so a stray hover doesn't animate a non-
-          interactive container. */}
-      <section className="w-full rounded-xl border border-primary/40 bg-card p-6 md:p-8">
+      {/* Conversion panel — blue edge marks it as the focal block. Uses the
+          shared .card-line-accent box; hover bg is pinned to the resting wash
+          so the non-interactive container doesn't animate on stray hovers. */}
+      <section className="w-full card-line card-line-accent rounded-none hover:bg-[rgba(0,166,255,0.08)]! p-6 md:p-8">
         {status === "analyzing" ? (
           <div className="flex flex-col items-center justify-center py-10 gap-4">
             <div className="relative w-10 h-10">
@@ -207,7 +207,7 @@ export default function QuizEmailGate({
             </div>
             <p
               key={analyzingIndex}
-              className="font-mono text-xs tracking-[0.18em] uppercase text-muted-foreground text-center"
+              className="font-mono-hud text-xs tracking-[0.18em] uppercase text-muted-foreground text-center"
               style={{ animation: "qcm-fade-in 300ms ease-out forwards" }}
             >
               {analyzingLines[analyzingIndex]}
@@ -233,7 +233,7 @@ export default function QuizEmailGate({
                 disabled={isBusy}
                 aria-describedby="qcm-email-error"
                 aria-invalid={status === "error"}
-                className="h-14 w-full rounded-none border border-input bg-obsidian px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                className="h-14 w-full rounded-none border border-input bg-card px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
 
@@ -241,8 +241,7 @@ export default function QuizEmailGate({
               type="submit"
               disabled={isBusy}
               className={cn(
-                "mt-1 h-14 w-full rounded-none bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors",
-                "hover:bg-[#33b8ff]",
+                "mt-1 cta h-14 w-full px-7 inline-flex items-center justify-center gap-3 text-[0.95rem] font-semibold",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
                 "disabled:cursor-not-allowed disabled:opacity-60"
               )}

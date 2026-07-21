@@ -5,6 +5,8 @@ import { Phone, Download, Users, ShoppingBag, Mail, Briefcase } from "lucide-rea
 import { cn } from "@/lib/utils";
 import { withLang } from "@/lib/lang-utils";
 import { SITE } from "@/lib/site";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
 import type { Lang } from "@/lib/portfolio";
 
 type ButtonSpec = {
@@ -24,6 +26,7 @@ type Copy = {
   langSwitch: string;
   langSwitchHref: string;
   langSwitchAria: string;
+  ticker: string[];
   buttons: ButtonSpec[];
 };
 
@@ -38,6 +41,12 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "EN",
     langSwitchHref: "/?lang=en",
     langSwitchAria: "Voir en anglais",
+    ticker: [
+      "Systèmes d'automatisation IA",
+      "Workflows prêts à l'emploi",
+      "La newsletter Le Brief",
+      "Communauté bientôt",
+    ],
     buttons: [
       { label: "Réserver un appel", href: withLang("/book", "fr"), icon: Phone, primary: true },
       { label: "Mon Skool", href: withLang("/skool", "fr"), icon: Users },
@@ -57,6 +66,12 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "FR",
     langSwitchHref: "/?lang=fr",
     langSwitchAria: "View in French",
+    ticker: [
+      "AI automation systems",
+      "Ready-to-run workflows",
+      "The Le Brief newsletter",
+      "Community coming soon",
+    ],
     buttons: [
       { label: "Book a call", href: withLang("/book", "en"), icon: Phone, primary: true },
       { label: "My Skool", href: withLang("/skool", "en"), icon: Users },
@@ -171,6 +186,8 @@ export default async function Home({
 
   return (
     <main className="relative flex-1 w-full flex flex-col min-h-screen paper-grid">
+      <Ticker items={c.ticker} />
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -178,25 +195,18 @@ export default async function Home({
         }}
       />
 
+      {/* Top bar — shared 3-col component; no back link on home */}
+      <TopBar
+        status={c.topStatus}
+        langSwitchHref={c.langSwitchHref}
+        langSwitchLabel={c.langSwitch}
+        langSwitchAria={c.langSwitchAria}
+      />
+
       <div
-        className="relative mx-auto w-full max-w-xl px-6 md:px-10 py-6 md:py-8 flex flex-col flex-1 min-h-screen"
+        className="relative mx-auto w-full max-w-xl px-6 md:px-10 pb-6 md:pb-8 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        {/* Top bar — mono label + lang toggle */}
-        <div className="w-full flex items-center justify-between font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground">
-          <span className="inline-flex items-center gap-2 text-foreground">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,166,255,0.8)]" />
-            {c.topStatus}
-          </span>
-          <Link
-            href={c.langSwitchHref}
-            className="inline-flex items-center justify-center min-h-[44px] px-3 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glacier-blue focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-            aria-label={c.langSwitchAria}
-          >
-            {c.langSwitch} <span aria-hidden>→</span>
-          </Link>
-        </div>
-
         {/* Semantic H1 — keyword-bearing, screen-reader only */}
         <h1 className="sr-only">{c.semanticH1}</h1>
 
@@ -237,7 +247,7 @@ export default async function Home({
                   {/* Icon — quiet square. Primary gets the solid navy chip. */}
                   <span
                     className={cn(
-                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border transition-colors",
+                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-none border transition-colors",
                       btn.primary
                         ? "border-primary bg-primary text-[#06131f]"
                         : "border-border bg-secondary/60 text-glacier-blue group-hover:border-primary/50 group-hover:text-primary",

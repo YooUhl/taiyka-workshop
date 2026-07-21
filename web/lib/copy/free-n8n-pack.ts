@@ -31,6 +31,20 @@ export type FreeN8nPackCopy = {
   upsellSecondaryHref: string;
 };
 
+/** Ticker strings for the /free-n8n-pack landing. */
+export const FREE_N8N_PACK_TICKER: Record<"fr" | "en", string[]> = {
+  fr: [
+    "5 workflows n8n gratuits",
+    "Guide d'installation inclus",
+    "Zéro spam",
+  ],
+  en: [
+    "5 free n8n workflows",
+    "Install guide included",
+    "Zero spam",
+  ],
+};
+
 export const FREE_N8N_PACK_COPY: Record<"fr" | "en", FreeN8nPackCopy> = {
   fr: {
     kicker: "PACK N8N · GRATUIT",

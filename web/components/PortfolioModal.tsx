@@ -268,9 +268,7 @@ export default function PortfolioModal({
           <a
             href={ctaHref}
             className={cn(
-              "group inline-flex items-center justify-center gap-3 min-h-12 py-2.5 px-5 rounded-none",
-              "bg-primary text-primary-foreground font-bold text-[0.875rem] md:text-[0.9375rem] tracking-tight",
-              "hover:bg-primary/90 transition-colors",
+              "group cta inline-flex items-center justify-center gap-3 h-14 px-7 text-[0.95rem] font-semibold",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             )}
           >

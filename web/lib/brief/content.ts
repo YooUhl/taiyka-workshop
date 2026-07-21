@@ -13,6 +13,20 @@ export function normalizeEmail(value: string): string {
   return value.trim().toLowerCase();
 }
 
+/** Ticker strings shared by the /brief surfaces (landing, confirmed, unsubscribe). */
+export const BRIEF_TICKER: Record<Lang, string[]> = {
+  fr: [
+    "L'IA qui compte, tous les 2 jours",
+    "2 minutes de lecture",
+    "Désinscription en 1 clic",
+  ],
+  en: [
+    "The AI that matters, every 2 days",
+    "2-minute read",
+    "One-click unsubscribe",
+  ],
+};
+
 // Brand tokens (mirror the site's Taiyka palette; site is debranded to "L'Atelier"
 // as a display name, so emails sign off as Le Brief / @manu_ai.to, not "Taiyka").
 const NAVY = "#0a1628";

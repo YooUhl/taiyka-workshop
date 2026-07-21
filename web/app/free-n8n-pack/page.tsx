@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import EmailCaptureForm from "@/components/EmailCaptureForm";
-import { FREE_N8N_PACK_COPY } from "@/lib/copy/free-n8n-pack";
+import { FREE_N8N_PACK_COPY, FREE_N8N_PACK_TICKER } from "@/lib/copy/free-n8n-pack";
 import { withLang } from "@/lib/lang-utils";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
 
 type Lang = "fr" | "en";
 
@@ -83,49 +85,36 @@ export default async function FreeN8nPackPage({
   };
 
   const backHref = withLang(fromQcm ? "/qcm/resultat/pas-pret" : "/", lang);
-  const backLabel = fromQcm ? copy.backFromQcm : copy.backHome;
+  // TopBar renders its own "← " glyph — strip the one baked into the copy string.
+  const backLabel = (fromQcm ? copy.backFromQcm : copy.backHome).replace(/^←\s*/, "");
   const heroKicker = fromQcm ? copy.kickerFromQcm : copy.kicker;
 
   return (
-    <main className="relative flex-1 w-full flex flex-col z-10">
+    <main className="relative flex-1 w-full flex flex-col z-10 paper-grid">
+      <Ticker items={FREE_N8N_PACK_TICKER[lang]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
       />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[70vh] paper-grid hidden md:block"
+
+      <TopBar
+        backHref={backHref}
+        backLabel={backLabel}
+        status={copy.statusPill}
+        langSwitchHref={copy.langSwitchHref}
+        langSwitchLabel={copy.langSwitchLabel}
+        langSwitchAria={`Switch language to ${copy.langSwitchLabel}`}
       />
 
       <div
         className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1 text-center"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        {/* Top bar */}
-        <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[11px] tracking-[0.22em] uppercase">
-          <Link
-            href={backHref}
-            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {backLabel}
-          </Link>
-          <span className="hidden sm:inline-flex items-center gap-2 text-muted-foreground">
-            <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
-            {copy.statusPill}
-          </span>
-          <Link
-            href={copy.langSwitchHref}
-            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {copy.langSwitchLabel}
-          </Link>
-        </div>
-
         {/* Kicker */}
         <span className="kicker kicker-accent self-center">{heroKicker}</span>
 
         {/* H1 */}
-        <h1 className="display-xl mt-5 mb-10 md:mb-12 text-balance">
+        <h1 className="display-xl display-caps max-sm:text-4xl! break-words mt-5 mb-10 md:mb-12 text-balance">
           {copy.h1Line1}{" "}
           <span className="text-primary">{copy.h1Line1Gradient}</span>{" "}
           <span className="text-muted-foreground">{copy.h1Line2}</span>
@@ -149,7 +138,7 @@ export default async function FreeN8nPackPage({
               >
                 <span
                   aria-hidden
-                  className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/80 pt-[0.45rem] min-w-[1.5rem]"
+                  className="font-mono-hud text-[10px] tabular-nums tracking-[0.18em] uppercase text-muted-foreground/80 pt-[0.45rem] min-w-[1.5rem]"
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>

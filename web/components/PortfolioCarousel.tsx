@@ -331,7 +331,8 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
                 aria-label={`${i + 1} / ${projects.length}`}
                 onClick={() => onDotClick(i)}
                 className={cn(
-                  "p-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
+                  // 44px min hit area (touch target) — the visual dot inside stays small.
+                  "group grid min-h-[44px] min-w-[44px] place-items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
                 )}
               >
                 <span

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
 import { getProjectMeta } from "@/components/PortfolioDetail";
 import { getPortfolioProjects, type Lang } from "@/lib/portfolio";
 import { withLang } from "@/lib/lang-utils";
@@ -12,7 +13,8 @@ type SearchParams = Promise<{ lang?: string }>;
 
 const COPY = {
   fr: {
-    home: "← TAIYKA · Accueil",
+    home: "TAIYKA · Accueil",
+    status: "PORTFOLIO · L'ATELIER",
     kicker: "SYSTÈMES LIVRÉS",
     title: "LIVRÉ",
     tagline: "Construits pour de vrais clients. Testés. En route tous les jours.",
@@ -26,7 +28,8 @@ const COPY = {
     ctaOpening: "Ouverture…",
   },
   en: {
-    home: "← TAIYKA · Home",
+    home: "TAIYKA · Home",
+    status: "PORTFOLIO · THE WORKSHOP",
     kicker: "SYSTEMS DELIVERED",
     title: "DELIVERED",
     tagline: "Built for real clients. Tested. Running every day.",
@@ -145,6 +148,14 @@ export default async function PortfolioPage({
   return (
     <main className="relative flex-1 w-full flex flex-col z-10">
       <Ticker items={copy.ticker} />
+      <TopBar
+        backHref={withLang("/", lang)}
+        backLabel={copy.home}
+        status={copy.status}
+        langSwitchHref={`/portfolio?lang=${otherLang}`}
+        langSwitchLabel={copy.toggleLabel}
+        langSwitchAria={`Switch language to ${copy.toggleLabel}`}
+      />
 
       <div className="w-full px-6 py-16 max-w-6xl mx-auto text-center">
         <script
@@ -152,20 +163,6 @@ export default async function PortfolioPage({
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
         />
-        <div className="w-full flex items-center justify-between mb-16 font-mono-hud text-[11px] tracking-[0.18em] uppercase">
-          <Link
-            href={withLang("/", lang)}
-            className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {copy.home}
-          </Link>
-          <Link
-            href={`/portfolio?lang=${otherLang}`}
-            className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {copy.toggleLabel} →
-          </Link>
-        </div>
         <header className="mb-16 text-center flex flex-col items-center gap-5">
           <span className="kicker kicker-accent">{copy.kicker}</span>
           <h1 className="display-xl display-caps text-foreground">{copy.title}</h1>
@@ -196,7 +193,7 @@ export default async function PortfolioPage({
         <PortfolioClient projects={projects} lang={lang} />
 
         <hr className="hairline mb-16 mt-24 border-0" />
-        <footer className="border border-primary bg-primary/[0.08] rounded-none text-center p-10 md:p-14">
+        <footer className="card-line card-line-accent rounded-none text-center p-10 md:p-14">
           <h2 className="display-md display-caps text-foreground mb-3">{copy.ctaTitle}</h2>
           <p className="text-muted-foreground max-w-md mx-auto mb-8 leading-relaxed">
             {copy.ctaBody}
@@ -206,7 +203,7 @@ export default async function PortfolioPage({
                 does nothing on a machine with no mail client configured. */}
             <Link
               href={withLang("/book", lang)}
-              className="group inline-flex items-center justify-center gap-3 min-h-14 py-3 px-7 rounded-none bg-primary text-primary-foreground font-bold text-[0.9375rem] md:text-base tracking-tight hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              className="group cta inline-flex items-center justify-center gap-3 h-14 px-7 text-[0.95rem] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {copy.ctaPrimary}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>

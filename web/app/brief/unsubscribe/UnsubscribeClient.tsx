@@ -127,8 +127,7 @@ export default function UnsubscribeClient({ initialEmail, lang, t }: Props) {
           disabled={isBusy || !email}
           aria-busy={isBusy}
           className={cn(
-            "mt-1 h-14 w-full rounded-none bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors",
-            "hover:bg-[#33b8ff]",
+            "mt-1 cta h-14 w-full px-7 inline-flex items-center justify-center gap-3 text-[0.95rem] font-semibold",
             FOCUS_RING,
             "disabled:cursor-not-allowed disabled:opacity-60"
           )}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
 import { TrustStrip } from "@/components/site/TrustStrip";
 import { FaqAccordion } from "@/components/site/FaqAccordion";
 import { withLang } from "@/lib/lang-utils";
@@ -93,42 +94,22 @@ export default function ShopClient({ lang }: { lang: Lang }) {
     >
       <Ticker items={c.ticker} />
 
-      {/* Top bar — back home + label + lang toggle */}
-      <div className={cn(SHELL, "py-6 md:py-8")}>
-        <div className="w-full grid grid-cols-3 items-center font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground">
-          <Link
-            href={backHref}
-            className={cn(
-              "justify-self-start hover:text-foreground transition-colors rounded-sm px-1 py-2",
-              FOCUS_RING,
-            )}
-          >
-            <span aria-hidden>← </span>
-            {c.backLabel}
-          </Link>
-          <span className="justify-self-center inline-flex items-center gap-2 text-foreground">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,166,255,0.8)]" />
-            {c.topStatus}
-          </span>
-          <Link
-            href={c.langSwitchHref}
-            className={cn(
-              "justify-self-end hover:text-foreground transition-colors rounded-sm px-1 py-2",
-              FOCUS_RING,
-            )}
-            aria-label={lang === "fr" ? "Switch to English" : "Passer en français"}
-          >
-            {c.langSwitch} <span aria-hidden>→</span>
-          </Link>
-        </div>
-      </div>
+      {/* Top bar — shared 3-col component */}
+      <TopBar
+        backHref={backHref}
+        backLabel={c.backLabel}
+        status={c.topStatus}
+        langSwitchHref={c.langSwitchHref}
+        langSwitchLabel={c.langSwitch}
+        langSwitchAria={lang === "fr" ? "Switch to English" : "Passer en français"}
+      />
 
       {/* Hero — split: pitch left, panel right */}
       <section className={cn(SHELL, "mt-8 md:mt-14 mb-16 md:mb-24")}>
         <div className="grid gap-10 lg:gap-14 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
             <p className="kicker kicker-accent mb-6">{c.heroProof}</p>
-            <h1 className="display-lg xl:display-xl text-balance">
+            <h1 className="display-lg xl:display-xl display-caps text-balance">
               {c.heroTitleLead}{" "}
               <span className="text-primary">{c.heroTitleAccent}</span>
             </h1>
@@ -139,7 +120,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
             <a
               href="#catalogue"
               className={cn(
-                "mt-9 inline-flex items-center gap-3 rounded-none bg-primary px-7 py-4 text-[0.95rem] md:text-base font-semibold tracking-tight text-[#06131f] transition-colors hover:bg-[#33b8ff]",
+                "cta mt-9 inline-flex h-14 items-center justify-center gap-3 px-7 text-[0.95rem] md:text-base font-semibold",
                 FOCUS_RING,
               )}
             >
@@ -190,7 +171,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
                   aria-selected={activeTab === cat.key}
                   onClick={() => setActiveTab(cat.key)}
                   className={cn(
-                    "rounded-sm px-2 py-2 font-mono-hud text-[11px] tracking-[0.18em] uppercase transition-colors",
+                    "inline-flex min-h-[44px] items-center rounded-sm px-2 py-2 font-mono-hud text-[11px] tracking-[0.18em] uppercase transition-colors",
                     FOCUS_RING,
                     activeTab === cat.key
                       ? "text-foreground"
@@ -204,7 +185,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
           </div>
 
           <div className="flex items-end justify-between gap-6 mb-7">
-            <h2 className="display-lg">{activeCategory.heading}</h2>
+            <h2 className="display-lg display-caps">{activeCategory.heading}</h2>
             <span className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-primary whitespace-nowrap pb-2">
               {activeCategory.live
                 ? `${workflows.length} ${lang === "fr" ? "produits" : "products"}`
@@ -266,14 +247,14 @@ export default function ShopClient({ lang }: { lang: Lang }) {
           <div className="relative grid gap-8 p-8 md:p-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div>
               <p className="kicker kicker-accent mb-5">{c.featureKicker}</p>
-              <h2 className="display-lg mb-4">{c.featureTitle}</h2>
+              <h2 className="display-lg display-caps mb-4">{c.featureTitle}</h2>
               <p className="text-[0.95rem] md:text-base text-muted-foreground leading-relaxed max-w-xl mb-8">
                 {c.featureBlurb}
               </p>
               <Link
                 href={withLang(`/shop/workflows/${c.featureSlug}`, lang)}
                 className={cn(
-                  "inline-flex items-center gap-3 rounded-none bg-primary px-7 py-4 text-[0.95rem] font-semibold tracking-tight text-[#06131f] transition-colors hover:bg-[#33b8ff]",
+                  "cta inline-flex h-14 items-center justify-center gap-3 px-7 text-[0.95rem] font-semibold",
                   FOCUS_RING,
                 )}
               >
@@ -302,7 +283,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
       <section className={cn(SHELL, "mb-16 md:mb-24")}>
         <p className="kicker kicker-accent mb-5">{c.waitlistKicker}</p>
         <div className="card-line card-line-accent p-6 md:p-10">
-          <h2 className="display-md mb-3">{c.waitlistTitle}</h2>
+          <h2 className="display-md display-caps mb-3">{c.waitlistTitle}</h2>
           <p className="text-[0.95rem] text-muted-foreground mb-7 leading-relaxed max-w-xl">
             {c.waitlistBlurb}
           </p>
@@ -338,11 +319,11 @@ export default function ShopClient({ lang }: { lang: Lang }) {
                 type="submit"
                 disabled={!emailLooksValid || status === "submitting"}
                 className={cn(
-                  "rounded-none py-3 px-6 text-[0.95rem] md:text-base font-semibold tracking-tight transition-colors",
+                  "inline-flex h-14 items-center justify-center px-6 text-[0.95rem] md:text-base font-semibold",
                   FOCUS_RING,
                   emailLooksValid && status !== "submitting"
-                    ? "bg-primary text-[#06131f] hover:bg-[#33b8ff]"
-                    : "bg-muted text-muted-foreground cursor-not-allowed",
+                    ? "cta"
+                    : "cta-disabled",
                 )}
               >
                 {status === "submitting" ? c.waitlistSubmitting : c.waitlistSubmit}
@@ -375,7 +356,7 @@ export default function ShopClient({ lang }: { lang: Lang }) {
             : {})}
           className={cn("group card-line block p-6 md:p-10", FOCUS_RING)}
         >
-          <h2 className="display-md mb-3 group-hover:text-primary transition-colors">
+          <h2 className="display-md display-caps mb-3 group-hover:text-primary transition-colors">
             {c.skoolTitle}
           </h2>
           <p className="text-[0.95rem] text-muted-foreground mb-6 leading-relaxed max-w-xl">
@@ -501,7 +482,12 @@ function ProductCard({ workflow, lang }: { workflow: Workflow; lang: Lang }) {
   );
 }
 
-/** Icon plate for the feature banner, pulled from the featured product. */
+/**
+ * Icon plate for the feature banner, pulled from the featured product.
+ * This is the shared plate recipe: square, border-border, arctic-navy fill,
+ * paper-grid overlay, single primary-blue icon. Other icon plates on the
+ * site (workflow cover, portfolio tiles) should match this treatment.
+ */
 function FeatureMark({
   slug,
   workflows,

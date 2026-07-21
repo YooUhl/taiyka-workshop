@@ -162,8 +162,7 @@ export default function EmailCaptureForm({
         disabled={isBusy}
         aria-busy={isBusy}
         className={cn(
-          "mt-1 h-14 w-full rounded-none bg-primary text-base font-semibold text-primary-foreground transition-colors",
-          "hover:bg-primary/90",
+          "mt-1 cta h-14 w-full px-7 inline-flex items-center justify-center gap-3 text-[0.95rem] font-semibold",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
           "disabled:cursor-not-allowed disabled:opacity-60"
         )}

@@ -196,7 +196,7 @@ export default function QuizQuestion({
         })}
       </ul>
 
-      <p className="mt-10 font-mono text-xs tracking-[0.22em] uppercase text-muted-foreground text-center">
+      <p className="mt-10 font-mono-hud text-xs tracking-[0.18em] uppercase text-muted-foreground text-center">
         {lang === "en"
           ? "Honest answer · You can go back"
           : "Réponse honnête · Tu peux revenir en arrière"}

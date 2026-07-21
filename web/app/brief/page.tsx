@@ -1,15 +1,18 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import BriefSignupForm from "@/components/BriefSignupForm";
 import SampleIssuePreview from "@/components/SampleIssuePreview";
 import { withLang } from "@/lib/lang-utils";
 import { SITE } from "@/lib/site";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
+import { BRIEF_TICKER } from "@/lib/brief/content";
 
 type Lang = "fr" | "en";
 
 type Copy = {
   htmlLang: string;
   topHome: string;
+  statusBar: string;
   langSwitchLabel: string;
   langSwitchHref: string;
   statusPill: string;
@@ -35,7 +38,8 @@ type Copy = {
 const COPY: Record<Lang, Copy> = {
   fr: {
     htmlLang: "fr",
-    topHome: "← L'Atelier · Accueil",
+    topHome: "L'Atelier · Accueil",
+    statusBar: "LE BRIEF · NEWSLETTER",
     langSwitchLabel: "EN",
     langSwitchHref: "/brief?lang=en",
     statusPill: "Newsletter · tous les 2 jours · 2 min",
@@ -65,7 +69,8 @@ const COPY: Record<Lang, Copy> = {
   },
   en: {
     htmlLang: "en",
-    topHome: "← The Workshop · Home",
+    topHome: "The Workshop · Home",
+    statusBar: "LE BRIEF · NEWSLETTER",
     langSwitchLabel: "FR",
     langSwitchHref: "/brief",
     statusPill: "Newsletter · every 2 days · 2 min",
@@ -185,35 +190,29 @@ export default async function BriefLandingPage({
 
   return (
     <main className="relative flex-1 w-full flex flex-col z-10 paper-grid">
+      <Ticker items={BRIEF_TICKER[lang]} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(briefSchema) }}
+      />
+
+      <TopBar
+        backHref={withLang("/", lang)}
+        backLabel={c.topHome}
+        status={c.statusBar}
+        langSwitchHref={c.langSwitchHref}
+        langSwitchLabel={c.langSwitchLabel}
+        langSwitchAria={`Switch language to ${c.langSwitchLabel}`}
       />
 
       <div
         className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        {/* Top bar */}
-        <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono-hud text-[10px] sm:text-[11px] tracking-[0.18em] uppercase gap-3">
-          <Link
-            href={withLang("/", lang)}
-            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {c.topHome}
-          </Link>
-          <Link
-            href={c.langSwitchHref}
-            className="inline-flex items-center justify-center min-h-[44px] px-2 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm shrink-0"
-          >
-            {c.langSwitchLabel} <span aria-hidden>→</span>
-          </Link>
-        </div>
-
         {/* Hero — editorial, left-aligned */}
         <header className="mb-16 md:mb-24">
           <span className="kicker kicker-accent">{c.kickerHero}</span>
-          <h1 className="mt-6 display-xl text-foreground text-balance">
+          <h1 className="mt-6 display-xl display-caps text-foreground text-balance">
             {c.h1Lead} <span className="text-primary">{c.h1Accent}</span>
           </h1>
           <p className="mt-6 max-w-[46ch] text-balance text-[1.0625rem] md:text-[1.25rem] leading-[1.6] text-glacier-blue">

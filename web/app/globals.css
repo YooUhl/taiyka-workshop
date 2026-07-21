@@ -174,6 +174,9 @@
     @apply bg-background text-foreground;
     background-color: #0b0f14;
     min-height: 100vh;
+    /* .band elements are 100vw, which includes the scrollbar on Windows —
+       clip the overflow once here instead of per-page overflow-x-hidden. */
+    overflow-x: clip;
   }
   html {
     @apply font-sans;
@@ -224,7 +227,8 @@
   }
 
   /* Full-bleed band: escapes the page gutter to run edge to edge, ruled top
-     and bottom. The building block for flush sections. */
+     and bottom. 100vw includes the scrollbar on Windows, so body carries
+     overflow-x: clip (see base layer) to kill the horizontal wiggle. */
   .band {
     position: relative;
     width: 100vw;
@@ -234,21 +238,24 @@
     border-bottom: 1px solid var(--border);
   }
 
-  /* Flush row — stacked list items that butt together with one hairline
-     between them, no gaps, no card chrome. */
-  .row-flush {
-    border-bottom: 1px solid var(--border);
-    transition: background-color 180ms ease, color 180ms ease;
+  /* The button. One recipe for every solid CTA on the site — square, solid
+     blue, dark ink. Pair with sizing utilities (h-14 px-7 is the default). */
+  .cta {
+    border-radius: 0;
+    background-color: var(--primary);
+    color: #06131f;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    transition: background-color 200ms ease;
   }
-  .row-flush:last-child {
-    border-bottom: 0;
+  .cta:hover {
+    background-color: #33b8ff;
   }
-  .row-flush:hover {
-    background-color: rgba(0, 166, 255, 0.06);
-  }
-  /* Selected/primary row — blue edge on the leading side. */
-  .row-flush-accent {
-    box-shadow: inset 3px 0 0 0 var(--accent);
+  .cta-disabled {
+    border-radius: 0;
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    cursor: not-allowed;
   }
 
   /* Mono kicker — quiet gray label, FounderOS style: "> SECTION NAME" */

@@ -41,7 +41,7 @@ function PortfolioPlaceholder({ lang }: { lang: Lang }) {
       aria-live="polite"
       aria-label={copy.ariaLabel}
     >
-      <div className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
+      <div className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground">
         {copy.text}
       </div>
     </div>

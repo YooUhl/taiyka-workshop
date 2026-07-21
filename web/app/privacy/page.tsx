@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { withLang } from "@/lib/lang-utils";
 import { SITE } from "@/lib/site";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
 
 type Lang = "fr" | "en";
 
@@ -32,7 +34,17 @@ export default async function PrivacyPage({
   const t =
     lang === "fr"
       ? {
-          topHome: "← L'Atelier · Accueil",
+          backLabel: "Accueil",
+          topStatus: "Confidentialité · L'Atelier",
+          langSwitch: "EN",
+          langSwitchHref: "/privacy?lang=en",
+          langSwitchAria: "Voir en anglais",
+          ticker: [
+            "Politique de confidentialité",
+            "Aucune revente de données",
+            "Désinscription en un clic",
+            "Double opt-in",
+          ],
           kicker: "CONFIDENTIALITÉ",
           title: "Politique de confidentialité",
           updated: "Dernière mise à jour : 15 juillet 2026",
@@ -61,7 +73,17 @@ export default async function PrivacyPage({
           back: "Retour à la page du brief →",
         }
       : {
-          topHome: "← The Workshop · Home",
+          backLabel: "Home",
+          topStatus: "Privacy · The Workshop",
+          langSwitch: "FR",
+          langSwitchHref: "/privacy",
+          langSwitchAria: "Voir en français",
+          ticker: [
+            "Privacy policy",
+            "No data resale",
+            "One-click unsubscribe",
+            "Double opt-in",
+          ],
           kicker: "PRIVACY",
           title: "Privacy policy",
           updated: "Last updated: 15 July 2026",
@@ -92,29 +114,33 @@ export default async function PrivacyPage({
 
   return (
     <main className="relative flex-1 w-full flex flex-col z-10 bg-obsidian">
+      <Ticker items={t.ticker} />
+
+      {/* Top bar — shared 3-col component */}
+      <TopBar
+        backHref={withLang("/", lang)}
+        backLabel={t.backLabel}
+        status={t.topStatus}
+        langSwitchHref={t.langSwitchHref}
+        langSwitchLabel={t.langSwitch}
+        langSwitchAria={t.langSwitchAria}
+      />
+
       <div
-        className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1"
+        className="relative mx-auto w-full max-w-3xl px-6 md:px-10 pt-4 md:pt-8 pb-12 md:pb-20 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        <div className="w-full flex items-center justify-start mb-10 md:mb-14 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase">
-          <Link
-            href={withLang("/", lang)}
-            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {t.topHome}
-          </Link>
-        </div>
-
         {/* The legal notice reads as a document: ice-white paper block on the
-            obsidian page, comfortable measure, clear heading rhythm. */}
-        <article className="panel-light rounded-none border border-border px-6 py-10 sm:px-10 md:px-14 md:py-16">
+            obsidian page, comfortable measure, clear heading rhythm. The box
+            is the shared card-line recipe (panel-light overrides apply). */}
+        <article className="panel-light card-line px-6 py-10 sm:px-10 md:px-14 md:py-16">
           {/* Plain .kicker here, not .kicker-accent: electric blue text on the
               ice-white panel fails AA. The blue "›" prefix carries the accent. */}
           <span className="kicker">{t.kicker}</span>
 
-          <h1 className="display-md mt-4 mb-3 max-w-prose">{t.title}</h1>
+          <h1 className="display-md display-caps mt-4 mb-3 max-w-prose">{t.title}</h1>
 
-          <p className="font-mono text-[11px] tracking-[0.14em] uppercase text-muted-foreground">
+          <p className="font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground">
             {t.updated}
           </p>
 

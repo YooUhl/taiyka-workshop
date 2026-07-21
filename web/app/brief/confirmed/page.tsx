@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { withLang } from "@/lib/lang-utils";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
+import { BRIEF_TICKER } from "@/lib/brief/content";
 
 type Lang = "fr" | "en";
 type ConfirmStatus = "confirmed" | "already" | "invalid" | "error";
@@ -37,7 +40,7 @@ export default async function BriefConfirmedPage({
   const t =
     lang === "fr"
       ? {
-          topHome: "← L'Atelier · Accueil",
+          topHome: "L'Atelier · Accueil",
           kicker: "LE BRIEF · INSCRIPTION",
           waitingKicker: "En attendant",
           ctaQcm: "Fais le QCM — 2 min, voir ton profil →",
@@ -82,7 +85,7 @@ export default async function BriefConfirmedPage({
           },
         }
       : {
-          topHome: "← The Workshop · Home",
+          topHome: "The Workshop · Home",
           kicker: "LE BRIEF · SUBSCRIPTION",
           waitingKicker: "While you wait",
           ctaQcm: "Take the quiz — 2 min, see your profile →",
@@ -135,27 +138,35 @@ export default async function BriefConfirmedPage({
     lang === "en" ? "&lang=en" : ""
   }`;
 
+  // Language switch preserves the transactional query (status / token).
+  const switchParams = new URLSearchParams();
+  if (sp?.status) switchParams.set("status", sp.status);
+  if (token) switchParams.set("token", token);
+  if (lang === "fr") switchParams.set("lang", "en");
+  const switchQuery = switchParams.toString();
+  const langSwitchHref = `/brief/confirmed${switchQuery ? `?${switchQuery}` : ""}`;
+  const langSwitchLabel = lang === "fr" ? "EN" : "FR";
+
   return (
     <main className="relative flex-1 w-full flex flex-col z-10 paper-grid">
+      <Ticker items={BRIEF_TICKER[lang]} />
+      <TopBar
+        backHref={withLang("/", lang)}
+        backLabel={t.topHome}
+        status="LE BRIEF"
+        langSwitchHref={langSwitchHref}
+        langSwitchLabel={langSwitchLabel}
+        langSwitchAria={`Switch language to ${langSwitchLabel}`}
+      />
       <div
         className="relative mx-auto w-full max-w-2xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        {/* Top bar */}
-        <div className="w-full flex items-center justify-start mb-16 md:mb-24 font-mono-hud text-[10px] sm:text-[11px] tracking-[0.18em] uppercase">
-          <Link
-            href={withLang("/", lang)}
-            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {t.topHome}
-          </Link>
-        </div>
-
         <span className="kicker">{t.kicker}</span>
 
         <p className="kicker kicker-accent kicker-bare mt-8 mb-4">{c.kicker}</p>
 
-        <h1 className="mb-6 display-lg text-foreground text-balance">
+        <h1 className="mb-6 display-lg display-caps break-words text-foreground text-balance">
           {c.lead} <span className="text-primary">{c.accent}</span>
         </h1>
 
@@ -167,7 +178,7 @@ export default async function BriefConfirmedPage({
           <form method="post" action={confirmAction} className="mb-12 md:mb-16">
             <button
               type="submit"
-              className="inline-flex h-14 items-center justify-center rounded-none bg-primary px-8 text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              className="cta inline-flex h-14 items-center justify-center gap-3 px-7 text-[0.95rem] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {t.confirm.button}
             </button>

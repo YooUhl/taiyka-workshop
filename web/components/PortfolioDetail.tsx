@@ -143,7 +143,7 @@ export default function PortfolioDetail({ project, lang }: Props) {
   const HeroIcon = meta.icon;
 
   return (
-    <article className="relative overflow-hidden rounded-none border border-border bg-card shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
+    <article className="relative overflow-hidden card-line rounded-none shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
       {/* Accent edge — single blue rule across the top of the sheet */}
       <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-primary" />
 
@@ -236,7 +236,7 @@ export default function PortfolioDetail({ project, lang }: Props) {
                 return (
                   <span
                     key={tech}
-                    className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-arctic-navy/60 px-2.5 py-1.5 font-mono text-[10px] tracking-[0.1em] uppercase text-muted-foreground"
+                    className="inline-flex items-center gap-1.5 rounded-none border border-border bg-arctic-navy/60 px-2.5 py-1.5 font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground"
                     title={tech}
                   >
                     <Icon size={12} strokeWidth={1.5} aria-hidden className="text-glacier-blue" />

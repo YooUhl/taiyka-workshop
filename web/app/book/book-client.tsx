@@ -89,10 +89,11 @@ const CALENDLY_FALLBACK_MS = 8000;
 // interactive element on this route.
 const FOCUS_RING =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]";
-const CTA_BASE =
-  "rounded-none font-semibold tracking-tight transition-colors duration-200 ease-out";
-const CTA_ACTIVE = "bg-primary text-primary-foreground hover:bg-[#33b8ff]";
-const CTA_DISABLED = "bg-muted text-muted-foreground/70 cursor-not-allowed";
+// The solid-CTA recipe now lives in globals.css (.cta / .cta-disabled) so every
+// route shares one button. Base keeps the sizing-agnostic text + transition bits.
+const CTA_BASE = "font-semibold tracking-tight transition-colors duration-200 ease-out";
+const CTA_ACTIVE = "cta";
+const CTA_DISABLED = "cta-disabled";
 const NOTICE =
   "mb-4 rounded-none border border-amber-400/30 bg-amber-400/[0.06] px-4 py-3 text-xs leading-relaxed text-amber-200/90";
 
@@ -537,7 +538,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
   const showHero = phase === "q1" && !booked;
 
   return (
-    <main className="paper-grid relative flex-1 w-full flex flex-col z-10 min-h-screen overflow-x-hidden">
+    <main className="paper-grid relative flex-1 w-full flex flex-col z-10 min-h-screen">
       <Ticker items={c.ticker} />
 
       <div
@@ -658,7 +659,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                     key={ex}
                     onClick={() => applyExample(ex)}
                     className={cn(
-                      "inline-flex items-center min-h-[44px] px-4 rounded-none text-xs border border-border bg-card text-muted-foreground hover:border-primary/60 hover:text-foreground transition-colors",
+                      "card-line inline-flex items-center min-h-[44px] px-4 rounded-none text-xs text-muted-foreground hover:text-foreground transition-colors",
                       FOCUS_RING,
                     )}
                   >
@@ -836,7 +837,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
               </svg>
             </div>
             <p className="kicker kicker-accent mb-5">{c.bookedKicker}</p>
-            <h1 className="display-lg text-balance mb-4">{c.bookedTitle}</h1>
+            <h1 className="display-lg display-caps text-balance mb-4">{c.bookedTitle}</h1>
             <p className="text-[0.95rem] md:text-base text-muted-foreground mb-10 leading-relaxed max-w-md">
               {c.bookedBlurb}
             </p>
@@ -906,7 +907,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
             <h1
               ref={headingRef}
               tabIndex={-1}
-              className="display-md text-balance mb-4 focus:outline-none"
+              className="display-md display-caps text-balance mb-4 focus:outline-none"
             >
               {calendlyScriptFailed
                 ? c.calendlyScriptFailedTitle
@@ -942,7 +943,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                   <div
                     ref={calendlyMountRef}
                     className="w-full rounded-none overflow-hidden border border-border bg-white"
-                    style={{ minHeight: 600, height: "min(85vh, 820px)" }}
+                    style={{ minHeight: "min(60vh, 600px)", height: "min(85vh, 820px)" }}
                   />
                 </div>
                 {/* Fallback link — always visible after timeout, immediately on script error */}
@@ -978,7 +979,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
             <Link
               href={c.langSwitchHref}
               className={cn(
-                "inline-flex items-center min-h-[44px] px-2 rounded-sm font-mono text-[10px] tracking-[0.22em] uppercase text-steel-blue hover:text-primary transition-colors",
+                "inline-flex items-center min-h-[44px] px-2 rounded-sm font-mono-hud text-[10px] tracking-[0.18em] uppercase text-steel-blue hover:text-primary transition-colors",
                 FOCUS_RING,
               )}
             >

@@ -7,6 +7,9 @@ import type { ProfileSlug } from "@/lib/quiz-questions";
 import ProfileEmailForm from "@/components/ProfileEmailForm";
 import { withLang } from "@/lib/lang-utils";
 import { SITE } from "@/lib/site";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
+import { QCM_TICKER } from "@/app/qcm/ticker";
 
 type RouteParams = { profil: string };
 type SearchParams = { [key: string]: string | string[] | undefined };
@@ -104,7 +107,7 @@ export default async function ResultPage({
   // Localized UI strings.
   const t = {
     fr: {
-      home: "← TAIYKA · Accueil",
+      home: "TAIYKA · Accueil",
       resultBadge: "Résultat",
       kickerProfil: "PROFIL",
       kickerMeaning: "CE QUE ÇA VEUT DIRE",
@@ -123,7 +126,7 @@ export default async function ResultPage({
       rights: "Tous droits réservés.",
     },
     en: {
-      home: "← TAIYKA · Home",
+      home: "TAIYKA · Home",
       resultBadge: "Result",
       kickerProfil: "PROFILE",
       kickerMeaning: "WHAT THIS MEANS",
@@ -166,8 +169,18 @@ export default async function ResultPage({
     dateModified: RESULTS_DATE_PUBLISHED,
   };
 
+  // Language switch preserves the current profile page (and the `from` state
+  // so gate/skip display logic survives the switch).
+  const basePath = `/qcm/resultat/${profil}`;
+  const switchParams = new URLSearchParams();
+  if (lang === "fr") switchParams.set("lang", "en");
+  if (from) switchParams.set("from", from);
+  const switchQuery = switchParams.toString();
+  const langSwitchHref = switchQuery ? `${basePath}?${switchQuery}` : basePath;
+
   return (
     <main className="relative flex-1 w-full z-10">
+      <Ticker items={QCM_TICKER[lang]} />
       {/* Article JSON-LD for SEO */}
       <script
         type="application/ld+json"
@@ -175,21 +188,16 @@ export default async function ResultPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
 
-      <div className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 text-center">
-        {/* Top bar */}
-        <div className="w-full flex items-center justify-between mb-16 md:mb-20 font-mono text-[11px] tracking-[0.22em] uppercase">
-          <Link
-            href={withLang("/", lang)}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {t.home}
-          </Link>
-          <span className="inline-flex items-center gap-2 text-muted-foreground">
-            <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
-            {t.resultBadge}
-          </span>
-        </div>
+      <TopBar
+        backHref={withLang("/", lang)}
+        backLabel={t.home}
+        status={t.resultBadge}
+        langSwitchHref={langSwitchHref}
+        langSwitchLabel={lang === "fr" ? "EN" : "FR"}
+        langSwitchAria={`Switch language to ${lang === "fr" ? "EN" : "FR"}`}
+      />
 
+      <div className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 text-center">
         {/* Kicker */}
         <span className="kicker kicker-accent">
           {t.kickerProfil} · {r.label.toUpperCase()}
@@ -199,7 +207,7 @@ export default async function ResultPage({
             `useGradient` now selects the blue accent treatment rather than a
             gradient fill — the gradient look is gone from the design system. */}
         <div className="mt-5 mb-12">
-          <h1 className="display-xl display-caps text-balance">
+          <h1 className="display-xl display-caps max-sm:text-4xl! break-words text-balance">
             <span className={r.useGradient ? "text-primary" : "text-foreground"}>
               {r.name}
             </span>
@@ -242,7 +250,7 @@ export default async function ResultPage({
               href={r.cta.external ? r.cta.href : withLang(r.cta.href, lang)}
               target={r.cta.external ? "_blank" : undefined}
               rel={r.cta.external ? "noopener noreferrer" : undefined}
-              className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-none bg-primary text-[#06131f] font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+              className="group cta inline-flex items-center justify-center gap-3 h-14 px-7 text-[0.95rem] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {r.cta.label}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">
@@ -250,7 +258,7 @@ export default async function ResultPage({
               </span>
             </a>
             {r.cta.meta && (
-              <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
+              <p className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground">
                 {r.cta.meta}
               </p>
             )}
@@ -308,7 +316,7 @@ export default async function ResultPage({
         {/* Finding 9: "Autres profils" rail. */}
         <nav
           aria-label={t.otherProfiles}
-          className="mt-16 text-xs font-mono uppercase tracking-wider text-muted-foreground"
+          className="mt-16 text-xs font-mono-hud uppercase tracking-[0.18em] text-muted-foreground"
         >
           <span>{t.otherProfiles} : </span>
           {rail.map((p, i) => (
@@ -327,7 +335,7 @@ export default async function ResultPage({
         {/* Social row */}
         <div className="mt-12 mb-8">
           <div className="hairline mb-6" />
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-mono text-[11px] tracking-[0.22em] uppercase">
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-mono-hud text-[11px] tracking-[0.18em] uppercase">
             <a
               href="https://www.skool.com/taiyka"
               target="_blank"

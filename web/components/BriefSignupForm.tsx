@@ -184,7 +184,7 @@ export default function BriefSignupForm({ lang = "fr" }: Props = {}) {
             disabled={isBusy}
             aria-describedby="brief-error"
             aria-invalid={isError}
-            className="h-14 w-full rounded-none border border-input bg-obsidian px-4 text-base text-foreground placeholder:text-glacier-blue/80 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60"
+            className="h-14 w-full rounded-none border border-input bg-card px-4 text-base text-foreground placeholder:text-glacier-blue/80 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60"
           />
         </div>
 
@@ -205,8 +205,7 @@ export default function BriefSignupForm({ lang = "fr" }: Props = {}) {
           disabled={isBusy}
           aria-busy={isBusy}
           className={cn(
-            "mt-1 h-14 w-full rounded-none bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors",
-            "hover:bg-[#33b8ff]",
+            "mt-1 cta h-14 w-full px-7 inline-flex items-center justify-center gap-3 text-[0.95rem] font-semibold",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
             "disabled:cursor-not-allowed disabled:opacity-60"
           )}

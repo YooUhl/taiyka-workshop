@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { withLang } from "@/lib/lang-utils";
-import { type Lang } from "@/lib/shop/content";
+import { COPY, type Lang } from "@/lib/shop/content";
 import { tierBadge, type Workflow } from "@/lib/shop/workflows";
 import { resolveIcon } from "@/lib/shop/icon-map";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
 
 const SKOOL_EXTERNAL_URL = process.env.NEXT_PUBLIC_SKOOL_COMMUNITY_URL;
 
@@ -35,6 +37,10 @@ export default function WorkflowClient({
   const externalSkool = SKOOL_EXTERNAL_URL && SKOOL_EXTERNAL_URL.length > 0;
   const skoolHref = externalSkool ? SKOOL_EXTERNAL_URL : withLang("/skool", lang);
 
+  // Skool block copy comes from the shop's content file — one source of
+  // truth shared with /shop, so the two blurbs can't drift apart.
+  const shopCopy = COPY[lang];
+
   const t = {
     fr: {
       topStatus: "PRODUIT · BOUTIQUE",
@@ -46,11 +52,6 @@ export default function WorkflowClient({
       kickerVariables: "Variables à renseigner",
       kickerCost: "Coût d'exécution",
       kickerValue: "Ce que tu en tires",
-      skoolKicker: "Communauté",
-      skoolTitle: "Pionniers",
-      skoolBlurb:
-        "L'accès permanent au playbook et à la communauté autour de l'automatisation IA.",
-      skoolCta: "Rejoindre Pionniers",
       footerNote: "Tous les contenus sont produits par Manu.",
     },
     en: {
@@ -63,49 +64,28 @@ export default function WorkflowClient({
       kickerVariables: "Variables to fill",
       kickerCost: "Running cost",
       kickerValue: "What you get",
-      skoolKicker: "Community",
-      skoolTitle: "Pioneers",
-      skoolBlurb:
-        "Permanent access to the playbook and the community around AI automation.",
-      skoolCta: "Join Pioneers",
       footerNote: "All content built by Manu.",
     },
   }[lang];
 
   return (
     <main className="relative flex-1 w-full flex flex-col min-h-screen">
+      <Ticker items={shopCopy.ticker} />
+
+      {/* Top bar — shared 3-col component */}
+      <TopBar
+        backHref={backHref}
+        backLabel={t.backLabel}
+        status={t.topStatus}
+        langSwitchHref={langSwitchHref}
+        langSwitchLabel={t.langSwitch}
+        langSwitchAria={lang === "fr" ? "Switch to English" : "Passer en français"}
+      />
+
       <div
-        className="relative mx-auto w-full max-w-5xl px-6 md:px-10 py-6 md:py-8 flex flex-col flex-1"
+        className="relative mx-auto w-full max-w-5xl px-6 md:px-10 pb-6 md:pb-8 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        {/* Top bar */}
-        <div className="w-full grid grid-cols-3 items-center font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground">
-          <Link
-            href={backHref}
-            className={cn(
-              "justify-self-start hover:text-foreground transition-colors rounded-sm px-1 py-2",
-              FOCUS_RING,
-            )}
-          >
-            <span aria-hidden>← </span>
-            {t.backLabel}
-          </Link>
-          <span className="justify-self-center inline-flex items-center gap-2 text-foreground">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(0,166,255,0.8)]" />
-            {t.topStatus}
-          </span>
-          <Link
-            href={langSwitchHref}
-            className={cn(
-              "justify-self-end hover:text-foreground transition-colors rounded-sm px-1 py-2",
-              FOCUS_RING,
-            )}
-            aria-label={lang === "fr" ? "Switch to English" : "Passer en français"}
-          >
-            {t.langSwitch} <span aria-hidden>→</span>
-          </Link>
-        </div>
-
         {/* Hero — two-column at lg+ */}
         <section className="mt-12 md:mt-16 mb-14 md:mb-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] gap-8 md:gap-10 items-start">
           {/* Cover — flat arctic-navy plate, single blue icon */}
@@ -118,7 +98,7 @@ export default function WorkflowClient({
                 strokeWidth={1.1}
               />
             </div>
-            <span className="absolute top-3 left-3 inline-flex items-center px-2 py-1 rounded-sm bg-obsidian/80 border border-border font-mono-hud text-[9px] tracking-[0.18em] uppercase text-glacier-blue">
+            <span className="absolute top-3 left-3 inline-flex items-center px-2 py-1 rounded-none bg-obsidian/80 border border-border font-mono-hud text-[9px] tracking-[0.18em] uppercase text-glacier-blue">
               {tierBadge(workflow.tier, lang)}
             </span>
           </div>
@@ -128,7 +108,7 @@ export default function WorkflowClient({
             <p className="kicker mb-4">
               01 · Workflows · {workflow.slug.replace(/-/g, " ")}
             </p>
-            <h1 className="display-lg mb-4">{loc.title}</h1>
+            <h1 className="display-lg display-caps mb-4">{loc.title}</h1>
             <p className="text-[1rem] md:text-[1.0625rem] text-muted-foreground leading-relaxed mb-8 max-w-xl">
               {loc.tagline}
             </p>
@@ -139,7 +119,7 @@ export default function WorkflowClient({
               </span>
               <span
                 aria-disabled="true"
-                className="inline-flex items-center gap-2 rounded-none px-5 py-3 font-mono-hud text-[11px] tracking-[0.18em] uppercase text-muted-foreground bg-muted border border-border cursor-not-allowed"
+                className="cta-disabled inline-flex h-14 items-center justify-center gap-3 px-7 text-[0.95rem] font-semibold"
               >
                 {t.ctaComingSoon}
               </span>
@@ -240,7 +220,7 @@ export default function WorkflowClient({
         {/* Footer CTA repeat */}
         <section className="card-line card-line-accent mb-12 md:mb-16 p-6 md:p-8 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-6">
           <div className="flex-1">
-            <h2 className="display-md mb-2">{loc.title}</h2>
+            <h2 className="display-md display-caps mb-2">{loc.title}</h2>
             <p className="text-[0.9rem] text-muted-foreground">
               {loc.hoverDescription}
             </p>
@@ -251,19 +231,16 @@ export default function WorkflowClient({
             </span>
             <span
               aria-disabled="true"
-              className={cn(
-                "inline-flex items-center gap-2 rounded-none px-5 py-3 font-mono-hud text-[11px] tracking-[0.18em] uppercase",
-                "text-muted-foreground bg-muted border border-border cursor-not-allowed",
-              )}
+              className="cta-disabled inline-flex h-14 items-center justify-center gap-3 px-7 text-[0.95rem] font-semibold"
             >
               {t.ctaComingSoon}
             </span>
           </div>
         </section>
 
-        {/* Skool CTA */}
+        {/* Skool CTA — copy shared with /shop via lib/shop/content */}
         <section className="mb-16 md:mb-20">
-          <p className="kicker mb-5">{t.skoolKicker}</p>
+          <p className="kicker mb-5">{shopCopy.skoolKicker}</p>
           <Link
             href={skoolHref}
             {...(externalSkool
@@ -271,14 +248,14 @@ export default function WorkflowClient({
               : {})}
             className={cn("group card-line block p-6 md:p-8", FOCUS_RING)}
           >
-            <h2 className="display-md mb-3 group-hover:text-primary transition-colors">
-              {t.skoolTitle}
+            <h2 className="display-md display-caps mb-3 group-hover:text-primary transition-colors">
+              {shopCopy.skoolTitle}
             </h2>
             <p className="text-[0.95rem] text-muted-foreground mb-5 leading-relaxed max-w-xl">
-              {t.skoolBlurb}
+              {shopCopy.skoolBlurb}
             </p>
             <span className="inline-flex items-center gap-2 font-mono-hud text-[11px] tracking-[0.18em] uppercase text-primary">
-              {t.skoolCta}
+              {shopCopy.skoolCta}
               <span aria-hidden className="transition-transform group-hover:translate-x-0.5">
                 →
               </span>

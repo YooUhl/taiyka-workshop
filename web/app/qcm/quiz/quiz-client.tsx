@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import QuizQuestion from "@/components/QuizQuestion";
 import QuizProgress from "@/components/QuizProgress";
+import { Ticker } from "@/components/site/Ticker";
+import { QCM_TICKER } from "@/app/qcm/ticker";
 import { QUESTIONS } from "@/lib/quiz-questions";
 import type { Answer } from "@/lib/quiz-questions";
 import {
@@ -189,6 +191,7 @@ export default function QuizClient({ lang }: Props) {
 
   return (
     <main className="relative flex-1 w-full min-h-screen z-10">
+      <Ticker items={QCM_TICKER[lang]} />
       <div
         className="relative mx-auto w-full max-w-2xl px-6 md:px-10 py-10 md:py-16"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
@@ -199,7 +202,7 @@ export default function QuizClient({ lang }: Props) {
 
         {phase === "question" && (
           <>
-            <div className="w-full flex items-center justify-between mb-6 font-mono text-[11px] tracking-[0.22em] uppercase">
+            <div className="w-full flex items-center justify-between mb-6 font-mono-hud text-[11px] tracking-[0.18em] uppercase">
               {index > 0 ? (
                 <button
                   onClick={handleBack}
@@ -235,7 +238,7 @@ export default function QuizClient({ lang }: Props) {
                 only accelerates drop-off, and on the last question where it
                 would read "0 questions to go". Only render when 1-3 left. */}
             {remaining > 0 && remaining <= 3 && (
-              <p className="mt-3 font-mono text-xs tracking-[0.18em] uppercase text-muted-foreground text-right tabular-nums">
+              <p className="mt-3 font-mono-hud text-xs tracking-[0.18em] uppercase text-muted-foreground text-right tabular-nums">
                 {t.remaining(remaining)}
               </p>
             )}

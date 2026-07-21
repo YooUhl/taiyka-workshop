@@ -1,6 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { withLang } from "@/lib/lang-utils";
+import { Ticker } from "@/components/site/Ticker";
+import { TopBar } from "@/components/site/TopBar";
+import { BRIEF_TICKER } from "@/lib/brief/content";
 
 type Lang = "fr" | "en";
 type UnsubStatus = "done" | "invalid" | "error";
@@ -36,7 +39,7 @@ export default async function UnsubscribePage({
   const t =
     lang === "fr"
       ? {
-          topHome: "← L'Atelier · Accueil",
+          topHome: "L'Atelier · Accueil",
           kicker: "DÉSINSCRIPTION · LE BRIEF",
           ctaHome: "Retour à l'accueil →",
           ctaBrief: "Voir la page du brief →",
@@ -69,7 +72,7 @@ export default async function UnsubscribePage({
           },
         }
       : {
-          topHome: "← The Workshop · Home",
+          topHome: "The Workshop · Home",
           kicker: "UNSUBSCRIBE · LE BRIEF",
           ctaHome: "Back to home →",
           ctaBrief: "See the brief page →",
@@ -107,27 +110,35 @@ export default async function UnsubscribePage({
     lang === "en" ? "&lang=en" : ""
   }`;
 
+  // Language switch preserves the transactional query (status / token).
+  const switchParams = new URLSearchParams();
+  if (sp?.status) switchParams.set("status", sp.status);
+  if (token) switchParams.set("token", token);
+  if (lang === "fr") switchParams.set("lang", "en");
+  const switchQuery = switchParams.toString();
+  const langSwitchHref = `/brief/unsubscribe${switchQuery ? `?${switchQuery}` : ""}`;
+  const langSwitchLabel = lang === "fr" ? "EN" : "FR";
+
   return (
     <main className="relative flex-1 w-full flex flex-col z-10 paper-grid">
+      <Ticker items={BRIEF_TICKER[lang]} />
+      <TopBar
+        backHref={withLang("/", lang)}
+        backLabel={t.topHome}
+        status="LE BRIEF"
+        langSwitchHref={langSwitchHref}
+        langSwitchLabel={langSwitchLabel}
+        langSwitchAria={`Switch language to ${langSwitchLabel}`}
+      />
       <div
         className="relative mx-auto w-full max-w-2xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
-        {/* Top bar */}
-        <div className="w-full flex items-center justify-start mb-16 md:mb-24 font-mono-hud text-[10px] sm:text-[11px] tracking-[0.18em] uppercase">
-          <Link
-            href={withLang("/", lang)}
-            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
-          >
-            {t.topHome}
-          </Link>
-        </div>
-
         <span className="kicker">{t.kicker}</span>
 
         <p className="kicker kicker-bare mt-8 mb-4">{c.badge}</p>
 
-        <h1 className="mb-6 display-lg text-foreground text-balance">
+        <h1 className="mb-6 display-lg display-caps break-words text-foreground text-balance">
           {c.lead} <span className="text-glacier-blue">{c.accent}</span>
         </h1>
 
