@@ -126,7 +126,7 @@ export const COPY: Record<Lang, Copy> = {
       "Appel de 30 minutes",
       "En visio",
       "Gratuit, sans engagement",
-      "Réponse en personne",
+      "C'est moi qui réponds",
     ],
     trust: [
       { label: "30 minutes", detail: "Pas plus, pas moins" },
@@ -139,12 +139,13 @@ export const COPY: Record<Lang, Copy> = {
     homeLabel: "Accueil",
 
     hero: {
-      outcome: "Réserve 30 minutes avec Manu.",
+      outcome: "On se cale 30 minutes ?",
       purpose:
         "On parle de ton projet, de tes besoins, et des problèmes que tu veux régler en ce moment.",
       logistics: "3 questions courtes (45 s), puis tu choisis ton créneau.",
-      notReadyLabel: "Pas encore prêt ? Récupère mes 5 workflows n8n gratuits →",
-      notReadyHref: "/resources",
+      notReadyLabel:
+        "Pas encore prêt ? Récupère 5 automatisations gratuites, prêtes à l'emploi →",
+      notReadyHref: "/free-n8n-pack",
     },
 
     q1Question: "D'abord, tu fais quoi ?",
@@ -181,7 +182,7 @@ export const COPY: Record<Lang, Copy> = {
     namePlaceholder: "Jean Dupont",
     emailLabel: "Email",
     emailPlaceholder: "prenom@exemple.com",
-    emailTrustHint: "Pas de spam, pas de revente. Je réponds en personne.",
+    emailTrustHint: "Pas de spam, pas de revente. C'est moi qui réponds.",
     locationLabel: "Localisation",
     locationPlaceholder: "Paris, France",
     locationHint: "Ville et pays — pour que je cale le bon fuseau horaire.",
@@ -210,7 +211,7 @@ export const COPY: Record<Lang, Copy> = {
       "Ton ad-blocker peut bloquer le widget. Désactive-le pour ce site, ou écris-moi à manu.uhila@taiyka.com pour le lien direct.",
     calendlyMissingTitle: "Bien reçu",
     calendlyMissingBlurb:
-      "Tes réponses sont enregistrées. Je t'envoie un lien de réservation manuellement sous 24h ouvrées — check tes spams.",
+      "Tes réponses sont enregistrées. Je t'envoie un lien de réservation à la main d'ici demain (jours ouvrés) — check tes spams.",
 
     bookedKicker: "Bien joué",
     bookedTitle: "On est calés",
@@ -220,11 +221,11 @@ export const COPY: Record<Lang, Copy> = {
     bookedUpsellTitle: "En attendant l'appel",
     bookedUpsells: [
       {
-        label: "Télécharge mes 5 workflows n8n gratuits (5 min de prépa pour notre appel)",
-        href: "/resources",
+        label: "Récupère 5 automatisations gratuites, prêtes à l'emploi (bonne prépa pour notre appel)",
+        href: "/free-n8n-pack",
       },
       {
-        label: "Rejoins ma communauté Skool pour échanger avec d'autres entrepreneurs IA",
+        label: "Découvre ma communauté Skool pour entrepreneurs IA (ouverture bientôt)",
         href: "/skool",
       },
       {
@@ -240,7 +241,7 @@ export const COPY: Record<Lang, Copy> = {
       "Tu as déjà envoyé ta demande. Si tu n'as rien reçu dans 5 min, écris-moi à manu.uhila@taiyka.com.",
     errorRequired: "Ce champ est requis.",
     errorEmail:
-      "Cet email a l'air cassé — vérifie le @ et le point com.",
+      "Cet email a l'air cassé — vérifie le @ et la fin de l'adresse.",
     errorLength: (min, max) =>
       `Entre ${min} et ${max} caractères, stp.`,
     draftRestoreFailed:
@@ -258,7 +259,7 @@ export const COPY: Record<Lang, Copy> = {
       "30-minute call",
       "Over video",
       "Free, no strings",
-      "I reply in person",
+      "I'm the one who replies",
     ],
     trust: [
       { label: "30 minutes", detail: "No more, no less" },
@@ -271,12 +272,13 @@ export const COPY: Record<Lang, Copy> = {
     homeLabel: "Home",
 
     hero: {
-      outcome: "Book 30 minutes with Manu.",
+      outcome: "Let's grab 30 minutes.",
       purpose:
         "We talk about your project, what you need, and the problems you want to solve right now.",
       logistics: "3 short questions (45 s), then pick your slot.",
-      notReadyLabel: "Not ready? Grab my 5 free n8n workflows →",
-      notReadyHref: "/resources?lang=en",
+      notReadyLabel:
+        "Not ready yet? Grab 5 free automations, ready to use →",
+      notReadyHref: "/free-n8n-pack?lang=en",
     },
 
     q1Question: "First — what do you do?",
@@ -313,7 +315,7 @@ export const COPY: Record<Lang, Copy> = {
     namePlaceholder: "Jane Doe",
     emailLabel: "Email",
     emailPlaceholder: "you@example.com",
-    emailTrustHint: "No spam, no resale. I reply personally.",
+    emailTrustHint: "No spam, no resale. I'm the one who replies.",
     locationLabel: "Location",
     locationPlaceholder: "Paris, France",
     locationHint: "City and country — so I lock the right timezone before the call.",
@@ -342,7 +344,7 @@ export const COPY: Record<Lang, Copy> = {
       "Your ad-blocker may be blocking the widget. Disable it for this site, or email me at manu.uhila@taiyka.com for the direct link.",
     calendlyMissingTitle: "Got it",
     calendlyMissingBlurb:
-      "Your answers are saved. I'll send you a booking link manually within 24 business hours — keep an eye on your spam folder.",
+      "Your answers are saved. I'll send you a booking link myself by tomorrow (business days) — keep an eye on your spam folder.",
 
     bookedKicker: "Nice",
     bookedTitle: "We're locked in",
@@ -352,11 +354,11 @@ export const COPY: Record<Lang, Copy> = {
     bookedUpsellTitle: "While you wait",
     bookedUpsells: [
       {
-        label: "Grab my 5 free n8n workflows (5 min of call prep)",
-        href: "/resources?lang=en",
+        label: "Grab 5 free automations, ready to use (good prep for our call)",
+        href: "/free-n8n-pack?lang=en",
       },
       {
-        label: "Join my Skool community to talk with other AI entrepreneurs",
+        label: "Check out my Skool community for AI entrepreneurs (opening soon)",
         href: "/skool?lang=en",
       },
       {
@@ -372,7 +374,7 @@ export const COPY: Record<Lang, Copy> = {
       "You've already submitted this. If nothing landed in 5 min, email me at manu.uhila@taiyka.com.",
     errorRequired: "This field is required.",
     errorEmail:
-      "That email looks off — double-check the @ and the .com.",
+      "That email looks off — double-check the @ and the ending.",
     errorLength: (min, max) =>
       `Between ${min} and ${max} characters, please.`,
     draftRestoreFailed:

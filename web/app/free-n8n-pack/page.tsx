@@ -20,10 +20,11 @@ export async function generateMetadata({
   const sp = await searchParams;
   const lang = resolveLang(sp?.lang);
 
+  // No brand suffix here — the root layout's title template appends it.
   const title =
     lang === "fr"
-      ? "Pack n8n gratuit — 5 workflows à importer · L'Atelier"
-      : "Free n8n pack — 5 workflows to import · The Workshop";
+      ? "Pack n8n gratuit — 5 workflows à importer"
+      : "Free n8n pack — 5 workflows to import";
 
   const description =
     lang === "fr"

@@ -8,7 +8,7 @@ type ConfirmStatus = "confirmed" | "already" | "invalid" | "error";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const metadata: Metadata = {
-  title: "Inscription · Le Brief · L'Atelier",
+  title: "Inscription · Le Brief",
   robots: { index: false, follow: false },
 };
 

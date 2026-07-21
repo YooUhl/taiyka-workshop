@@ -21,13 +21,12 @@ function makePool(): Pool {
 
 // Lazy: build-time page-data collection imports this module without ever calling
 // query(), so we must not throw at module load. Pool created on first call.
+// Pool is process-scoped — cache across hot requests in any environment.
+// Vercel cold start still pays the first-connection cost (~200-500ms).
 function getPool(): Pool {
   if (global.__pgPool) return global.__pgPool;
-  const p = makePool();
-  if (process.env.NODE_ENV !== "production") {
-    global.__pgPool = p;
-  }
-  return p;
+  global.__pgPool = makePool();
+  return global.__pgPool;
 }
 
 export async function query<T = unknown>(

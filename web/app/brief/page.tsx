@@ -103,10 +103,11 @@ export async function generateMetadata({
   const sp = await searchParams;
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
 
+  // No brand suffix here — the root layout's title template appends it.
   const title =
     lang === "fr"
-      ? "Le Brief — L'IA qui bouge, un jour sur deux · L'Atelier"
-      : "Le Brief — AI that moves, every 2 days · The Workshop";
+      ? "Le Brief — L'IA qui bouge, un jour sur deux"
+      : "Le Brief — AI that moves, every 2 days";
 
   const description =
     lang === "fr"

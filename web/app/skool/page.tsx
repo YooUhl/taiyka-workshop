@@ -27,7 +27,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: `${SITE}/skool`,
-      siteName: "My Workshop",
+      siteName: "The Workshop",
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title: c.title,
       description: c.metaDescription,

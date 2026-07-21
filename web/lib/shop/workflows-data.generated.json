@@ -9,12 +9,12 @@
     "fr": {
       "title": "Pack Acquisition",
       "tagline": "8 workflows pour automatiser ta prospection de A à Z.",
-      "hoverDescription": "Scraping + enrichissement + envoi personnalisé. Setup en 60 minutes."
+      "hoverDescription": "100 prospects contactés pendant que tu bosses sur autre chose. Setup en 60 minutes."
     },
     "en": {
       "title": "Acquisition Pack",
       "tagline": "8 workflows to automate your prospecting end-to-end.",
-      "hoverDescription": "Scraping + enrichment + personalized outreach. 60-minute setup."
+      "hoverDescription": "100 prospects contacted while you work on something else. 60-minute setup."
     },
     "nodes": [
       "Apify · Apollo / LinkedIn scraper",
@@ -48,20 +48,20 @@
     },
     "valueProps": {
       "fr": [
-        "Économise 4h par semaine sur la prospection",
+        "La prospection tourne toute seule — le système que je construis pour mes clients",
         "Setup complet en moins de 60 minutes",
-        "Personnalisation IA à grande échelle",
-        "Pipeline trackée automatiquement dans Google Sheets"
+        "Chaque email écrit sur mesure par Claude",
+        "Tes prospects suivis automatiquement dans Google Sheets"
       ],
       "en": [
-        "Saves 4h per week on prospecting",
+        "Prospecting runs on its own — the system I build for my clients",
         "Full setup in under 60 minutes",
-        "AI personalization at scale",
-        "Pipeline auto-tracked in Google Sheets"
+        "Every email written custom by Claude",
+        "Your prospects tracked automatically in Google Sheets"
       ]
     },
-    "frBody": "# Description (FR)\n\nLe Pack Acquisition rassemble 8 workflows n8n prêts à l'emploi pour bâtir un système de prospection complet, sans coder. Tu importes les workflows dans ton instance n8n, tu renseignes 4 variables d'environnement, et la machine tourne.\n\nLe pack couvre toute la chaîne : du scraping de prospects qualifiés (Apollo ou LinkedIn via Apify) à la vérification d'email (Hunter.io), en passant par la personnalisation IA (Claude rédige chaque premier message en se basant sur le profil scrappé) et l'envoi multi-canal (Gmail ou Outlook).\n\nChaque workflow est documenté, testé, et accompagné d'un guide de setup. Si tu connais déjà n8n, compte 30 minutes. Sinon, 60 minutes max — un guide vidéo de setup est inclus.",
-    "enBody": "# Description (EN)\n\nThe Acquisition Pack bundles 8 ready-to-use n8n workflows that build a complete prospecting system, no code required. You import the workflows into your n8n instance, fill in 4 environment variables, and the machine runs.\n\nThe pack covers the full chain: from scraping qualified prospects (Apollo or LinkedIn via Apify) to email verification (Hunter.io), through AI personalization (Claude writes every first message based on the scraped profile) and multi-channel sending (Gmail or Outlook).\n\nEvery workflow is documented, tested, and shipped with a setup guide. If you already know n8n, plan for 30 minutes. Otherwise 60 minutes max — a setup video walkthrough is included."
+    "frBody": "# Description (FR)\n\nLe Pack Acquisition rassemble 8 workflows n8n prêts à l'emploi pour bâtir un système de prospection complet, sans coder. Tu importes les workflows dans ton instance n8n, tu colles 4 clés — le guide te montre où — et la machine tourne.\n\nLe pack couvre toute la chaîne : du scraping de prospects qualifiés (Apollo ou LinkedIn via Apify) à la vérification d'email (Hunter.io), en passant par la personnalisation IA (Claude rédige chaque premier message en se basant sur le profil scrappé) et l'envoi multi-canal (Gmail ou Outlook).\n\nChaque workflow est documenté, testé, et accompagné d'un guide de setup. Si tu connais déjà n8n, compte 30 minutes. Sinon, 60 minutes max — un guide vidéo de setup est inclus.",
+    "enBody": "# Description (EN)\n\nThe Acquisition Pack bundles 8 ready-to-use n8n workflows that build a complete prospecting system, no code required. You import the workflows into your n8n instance, paste in 4 keys — the guide shows you where — and the machine runs.\n\nThe pack covers the full chain: from scraping qualified prospects (Apollo or LinkedIn via Apify) to email verification (Hunter.io), through AI personalization (Claude writes every first message based on the scraped profile) and multi-channel sending (Gmail or Outlook).\n\nEvery workflow is documented, tested, and shipped with a setup guide. If you already know n8n, plan for 30 minutes. Otherwise 60 minutes max — a setup video walkthrough is included."
   },
   {
     "slug": "content-pack",
@@ -73,12 +73,12 @@
     "fr": {
       "title": "Pack Contenu",
       "tagline": "Pipeline idée → script → publication, connecté à Claude.",
-      "hoverDescription": "Multi-plateforme : IG, TikTok, LinkedIn. Idéation IA et publication automatique."
+      "hoverDescription": "Multi-plateforme : IG, TikTok, LinkedIn. Les idées viennent toutes seules, la publication aussi."
     },
     "en": {
       "title": "Content Pack",
       "tagline": "Idea → script → publish pipeline, wired to Claude.",
-      "hoverDescription": "Multi-platform: IG, TikTok, LinkedIn. AI ideation and auto-publishing."
+      "hoverDescription": "Multi-platform: IG, TikTok, LinkedIn. Ideas show up on their own, publishing runs itself."
     },
     "nodes": [
       "Anthropic · Claude idea generator",

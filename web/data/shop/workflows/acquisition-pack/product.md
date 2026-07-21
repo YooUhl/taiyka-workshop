@@ -8,11 +8,11 @@ status: coming-soon
 fr:
   title: "Pack Acquisition"
   tagline: "8 workflows pour automatiser ta prospection de A à Z."
-  hoverDescription: "Scraping + enrichissement + envoi personnalisé. Setup en 60 minutes."
+  hoverDescription: "100 prospects contactés pendant que tu bosses sur autre chose. Setup en 60 minutes."
 en:
   title: "Acquisition Pack"
   tagline: "8 workflows to automate your prospecting end-to-end."
-  hoverDescription: "Scraping + enrichment + personalized outreach. 60-minute setup."
+  hoverDescription: "100 prospects contacted while you work on something else. 60-minute setup."
 nodes:
   - "Apify · Apollo / LinkedIn scraper"
   - "Hunter.io · Email finder + verifier"
@@ -34,20 +34,20 @@ costEstimate:
   en: "≈ €0.15 per prospect contacted (scraping + email + AI + send)."
 valueProps:
   fr:
-    - "Économise 4h par semaine sur la prospection"
+    - "La prospection tourne toute seule — le système que je construis pour mes clients"
     - "Setup complet en moins de 60 minutes"
-    - "Personnalisation IA à grande échelle"
-    - "Pipeline trackée automatiquement dans Google Sheets"
+    - "Chaque email écrit sur mesure par Claude"
+    - "Tes prospects suivis automatiquement dans Google Sheets"
   en:
-    - "Saves 4h per week on prospecting"
+    - "Prospecting runs on its own — the system I build for my clients"
     - "Full setup in under 60 minutes"
-    - "AI personalization at scale"
-    - "Pipeline auto-tracked in Google Sheets"
+    - "Every email written custom by Claude"
+    - "Your prospects tracked automatically in Google Sheets"
 ---
 
 # Description (FR)
 
-Le Pack Acquisition rassemble 8 workflows n8n prêts à l'emploi pour bâtir un système de prospection complet, sans coder. Tu importes les workflows dans ton instance n8n, tu renseignes 4 variables d'environnement, et la machine tourne.
+Le Pack Acquisition rassemble 8 workflows n8n prêts à l'emploi pour bâtir un système de prospection complet, sans coder. Tu importes les workflows dans ton instance n8n, tu colles 4 clés — le guide te montre où — et la machine tourne.
 
 Le pack couvre toute la chaîne : du scraping de prospects qualifiés (Apollo ou LinkedIn via Apify) à la vérification d'email (Hunter.io), en passant par la personnalisation IA (Claude rédige chaque premier message en se basant sur le profil scrappé) et l'envoi multi-canal (Gmail ou Outlook).
 
@@ -57,7 +57,7 @@ Chaque workflow est documenté, testé, et accompagné d'un guide de setup. Si t
 
 # Description (EN)
 
-The Acquisition Pack bundles 8 ready-to-use n8n workflows that build a complete prospecting system, no code required. You import the workflows into your n8n instance, fill in 4 environment variables, and the machine runs.
+The Acquisition Pack bundles 8 ready-to-use n8n workflows that build a complete prospecting system, no code required. You import the workflows into your n8n instance, paste in 4 keys — the guide shows you where — and the machine runs.
 
 The pack covers the full chain: from scraping qualified prospects (Apollo or LinkedIn via Apify) to email verification (Hunter.io), through AI personalization (Claude writes every first message based on the scraped profile) and multi-channel sending (Gmail or Outlook).
 

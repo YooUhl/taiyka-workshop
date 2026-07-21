@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import QuizClient from "./quiz-client";
 
 export const metadata: Metadata = {
-  title: "QCM — En cours · L'Atelier",
+  title: "QCM — En cours",
   description:
     "Réponds à 9 questions et découvre ton profil d'entrepreneur. Personnalisé, sans détour.",
   alternates: {

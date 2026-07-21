@@ -8,7 +8,6 @@ const LAST_MOD = new Date();
 
 const routes = [
   "",
-  "/products",
   "/portfolio",
   "/free-n8n-pack",
   "/qcm",
@@ -21,7 +20,7 @@ const routes = [
   "/brief",
   "/book",
   "/shop",
-  "/products/prospect-audit-funnel",
+  "/privacy",
 ];
 
 // Builds one sitemap entry with a full hreflang cluster (x-default + fr/en).

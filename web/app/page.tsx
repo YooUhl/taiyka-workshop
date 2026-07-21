@@ -95,7 +95,9 @@ export async function generateMetadata({
   ];
 
   return {
-    title,
+    // `absolute` opts out of the root "%s — L'Atelier" template: the home
+    // title already leads with the brand, so templating would double it.
+    title: { absolute: title },
     description,
     alternates: {
       // Lang-aware canonical so `?lang=en` isn't deduped into the FR root.

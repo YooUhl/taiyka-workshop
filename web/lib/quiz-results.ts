@@ -34,7 +34,6 @@ export type ProfileResultLocalized = {
   en: ProfileResult;
 };
 
-const SKOOL_URL = "https://www.skool.com/taiyka";
 const CALENDLY_URL = "https://calendly.com/manu-uhila-taiyka/30min";
 
 export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
@@ -54,7 +53,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
         {
           tone: "ink",
           text:
-            "La vérité c'est que ton salaire, c'est pas ton destin — c'est ton levier. Tu as déjà des choses que les pures débutants n'ont pas : un revenu stable, du temps qui t'appartient le soir, et l'observation directe de tous les process inefficaces de ta boîte. C'est exactement la matière première dont tu as besoin pour construire à côté.",
+            "La vérité c'est que ton salaire, c'est pas ton destin — c'est ton levier. Tu as déjà des choses que les purs débutants n'ont pas : un revenu stable, du temps qui t'appartient le soir, et l'observation directe de tous les process inefficaces de ta boîte. C'est exactement la matière première dont tu as besoin pour construire à côté.",
         },
         {
           tone: "muted",
@@ -64,12 +63,12 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Entrer dans la communauté Skool →",
-        href: SKOOL_URL,
-        external: true,
-        meta: "Tarif fondateur pour les 100 premiers · Verrouillé à vie",
+        label: "Découvrir la communauté Skool →",
+        href: "/skool",
+        external: false,
+        meta: "Ouverture bientôt",
       },
-      ps: "La communauté est en lancement — accès fondateur pour les premiers membres, je relève le prix après.",
+      ps: "La communauté ouvre bientôt — mes abonnés email seront prévenus en premier.",
     },
     en: {
       slug: "salarie",
@@ -96,12 +95,12 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Enter the Skool community →",
-        href: SKOOL_URL,
-        external: true,
-        meta: "Founder pricing for the first 100 · Locked for life",
+        label: "See the Skool community →",
+        href: "/skool?lang=en",
+        external: false,
+        meta: "Opening soon",
       },
-      ps: "The community is launching — founder access for the first members, I raise the price after.",
+      ps: "The community opens soon — email subscribers hear about it first.",
     },
   },
 
@@ -111,7 +110,7 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       label: "Aspirant Méthodique",
       name: "L'Aspirant Méthodique",
       tagline:
-        "Tu as l'idée, l'envie, le feu. Il te manque juste de passer du brouillon au shipped.",
+        "Tu as l'idée, l'envie, le feu. Il te manque juste de passer du brouillon au truc lancé.",
       body: [
         {
           tone: "ink",
@@ -131,12 +130,12 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Entrer dans la communauté Skool →",
-        href: SKOOL_URL,
-        external: true,
-        meta: "Tarif fondateur pour les 100 premiers · Verrouillé à vie",
+        label: "Découvrir la communauté Skool →",
+        href: "/skool",
+        external: false,
+        meta: "Ouverture bientôt",
       },
-      ps: "La communauté est en lancement — accès fondateur pour les premiers membres, je relève le prix après.",
+      ps: "La communauté ouvre bientôt — mes abonnés email seront prévenus en premier.",
     },
     en: {
       slug: "aspirant",
@@ -163,12 +162,12 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Enter the Skool community →",
-        href: SKOOL_URL,
-        external: true,
-        meta: "Founder pricing for the first 100 · Locked for life",
+        label: "See the Skool community →",
+        href: "/skool?lang=en",
+        external: false,
+        meta: "Opening soon",
       },
-      ps: "The community is launching — founder access for the first members, I raise the price after.",
+      ps: "The community opens soon — email subscribers hear about it first.",
     },
   },
 
@@ -198,12 +197,12 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Entrer dans la communauté Skool →",
-        href: SKOOL_URL,
-        external: true,
-        meta: "Tarif fondateur pour les 100 premiers · Verrouillé à vie",
+        label: "Découvrir la communauté Skool →",
+        href: "/skool",
+        external: false,
+        meta: "Ouverture bientôt",
       },
-      ps: "La communauté est en lancement — accès fondateur pour les premiers membres, je relève le prix après.",
+      ps: "La communauté ouvre bientôt — mes abonnés email seront prévenus en premier.",
     },
     en: {
       slug: "surcharge",
@@ -230,12 +229,12 @@ export const RESULTS: Record<ProfileSlug, ProfileResultLocalized> = {
       ],
       useGradient: true,
       cta: {
-        label: "Enter the Skool community →",
-        href: SKOOL_URL,
-        external: true,
-        meta: "Founder pricing for the first 100 · Locked for life",
+        label: "See the Skool community →",
+        href: "/skool?lang=en",
+        external: false,
+        meta: "Opening soon",
       },
-      ps: "The community is launching — founder access for the first members, I raise the price after.",
+      ps: "The community opens soon — email subscribers hear about it first.",
     },
   },
 

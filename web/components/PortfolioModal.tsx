@@ -23,16 +23,16 @@ const LABELS = {
     prev: "Projet précédent",
     next: "Projet suivant",
     cta: "Discutons un projet similaire",
-    secondaryDefault: "Voir mes systèmes packagés → /products",
-    secondaryIntel: "Système packagé → /products",
+    secondaryDefault: "Voir la boutique →",
+    secondaryIntel: "Ce système en pack →",
   },
   en: {
     close: "Close",
     prev: "Previous project",
     next: "Next project",
     cta: "Let's discuss a similar project",
-    secondaryDefault: "See my packaged systems → /products",
-    secondaryIntel: "Packaged system → /products",
+    secondaryDefault: "See the shop →",
+    secondaryIntel: "This system as a pack →",
   },
 };
 

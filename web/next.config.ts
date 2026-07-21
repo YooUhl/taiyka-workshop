@@ -34,8 +34,26 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   experimental: {
     optimizePackageImports: ["lucide-react"],
+  },
+  // /products is retired — the catalog lives at /shop now. Permanent 301s so
+  // indexed URLs and old social links keep resolving. Query strings (?lang=en)
+  // are carried over automatically.
+  async redirects() {
+    return [
+      {
+        source: "/products",
+        destination: "/shop",
+        permanent: true,
+      },
+      {
+        source: "/products/prospect-audit-funnel",
+        destination: "/shop",
+        permanent: true,
+      },
+    ];
   },
   images: {
     formats: ["image/avif", "image/webp"],

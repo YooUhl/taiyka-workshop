@@ -7,7 +7,7 @@ export const COPY: Record<Lang, Copy> = {
     title: "Mon Skool — Bientôt",
     metaDescription:
       "Ma communauté privée pour entrepreneurs IA arrive bientôt.",
-    headline: "L'atelier ouvre bientôt.",
+    headline: "L'Atelier ouvre bientôt.",
     backCta: "← Accueil",
     backHref: "/",
     langSwitch: "EN",

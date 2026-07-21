@@ -12,8 +12,12 @@ export async function generateMetadata({
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
   const c = COPY[lang];
 
+  // c.title (from lib/shop/content.ts) carries the brand suffix; the root
+  // layout's title template re-appends "— L'Atelier", so strip it here.
+  const pageTitle = c.title.replace(/\s*[—·]\s*(L['’]Atelier|The Workshop)\s*$/u, "");
+
   return {
-    title: c.title,
+    title: pageTitle,
     description: c.metaDescription,
     alternates: {
       canonical: `${SITE}/shop`,

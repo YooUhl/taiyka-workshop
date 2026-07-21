@@ -12,8 +12,12 @@ export async function generateMetadata({
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
   const c = COPY[lang];
 
+  // c.title (from lib/book/content.ts) carries the brand suffix; the root
+  // layout's title template re-appends "— L'Atelier", so strip it here.
+  const pageTitle = c.title.replace(/\s*[—·]\s*(L['’]Atelier|The Workshop)\s*$/u, "");
+
   return {
-    title: c.title,
+    title: pageTitle,
     description: c.metaDescription,
     alternates: {
       canonical: `${SITE}/book`,
@@ -31,7 +35,7 @@ export async function generateMetadata({
       description: c.metaDescription,
       images: [
         {
-          url: "/og/brief.png",
+          url: "/og/book.png",
           width: 1200,
           height: 630,
           alt: c.title,
@@ -42,7 +46,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: c.title,
       description: c.metaDescription,
-      images: ["/og/brief.png"],
+      images: ["/og/book.png"],
       creator: "@manu_ai.to",
     },
   };

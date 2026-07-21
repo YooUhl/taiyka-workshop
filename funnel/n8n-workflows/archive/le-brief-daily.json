@@ -1,0 +1,263 @@
+{
+  "name": "Le Brief — Daily (Ollama + Resend)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "cronExpression", "expression": "30 6 * * *" }
+          ]
+        }
+      },
+      "id": "lb-001",
+      "name": "Cron — 06:30 Europe/Paris",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 400],
+      "notes": "Timezone from n8n instance setting. Confirm GENERIC_TIMEZONE=Europe/Paris on the host."
+    },
+    {
+      "parameters": {
+        "jsCode": "// === Source registry ===\n// RSS / Reddit feeds. Returns one merged, deduped, time-filtered array.\n// Note: the 'open-source / self-hosted' theme was dropped, but keeping the\n// LocalLLaMA feed is fine — the LLM filter decides relevance per the 7 themes.\n\nconst RSS_FEEDS = [\n  { url: 'https://techcrunch.com/category/artificial-intelligence/feed/', source: 'techcrunch.com' },\n  { url: 'https://www.theverge.com/ai-artificial-intelligence/rss/index.xml', source: 'theverge.com' },\n  { url: 'https://www.technologyreview.com/topic/artificial-intelligence/feed', source: 'technologyreview.com' },\n  { url: 'https://www.anthropic.com/news/rss.xml', source: 'anthropic.com' },\n  { url: 'https://openai.com/blog/rss.xml', source: 'openai.com' },\n  { url: 'https://hnrss.org/frontpage?q=AI+OR+LLM+OR+Claude+OR+GPT', source: 'news.ycombinator.com' },\n  { url: 'https://www.reddit.com/r/LocalLLaMA/.rss', source: 'reddit.com/r/LocalLLaMA' },\n  { url: 'https://www.reddit.com/r/MachineLearning/.rss', source: 'reddit.com/r/MachineLearning' },\n  { url: 'https://www.reddit.com/r/singularity/top.rss?t=day', source: 'reddit.com/r/singularity' },\n];\n\nconst CUTOFF_MS = Date.now() - 24 * 60 * 60 * 1000;\n\nfunction stripCdata(s = '') {\n  return s.replace(/<!\\[CDATA\\[([\\s\\S]*?)\\]\\]>/g, '$1').replace(/<[^>]+>/g, '').trim();\n}\n\nfunction parseRss(xml, source) {\n  const out = [];\n  const blocks = xml.match(/<(item|entry)[\\s\\S]*?<\\/(item|entry)>/g) || [];\n  for (const block of blocks) {\n    const title = (block.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/) || [, ''])[1];\n    const linkMatch =\n      block.match(/<link[^>]*href=\"([^\"]+)\"/) ||\n      block.match(/<link[^>]*>([\\s\\S]*?)<\\/link>/);\n    const link = linkMatch ? linkMatch[1] : '';\n    const pub =\n      (block.match(/<pubDate[^>]*>([\\s\\S]*?)<\\/pubDate>/) || [, ''])[1] ||\n      (block.match(/<published[^>]*>([\\s\\S]*?)<\\/published>/) || [, ''])[1] ||\n      (block.match(/<updated[^>]*>([\\s\\S]*?)<\\/updated>/) || [, ''])[1];\n    const desc =\n      (block.match(/<description[^>]*>([\\s\\S]*?)<\\/description>/) || [, ''])[1] ||\n      (block.match(/<summary[^>]*>([\\s\\S]*?)<\\/summary>/) || [, ''])[1];\n    const publishedMs = pub ? Date.parse(pub) : NaN;\n    if (!title || !link) continue;\n    out.push({\n      title: stripCdata(title),\n      url: link.trim(),\n      source,\n      published_ms: isFinite(publishedMs) ? publishedMs : Date.now(),\n      snippet: stripCdata(desc).slice(0, 400),\n      kind: 'rss',\n    });\n  }\n  return out;\n}\n\nasync function fetchFeed({ url, source }) {\n  try {\n    const xml = await this.helpers.httpRequest({\n      method: 'GET',\n      url,\n      headers: { 'User-Agent': 'LeBriefBot/1.0 (+https://taiyka.com)' },\n      returnFullResponse: false,\n    });\n    return parseRss(typeof xml === 'string' ? xml : String(xml), source);\n  } catch (err) {\n    console.warn('Feed failed: ' + source + ' ' + err.message);\n    return [];\n  }\n}\n\nconst all = [];\nfor (const feed of RSS_FEEDS) {\n  const rows = await fetchFeed.call(this, feed);\n  all.push(...rows);\n}\n\nconst seen = new Set();\nconst filtered = all\n  .filter((i) => i.published_ms >= CUTOFF_MS)\n  .filter((i) => { if (seen.has(i.url)) return false; seen.add(i.url); return true; })\n  .sort((a, b) => b.published_ms - a.published_ms)\n  .slice(0, 80);\n\nreturn [{ json: { items: filtered, count: filtered.length } }];\n"
+      },
+      "id": "lb-002",
+      "name": "Fetch RSS + Reddit Sources",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 320],
+      "notes": "Fetches all RSS/Reddit feeds. Remove a row in RSS_FEEDS to disable a source."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apidojo~twitter-scraper-lite/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "token", "value": "={{ $env.APIFY_API_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"searchTerms\": [\"from:sama\", \"from:karpathy\", \"from:AnthropicAI\", \"from:OpenAI\", \"from:GoogleDeepMind\", \"from:miramurati\", \"from:swyx\", \"from:hwchase17\"],\n  \"sort\": \"Latest\",\n  \"tweetLanguage\": \"en\",\n  \"maxItems\": 40\n}",
+        "options": { "timeout": 60000 }
+      },
+      "id": "lb-003",
+      "name": "Apify — Twitter (last 24h)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 520],
+      "notes": "Apify actor pulls last 24h tweets. Requires APIFY_API_KEY in n8n env. onError=continue so a dead source never blocks the issue.",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize Apify Twitter rows into our item shape.\nconst CUTOFF_MS = Date.now() - 24 * 60 * 60 * 1000;\nconst rows = items.map((i) => i.json);\nconst normalized = rows\n  .map((t) => {\n    const created = t.createdAt || t.created_at || t.date;\n    const ms = created ? Date.parse(created) : Date.now();\n    const handle = t.author?.userName || t.user?.screen_name || t.username || 'unknown';\n    return {\n      title: t.text ? t.text.slice(0, 200) : '',\n      url: t.url || t.twitterUrl || ('https://x.com/' + handle + '/status/' + (t.id || '')),\n      source: 'x.com/@' + handle,\n      published_ms: ms,\n      snippet: t.text || '',\n      kind: 'tweet',\n      engagement: (t.likeCount || 0) + (t.retweetCount || 0) * 2,\n    };\n  })\n  .filter((t) => t.title && t.published_ms >= CUTOFF_MS)\n  .sort((a, b) => b.engagement - a.engagement)\n  .slice(0, 15);\n\nreturn [{ json: { items: normalized, count: normalized.length } }];\n"
+      },
+      "id": "lb-004",
+      "name": "Normalize Tweets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 520]
+    },
+    {
+      "parameters": { "mode": "combine", "combineBy": "combineAll", "options": {} },
+      "id": "lb-005",
+      "name": "Merge Sources",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [900, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine both branches into one item list + tag a monotonic issue number.\nconst combined = [];\nfor (const i of items) {\n  if (Array.isArray(i.json?.items)) combined.push(...i.json.items);\n}\nconst now = new Date();\nconst start = Date.UTC(now.getUTCFullYear(), 0, 0);\nconst dayOfYear = Math.floor((now.getTime() - start) / 86400000);\nconst issueNumber = (now.getUTCFullYear() - 2024) * 365 + dayOfYear;\nreturn [{ json: { items: combined, count: combined.length, issue_number: issueNumber, date_iso: now.toISOString() } }];\n"
+      },
+      "id": "lb-006",
+      "name": "Combine + Tag Issue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:11434/api/chat",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"qwen2.5:7b\",\n  \"stream\": false,\n  \"format\": \"json\",\n  \"options\": { \"temperature\": 0.4, \"num_ctx\": 8192 },\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Tu es l'éditeur de la newsletter quotidienne 'Le Brief' de Manu (@manu_ai.to). Audience: entrepreneurs et curieux francophones qui suivent l'IA. Tu reçois 50-100 news des dernières 24h. Garde UNIQUEMENT les news qui entrent dans ces 7 thèmes: (1) automatisation et agents IA (n8n, frameworks d'agents), (2) nouveaux outils et lancements IA, (3) sorties de modèles (Claude, GPT, Gemini, modèles open), (4) IA pour entrepreneurs et solopreneurs (business, monétisation), (5) tutos pratiques (prompts, workflows), (6) gros mouvements de l'industrie (levées de fonds, rachats, stratégie), (7) IA pour le code et outils dev. Ignore tout le reste (drama, hype vide, leaks vagues). Choisis les 5 à 8 meilleures news. Pour chacune écris UNE ligne en français de 8 à 16 mots, factuelle et claire (ce que c'est + pourquoi ça compte), garde la source (le domaine) et l'URL exacte fournie. Réponds UNIQUEMENT en JSON valide, sans markdown, selon ce schéma exact: {\\\"stories\\\":[{\\\"line\\\":\\\"...\\\",\\\"source\\\":\\\"...\\\",\\\"url\\\":\\\"...\\\"}]}\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify('News candidates (dernières 24h):\\n\\n' + JSON.stringify($json.items.map(i => ({ title: i.title, source: i.source, url: i.url, snippet: (i.snippet||'').slice(0,240) })))) }}\n    }\n  ]\n}",
+        "options": { "timeout": 300000 }
+      },
+      "id": "lb-007",
+      "name": "Ollama — Curate (7 themes)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 400],
+      "notes": "Self-hosted Ollama on the VPS (localhost:11434). qwen2.5:7b with format=json forces a JSON reply. CPU inference is slow — timeout 300s. If OOM under n8n load, pull qwen2.5:3b and change the model here."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Ollama's JSON reply, guard the story count.\nconst reply = $input.first().json;\nconst raw = reply?.message?.content || '{}';\nlet parsed;\ntry {\n  const cleaned = raw.replace(/^```json\\s*/i, '').replace(/^```\\s*/i, '').replace(/```\\s*$/, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = { stories: [] };\n}\nlet stories = Array.isArray(parsed.stories) ? parsed.stories : [];\n// Keep only well-formed rows, cap at 8.\nstories = stories\n  .filter((s) => s && s.line && s.url)\n  .map((s) => ({ line: String(s.line).trim(), source: String(s.source || '').trim(), url: String(s.url).trim() }))\n  .slice(0, 8);\n\nconst issue = $('Combine + Tag Issue').first().json;\nreturn [{\n  json: {\n    stories,\n    story_count: stories.length,\n    held: stories.length < 3,\n    issue_number: issue.issue_number,\n    date_iso: issue.date_iso,\n  },\n}];\n"
+      },
+      "id": "lb-008",
+      "name": "Parse Ollama + Guard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 400]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.held }}",
+              "rightValue": "",
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "lb-009",
+      "name": "Held? (< 3 stories)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1780, 400],
+      "notes": "TRUE = too few stories passed the theme filter -> hold the issue, don't send. FALSE = send."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "insert into brief.issues (issue_date, story_count, sent_count, status, note) values (current_date, {{ $json.story_count }}, 0, 'held-no-stories', 'Held: fewer than 3 stories passed the theme filter.')",
+        "options": {}
+      },
+      "id": "lb-010",
+      "name": "Log Held Issue",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2000, 260],
+      "credentials": {
+        "postgres": { "id": "REPLACE_WITH_SUPABASE_PG_CRED_ID", "name": "Supabase — Le Brief" }
+      },
+      "notes": "Create an n8n Postgres credential pointing at BOOK_DATABASE_URL (the lead-capture Supabase pooler, port 6543)."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.RESEND_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": {{ JSON.stringify($env.BRIEF_FROM_EMAIL || 'Le Brief <brief@taiyka.com>') }},\n  \"to\": \"manu.uhila@taiyka.com\",\n  \"subject\": {{ JSON.stringify('[Le Brief] Numéro tenu — trop peu de news (' + $json.story_count + ')') }},\n  \"text\": \"Le Brief du jour n'a pas été envoyé: moins de 3 news ont passé le filtre des thèmes. Rien à faire — c'est le garde-fou anti-numéro-vide.\"\n}",
+        "options": {}
+      },
+      "id": "lb-011",
+      "name": "Notify Manu — Held",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 260],
+      "notes": "Alerts Manu that the issue was held. Requires RESEND_API_KEY + a verified BRIEF_FROM_EMAIL."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select email, token from brief.subscribers where status = 'active' and lang = 'fr'",
+        "options": {}
+      },
+      "id": "lb-012",
+      "name": "Get Active Subscribers",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2000, 500],
+      "credentials": {
+        "postgres": { "id": "REPLACE_WITH_SUPABASE_PG_CRED_ID", "name": "Supabase — Le Brief" }
+      },
+      "notes": "Reads confirmed FR subscribers from the same BOOK_DATABASE_URL Supabase project."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the Resend batch payload. One rendered email per subscriber (their own\n// unsubscribe token in the footer) + one monitor copy to Manu.\n// Resend /emails/batch caps at 100 per call — fine at the free-tier list size.\nconst guard = $('Parse Ollama + Guard').first().json;\nconst stories = guard.stories;\nconst issueNumber = guard.issue_number;\nconst dateLabel = new Date(guard.date_iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });\nconst subs = items.map((i) => i.json).filter((s) => s && s.email && s.token);\n\nconst SITE = $env.BRIEF_SITE_URL || 'https://taiyka.com';\nconst FROM = $env.BRIEF_FROM_EMAIL || 'Le Brief <brief@taiyka.com>';\nconst subject = 'Le Brief #' + String(issueNumber).padStart(3, '0') + ' — ' + dateLabel;\n\nfunction esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }\n\nfunction render(unsubUrl) {\n  const rows = stories.map((s, i) => (\n    '<tr><td style=\"padding:0 0 14px 0;\">' +\n    '<table role=\"presentation\" width=\"100%\"><tr>' +\n    '<td width=\"26\" valign=\"top\" style=\"font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:0.14em;color:#00a6ff;padding-top:2px;\">' + String(i + 1).padStart(2, '0') + '</td>' +\n    '<td style=\"font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;\">' +\n    '<a href=\"' + s.url + '\" style=\"font-size:15px;line-height:1.5;color:#e8f0fe;text-decoration:none;\">' + esc(s.line) + '</a>' +\n    (s.source ? ' <span style=\"font-size:11px;color:#8fa3bd;\">— ' + esc(s.source) + '</span>' : '') +\n    '</td></tr></table></td></tr>'\n  )).join('');\n  return '<!doctype html><html lang=\"fr\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>' +\n    '<body style=\"margin:0;padding:0;background:#0a1628;\">' +\n    '<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:#0a1628;\"><tr><td align=\"center\" style=\"padding:28px 16px;\">' +\n    '<table role=\"presentation\" width=\"560\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:560px;width:100%;background:#0f1a2e;border:1px solid rgba(141,162,192,0.2);border-radius:8px;padding:26px;\">' +\n    '<tr><td style=\"border-bottom:1px solid rgba(141,162,192,0.2);padding-bottom:14px;\"><table role=\"presentation\" width=\"100%\"><tr>' +\n    '<td style=\"font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#00a6ff;\">LE BRIEF · #' + String(issueNumber).padStart(3, '0') + '</td>' +\n    '<td align=\"right\" style=\"font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8fa3bd;\">' + dateLabel + ' · 7h</td>' +\n    '</tr></table></td></tr>' +\n    '<tr><td style=\"padding:22px 0 0 0;\"><table role=\"presentation\" width=\"100%\">' + rows + '</table></td></tr>' +\n    '<tr><td style=\"border-top:1px solid rgba(141,162,192,0.2);padding-top:14px;text-align:center;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:12px;color:#8fa3bd;\">' +\n    '<p style=\"margin:0 0 6px 0;\">— Manu · <a href=\"https://instagram.com/manu_ai.to\" style=\"color:#00a6ff;text-decoration:none;\">@manu_ai.to</a></p>' +\n    '<p style=\"margin:0;font-size:11px;\"><a href=\"' + unsubUrl + '\" style=\"color:#8fa3bd;text-decoration:underline;\">Se désinscrire en 1 clic</a></p>' +\n    '</td></tr></table></td></tr></table></body></html>';\n}\n\nconst batch = [];\n// Monitor copy to Manu (visibility for the first ~2 weeks; one email/day, not a BCC per recipient).\nbatch.push({ from: FROM, to: 'manu.uhila@taiyka.com', subject: '[COPIE] ' + subject, html: render(SITE + '/brief') });\nfor (const s of subs) {\n  const unsub = SITE + '/api/brief/unsubscribe?token=' + s.token;\n  batch.push({ from: FROM, to: s.email, subject, html: render(unsub) });\n}\n\nreturn [{ json: { batch, sent_count: subs.length, story_count: stories.length } }];\n"
+      },
+      "id": "lb-013",
+      "name": "Build Resend Batch",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2220, 500],
+      "notes": "One rendered email per active subscriber (their token in the unsubscribe link) + a monitor copy to Manu. Caps at Resend's 100-per-batch — matches the free-tier daily ceiling."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails/batch",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{ $env.RESEND_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.batch }}",
+        "options": {}
+      },
+      "id": "lb-014",
+      "name": "Resend — Batch Send",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 500],
+      "notes": "Sends the whole issue in one batch call. RESEND_API_KEY + verified BRIEF_FROM_EMAIL domain required (Phase 0)."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "insert into brief.issues (issue_date, story_count, sent_count, status) values (current_date, {{ $('Build Resend Batch').first().json.story_count }}, {{ $('Build Resend Batch').first().json.sent_count }}, 'sent')",
+        "options": {}
+      },
+      "id": "lb-015",
+      "name": "Log Sent Issue",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2660, 500],
+      "credentials": {
+        "postgres": { "id": "REPLACE_WITH_SUPABASE_PG_CRED_ID", "name": "Supabase — Le Brief" }
+      }
+    }
+  ],
+  "connections": {
+    "Cron — 06:30 Europe/Paris": {
+      "main": [
+        [
+          { "node": "Fetch RSS + Reddit Sources", "type": "main", "index": 0 },
+          { "node": "Apify — Twitter (last 24h)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Apify — Twitter (last 24h)": { "main": [[{ "node": "Normalize Tweets", "type": "main", "index": 0 }]] },
+    "Fetch RSS + Reddit Sources": { "main": [[{ "node": "Merge Sources", "type": "main", "index": 0 }]] },
+    "Normalize Tweets": { "main": [[{ "node": "Merge Sources", "type": "main", "index": 1 }]] },
+    "Merge Sources": { "main": [[{ "node": "Combine + Tag Issue", "type": "main", "index": 0 }]] },
+    "Combine + Tag Issue": { "main": [[{ "node": "Ollama — Curate (7 themes)", "type": "main", "index": 0 }]] },
+    "Ollama — Curate (7 themes)": { "main": [[{ "node": "Parse Ollama + Guard", "type": "main", "index": 0 }]] },
+    "Parse Ollama + Guard": { "main": [[{ "node": "Held? (< 3 stories)", "type": "main", "index": 0 }]] },
+    "Held? (< 3 stories)": {
+      "main": [
+        [{ "node": "Log Held Issue", "type": "main", "index": 0 }],
+        [{ "node": "Get Active Subscribers", "type": "main", "index": 0 }]
+      ]
+    },
+    "Log Held Issue": { "main": [[{ "node": "Notify Manu — Held", "type": "main", "index": 0 }]] },
+    "Get Active Subscribers": { "main": [[{ "node": "Build Resend Batch", "type": "main", "index": 0 }]] },
+    "Build Resend Batch": { "main": [[{ "node": "Resend — Batch Send", "type": "main", "index": 0 }]] },
+    "Resend — Batch Send": { "main": [[{ "node": "Log Sent Issue", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1", "timezone": "Europe/Paris" },
+  "tags": [{ "name": "newsletter" }, { "name": "le-brief" }, { "name": "taiyka" }]
+}

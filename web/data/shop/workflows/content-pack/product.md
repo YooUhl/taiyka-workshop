@@ -8,11 +8,11 @@ status: coming-soon
 fr:
   title: "Pack Contenu"
   tagline: "Pipeline idée → script → publication, connecté à Claude."
-  hoverDescription: "Multi-plateforme : IG, TikTok, LinkedIn. Idéation IA et publication automatique."
+  hoverDescription: "Multi-plateforme : IG, TikTok, LinkedIn. Les idées viennent toutes seules, la publication aussi."
 en:
   title: "Content Pack"
   tagline: "Idea → script → publish pipeline, wired to Claude."
-  hoverDescription: "Multi-platform: IG, TikTok, LinkedIn. AI ideation and auto-publishing."
+  hoverDescription: "Multi-platform: IG, TikTok, LinkedIn. Ideas show up on their own, publishing runs itself."
 nodes:
   - "Anthropic · Claude idea generator"
   - "Anthropic · Claude script writer"

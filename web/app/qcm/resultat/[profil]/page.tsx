@@ -35,7 +35,7 @@ export async function generateMetadata({
   const { profil } = await params;
   const sp = await searchParams;
   const lang = pickLang(sp);
-  if (!isValidProfile(profil)) return { title: "Résultat — L'Atelier" };
+  if (!isValidProfile(profil)) return { title: "Résultat" };
   const r = RESULTS[profil][lang];
   const path = `/qcm/resultat/${profil}`;
   const ogTitle =
@@ -43,7 +43,8 @@ export async function generateMetadata({
       ? `Je suis ${r.name} sur le QCM de L'Atelier. Et toi ?`
       : `I'm ${r.name} on The Workshop quiz. What about you?`;
   return {
-    title: `${r.name} — ${lang === "fr" ? "Ton profil" : "Your profile"} · ${lang === "fr" ? "L'Atelier QCM" : "The Workshop quiz"}`,
+    // No brand suffix — the root layout's title template appends "— L'Atelier".
+    title: `${r.name} — ${lang === "fr" ? "Ton profil" : "Your profile"} · ${lang === "fr" ? "QCM" : "Quiz"}`,
     description: r.tagline,
     alternates: {
       canonical: path,
@@ -109,7 +110,7 @@ export default async function ResultPage({
       kickerMeaning: "CE QUE ÇA VEUT DIRE",
       kickerNext: "PROCHAINE ÉTAPE",
       kickerPs: "PS",
-      kickerTips: "Emails taillés pour ton profil",
+      kickerTips: "Ce que je ferais à ta place",
       tipsBlurb: "Reçois 2-3 emails taillés pour ton profil. Optionnel.",
       gateNote: "Email déjà envoyé — check ta boîte. Pas arrivé ? ",
       gateNoteCta: "Écris-moi",

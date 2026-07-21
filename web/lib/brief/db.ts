@@ -43,13 +43,12 @@ function makePool(): Pool {
   });
 }
 
+// Pool is process-scoped — cache across hot requests in any environment.
+// Vercel cold start still pays the first-connection cost (~200-500ms).
 function getPool(): Pool {
   if (global.__briefPgPool) return global.__briefPgPool;
-  const p = makePool();
-  if (process.env.NODE_ENV !== "production") {
-    global.__briefPgPool = p;
-  }
-  return p;
+  global.__briefPgPool = makePool();
+  return global.__briefPgPool;
 }
 
 export async function query<T = unknown>(

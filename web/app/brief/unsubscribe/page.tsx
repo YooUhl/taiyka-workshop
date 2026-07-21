@@ -8,7 +8,7 @@ type UnsubStatus = "done" | "invalid" | "error";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export const metadata: Metadata = {
-  title: "Désinscription · Le Brief · L'Atelier",
+  title: "Désinscription · Le Brief",
   robots: { index: false, follow: false },
 };
 
@@ -43,15 +43,15 @@ export default async function UnsubscribePage({
           confirm: {
             badge: "Confirmer",
             lead: "Te désinscrire",
-            accent: "de Le Brief ?",
+            accent: "du Brief ?",
             sub: "Un clic et tu ne reçois plus rien. Tu pourras toujours revenir.",
             button: "Confirmer la désinscription",
           },
           copy: {
             done: {
               badge: "✓ TERMINÉ",
-              lead: "On t'enlève",
-              accent: "de la liste.",
+              lead: "C'est fait —",
+              accent: "t'es plus sur la liste.",
               sub: "Plus aucun mail. Si tu changes d'avis, le formulaire d'inscription est toujours là.",
             },
             invalid: {
@@ -83,8 +83,8 @@ export default async function UnsubscribePage({
           copy: {
             done: {
               badge: "✓ DONE",
-              lead: "You're off",
-              accent: "the list.",
+              lead: "Done —",
+              accent: "you're off the list.",
               sub: "No more emails. If you change your mind, the signup form is still there.",
             },
             invalid: {

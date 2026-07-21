@@ -1,6 +1,8 @@
-// Copies ../portfolio/ and ../products/ into web/.data/ so they're inside the
-// Vercel deployment root and get bundled into serverless function output.
+// Copies ../portfolio/ into web/.data/ so it's inside the Vercel deployment
+// root and gets bundled into serverless function output.
 // Runs as `prebuild` hook before next build.
+// (../products/ used to be copied too — that fed the retired /products route
+// via lib/products.ts, both deleted.)
 import { existsSync, mkdirSync, cpSync, rmSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -12,7 +14,6 @@ const TARGET = resolve(WEB, ".data");
 
 const SOURCES = [
   { name: "portfolio", from: resolve(REPO, "portfolio") },
-  { name: "products", from: resolve(REPO, "products") },
 ];
 
 if (existsSync(TARGET)) rmSync(TARGET, { recursive: true, force: true });

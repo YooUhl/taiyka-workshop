@@ -13,13 +13,13 @@ type SearchParams = Promise<{ lang?: string }>;
 const COPY = {
   fr: {
     home: "← TAIYKA · Accueil",
-    kicker: "OPS LOG",
-    title: "DEPLOYED",
-    tagline: "Workflows buildés, testés, en prod chez des clients.",
+    kicker: "SYSTÈMES LIVRÉS",
+    title: "LIVRÉ",
+    tagline: "Construits pour de vrais clients. Testés. En route tous les jours.",
     toggleLabel: "EN",
     ticker: ["Systèmes en production", "Clients réels", "n8n · Claude · Supabase"],
-    ctaTitle: "Prêt à shipper ?",
-    ctaBody: "Places limitées. Je prends 2-3 projets ce mois-ci.",
+    ctaTitle: "On construit le tien ?",
+    ctaBody: "Je prends 2-3 projets ce mois-ci.",
     ctaPrimary: "Réserver un call de 30 min",
     ctaSecondary: "Voir mes systèmes prêts à brancher →",
     ctaTertiary: "Ou rejoins la communauté Skool →",
@@ -27,13 +27,13 @@ const COPY = {
   },
   en: {
     home: "← TAIYKA · Home",
-    kicker: "OPS LOG",
-    title: "DEPLOYED",
-    tagline: "Workflows built, tested, running in production.",
+    kicker: "SYSTEMS DELIVERED",
+    title: "DELIVERED",
+    tagline: "Built for real clients. Tested. Running every day.",
     toggleLabel: "FR",
     ticker: ["Systems in production", "Real clients", "n8n · Claude · Supabase"],
-    ctaTitle: "Ready to ship?",
-    ctaBody: "Limited slots. I'm taking 2-3 projects this month.",
+    ctaTitle: "Want yours built?",
+    ctaBody: "I'm taking 2-3 projects this month.",
     ctaPrimary: "Book a 30-min call",
     ctaSecondary: "See packaged systems →",
     ctaTertiary: "Or join Skool →",
@@ -49,10 +49,11 @@ export async function generateMetadata({
   const sp = await searchParams;
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
 
+  // No brand suffix here — the root layout's title template appends it.
   const title =
     lang === "fr"
-      ? "Portfolio — Systèmes d'automatisation IA en production · L'Atelier"
-      : "Portfolio — AI Automation Systems Running in Production · The Workshop";
+      ? "Portfolio — Systèmes d'automatisation IA en production"
+      : "Portfolio — AI Automation Systems Running in Production";
 
   const description =
     lang === "fr"

@@ -34,10 +34,11 @@ export async function generateMetadata({
   const loc = workflow[lang];
   const path = `/shop/workflows/${slug}`;
   return {
+    // No brand suffix — the root layout's title template appends "— L'Atelier".
     title:
       lang === "fr"
-        ? `${loc.title} — Boutique · L'Atelier`
-        : `${loc.title} — Shop · The Workshop`,
+        ? `${loc.title} — Boutique`
+        : `${loc.title} — Shop`,
     description: loc.tagline,
     alternates: {
       canonical: `${SITE}${path}`,
@@ -53,6 +54,14 @@ export async function generateMetadata({
       locale: lang === "fr" ? "fr_FR" : "en_US",
       title: loc.title,
       description: loc.tagline,
+      images: [
+        {
+          url: "/og/products.png",
+          width: 1200,
+          height: 630,
+          alt: loc.title,
+        },
+      ],
     },
   };
 }

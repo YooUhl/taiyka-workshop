@@ -6,12 +6,17 @@
  * platforms do not render SVG previews so PNGs are mandatory.
  *
  * Two responsibilities:
- *   1. Rasterize the 5 hand-designed SVGs already in `web/public/og/`
- *      (brief, home, prospect-audit-funnel, qcm, skool) into PNG.
- *   2. Generate 9 additional brand-templated PNGs from scratch for pages
+ *   1. Rasterize the 6 hand-designed SVGs already in `web/public/og/`
+ *      (book, brief, home, prospect-audit-funnel, qcm, skool) into PNG.
+ *   2. Generate additional brand-templated PNGs from scratch for pages
  *      that don't have a hand-designed SVG yet:
  *        - portfolio, products, qcm-quiz, free-n8n-pack
  *        - 5 quiz profile cards (profil-salarie / aspirant / surcharge / scale / pas-pret)
+ *        - product cards referenced by the /products JSON-LD
+ *
+ * All cards follow the Arctic brand: obsidian #0B0F14, ice white #F5F8FA,
+ * arctic navy border #1E2A39, muted #A8C0D4, electric blue #00A6FF accent.
+ * Flat and square — no glows, no gradients, no rounded corners.
  *
  * Run with: npm run og:generate
  *     or: npx tsx scripts/og-to-png.ts
@@ -36,6 +41,7 @@ const HEIGHT = 630;
 // 1) Existing hand-designed SVGs we just need to rasterize.
 // ---------------------------------------------------------------------------
 const SVG_PAGES = [
+  'book',
   'brief',
   'home',
   'prospect-audit-funnel',
@@ -52,30 +58,36 @@ type Generated = {
   name: string;
   title: string;
   /**
-   * Optional kicker line at the top of the card. Defaults to "TAIYKA".
+   * Optional kicker line at the top of the card. Defaults to "L'ATELIER".
+   * Rendered mono uppercase with a "›" prefix.
    */
   kicker?: string;
+  /**
+   * Optional one-line sub in muted arctic blue under the title.
+   */
+  sub?: string;
 };
 
 const GENERATED: Generated[] = [
-  { name: 'portfolio', title: 'Portfolio — Workflows en prod', kicker: 'TAIYKA · PORTFOLIO' },
-  { name: 'products', title: 'Kits · Systèmes · Workflows', kicker: 'TAIYKA · PRODUCTS' },
-  { name: 'qcm-quiz', title: 'QCM — En cours', kicker: 'TAIYKA · QCM' },
-  { name: 'free-n8n-pack', title: 'Pack n8n gratuit', kicker: 'TAIYKA · LEAD MAGNET' },
-  { name: 'profil-salarie', title: "L'Employé Lucide", kicker: 'TAIYKA · QCM · PROFIL' },
-  { name: 'profil-aspirant', title: "L'Aspirant", kicker: 'TAIYKA · QCM · PROFIL' },
-  { name: 'profil-surcharge', title: 'Le Surchargé', kicker: 'TAIYKA · QCM · PROFIL' },
-  { name: 'profil-scale', title: 'Le Builder Prêt à Scaler', kicker: 'TAIYKA · QCM · PROFIL' },
-  { name: 'profil-pas-pret', title: "L'Explorateur", kicker: 'TAIYKA · QCM · PROFIL' },
+  { name: 'portfolio', title: 'Livré', kicker: "L'ATELIER · PORTFOLIO", sub: 'Systèmes en production' },
+  // products.png is shared by /products, /shop and the shop workflow pages.
+  { name: 'products', title: 'La Boutique', kicker: "L'ATELIER", sub: 'Kits · Systèmes · Workflows' },
+  { name: 'qcm-quiz', title: 'QCM — En cours', kicker: "L'ATELIER · QCM", sub: '9 questions · 2 min' },
+  { name: 'free-n8n-pack', title: 'Pack n8n gratuit', kicker: "L'ATELIER · GRATUIT", sub: '5 workflows pour entrepreneurs IA' },
+  { name: 'profil-salarie', title: "L'Employé Lucide", kicker: "L'ATELIER · QCM · PROFIL", sub: 'Ton profil entrepreneur IA' },
+  { name: 'profil-aspirant', title: "L'Aspirant", kicker: "L'ATELIER · QCM · PROFIL", sub: 'Ton profil entrepreneur IA' },
+  { name: 'profil-surcharge', title: 'Le Surchargé', kicker: "L'ATELIER · QCM · PROFIL", sub: 'Ton profil entrepreneur IA' },
+  { name: 'profil-scale', title: 'Le Builder Prêt à Scaler', kicker: "L'ATELIER · QCM · PROFIL", sub: 'Ton profil entrepreneur IA' },
+  { name: 'profil-pas-pret', title: "L'Explorateur", kicker: "L'ATELIER · QCM · PROFIL", sub: 'Ton profil entrepreneur IA' },
   // Product cards — referenced by /products page ItemList JSON-LD as /og/<slug>.png
-  { name: 'free-claude-starter', title: 'Claude Code Starter Pack', kicker: 'TAIYKA · LEAD MAGNET' },
-  { name: 'cold-outreach-pack', title: 'Cold Outreach Pack', kicker: 'TAIYKA · PRODUCT · 10-25€' },
-  { name: 'notion-ai-stack', title: 'Notion — Solopreneur AI Stack', kicker: 'TAIYKA · PRODUCT · 10-25€' },
-  { name: 'prompt-pack-50', title: '50 Prompts pour Automatiser', kicker: 'TAIYKA · PRODUCT · 10-25€' },
-  { name: 'competitor-intel', title: 'Competitor Intelligence System', kicker: 'TAIYKA · PRODUCT · 25-50€' },
-  { name: 'client-acquisition-bundle', title: 'Client Acquisition Bundle', kicker: 'TAIYKA · PRODUCT · 25-50€' },
-  { name: 'ai-agent-playbook', title: 'Build Your First AI Agent', kicker: 'TAIYKA · PRODUCT · 25-50€' },
-  { name: 'email-triage-agent', title: 'Email Triage Agent', kicker: 'TAIYKA · PRODUCT · 25-50€' },
+  { name: 'free-claude-starter', title: 'Claude Code Starter Pack', kicker: "L'ATELIER · GRATUIT" },
+  { name: 'cold-outreach-pack', title: 'Cold Outreach Pack', kicker: "L'ATELIER · PRODUIT · 10-25€" },
+  { name: 'notion-ai-stack', title: 'Notion AI Stack', kicker: "L'ATELIER · PRODUIT · 10-25€", sub: 'Solopreneur dashboard' },
+  { name: 'prompt-pack-50', title: '50 Prompts pour Automatiser', kicker: "L'ATELIER · PRODUIT · 10-25€" },
+  { name: 'competitor-intel', title: 'Competitor Intel System', kicker: "L'ATELIER · PRODUIT · 25-50€" },
+  { name: 'client-acquisition-bundle', title: 'Client Acquisition Bundle', kicker: "L'ATELIER · PRODUIT · 25-50€" },
+  { name: 'ai-agent-playbook', title: 'Build Your First AI Agent', kicker: "L'ATELIER · PRODUIT · 25-50€" },
+  { name: 'email-triage-agent', title: 'Email Triage Agent', kicker: "L'ATELIER · PRODUIT · 25-50€" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -94,10 +106,11 @@ function escapeXml(s: string): string {
  * Break a title onto at most 2 lines at a sensible word boundary if it's
  * too long for one line at the chosen font size.
  *
- * The empirical limit at font-size=84 / Arial-Black-ish on a 1080px-wide
- * usable column is ~22 characters. Beyond that we wrap.
+ * Titles render UPPERCASE (Arctic display style), which is wider — the
+ * empirical one-line limit on the 1008px usable column is ~16 characters.
+ * Beyond that we wrap; the font size then adapts to the longest line.
  */
-function wrapTitle(title: string, maxCharsPerLine = 22): string[] {
+function wrapTitle(title: string, maxCharsPerLine = 16): string[] {
   if (title.length <= maxCharsPerLine) return [title];
 
   const words = title.split(' ');
@@ -130,71 +143,54 @@ function wrapTitle(title: string, maxCharsPerLine = 22): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// Build the SVG string for a brand-templated card.
-// Keep the visual language consistent with the hand-designed home.svg /
-// brief.svg (dark navy gradient, electric blue accent, HUD bracket corners,
-// kicker + headline + footer marks).
+// Build the SVG string for a brand-templated card — Arctic design.
+// Matches the hand-designed SVGs in public/og/: obsidian field #0B0F14,
+// 1px inset border #1E2A39, mono uppercase "›" kicker in #00A6FF, heavy
+// uppercase title in ice white #F5F8FA, one-line sub in #A8C0D4, and a
+// small blue square accent mark. Flat and square — no glows, no gradients,
+// no rounded corners.
 // ---------------------------------------------------------------------------
-function buildCardSvg(title: string, kicker = 'TAIYKA'): string {
-  const lines = wrapTitle(title);
-  const fontSize = lines.length === 1 ? 92 : 84;
-  const lineHeight = lines.length === 1 ? 0 : 92;
-  // Vertical center for the title block.
-  const titleBlockHeight = lines.length === 1 ? fontSize : fontSize + lineHeight;
-  const titleTop = Math.round((HEIGHT - titleBlockHeight) / 2 + fontSize * 0.85);
+const FONT_DISPLAY = 'Inter, Arial, system-ui, sans-serif';
+const FONT_MONO = 'JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
 
-  const titleTspans = lines
+function buildCardSvg(title: string, kicker = "L'ATELIER", sub?: string): string {
+  const lines = wrapTitle(title.toUpperCase());
+  // Fit the longest line on the 1008px usable column (x=96 .. x=1104).
+  // Uppercase heavy sans runs ~0.72em per character.
+  const maxLen = Math.max(...lines.map(l => l.length));
+  const fontSize = Math.max(48, Math.min(100, Math.floor(1008 / (0.72 * maxLen))));
+  const lineHeight = Math.round(fontSize * 1.1);
+  const firstBaseline = lines.length === 1 ? 350 : 300;
+
+  const titleTexts = lines
     .map((line, i) => {
-      const y = titleTop + i * lineHeight;
-      return `<text x="80" y="${y}" fill="${i === lines.length - 1 ? 'url(#accent)' : '#FFFFFF'}" font-family="Inter, system-ui, sans-serif" font-size="${fontSize}" font-weight="800" letter-spacing="-3">${escapeXml(line)}</text>`;
+      const y = firstBaseline + i * lineHeight;
+      return `<text x="96" y="${y}" fill="#F5F8FA" font-family="${FONT_DISPLAY}" font-size="${fontSize}" font-weight="900" letter-spacing="-1">${escapeXml(line)}</text>`;
     })
     .join('\n  ');
 
+  const lastBaseline = firstBaseline + (lines.length - 1) * lineHeight;
+  const subText = sub
+    ? `<text x="96" y="${lastBaseline + 68}" fill="#A8C0D4" font-family="${FONT_DISPLAY}" font-size="28" font-weight="500">${escapeXml(sub)}</text>`
+    : '';
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${WIDTH} ${HEIGHT}" width="${WIDTH}" height="${HEIGHT}">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0A1628"/>
-      <stop offset="100%" stop-color="#000000"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#00A6FF"/>
-      <stop offset="100%" stop-color="#00E5FF"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="20%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#00A6FF" stop-opacity="0.28"/>
-      <stop offset="60%" stop-color="#00A6FF" stop-opacity="0.04"/>
-      <stop offset="100%" stop-color="#00A6FF" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
+  <rect width="${WIDTH}" height="${HEIGHT}" fill="#0B0F14"/>
+  <rect x="0.5" y="0.5" width="${WIDTH - 1}" height="${HEIGHT - 1}" fill="none" stroke="#1E2A39" stroke-width="1"/>
 
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#bg)"/>
-  <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#glow)"/>
-
-  <!-- HUD bracket corners -->
-  <path d="M40 40 H120 M40 40 V120" stroke="#00A6FF" stroke-width="2" fill="none"/>
-  <path d="M1160 40 H1080 M1160 40 V120" stroke="#00A6FF" stroke-width="2" fill="none"/>
-  <path d="M40 590 H120 M40 590 V510" stroke="#00A6FF" stroke-width="2" fill="none"/>
-  <path d="M1160 590 H1080 M1160 590 V510" stroke="#00A6FF" stroke-width="2" fill="none"/>
-
-  <!-- Top kicker -->
-  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" fill="#8DA2C0" letter-spacing="4">
-    <circle cx="80" cy="74" r="5" fill="#00A6FF"/>
-    <text x="100" y="80">§ ${escapeXml(kicker)}</text>
-  </g>
+  <!-- Kicker -->
+  <text x="96" y="150" font-family="${FONT_MONO}" font-size="22" letter-spacing="6" fill="#00A6FF">› ${escapeXml(kicker.toUpperCase())}</text>
 
   <!-- Title -->
-  ${titleTspans}
+  ${titleTexts}
 
-  <!-- Accent line under title -->
-  <rect x="80" y="${titleTop + 30}" width="120" height="3" fill="url(#accent)"/>
+  <!-- Sub -->
+  ${subText}
 
-  <!-- Hairline -->
-  <rect x="80" y="525" width="1040" height="1" fill="#8DA2C0" opacity="0.20"/>
-
-  <!-- Footer mark -->
-  <text x="80" y="585" fill="#8DA2C0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="3">TAIYKA · @MANU_AI.TO</text>
-  <text x="1120" y="585" text-anchor="end" fill="#8DA2C0" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" letter-spacing="3">TAIYKA.COM</text>
+  <!-- Accent mark + footer -->
+  <rect x="96" y="516" width="18" height="18" fill="#00A6FF"/>
+  <text x="1104" y="531" text-anchor="end" font-family="${FONT_MONO}" font-size="18" letter-spacing="4" fill="#A8C0D4">TAIYKA.COM</text>
 </svg>`;
 }
 
@@ -325,7 +321,7 @@ async function main() {
 
   for (const item of GENERATED) {
     try {
-      const svg = buildCardSvg(item.title, item.kicker);
+      const svg = buildCardSvg(item.title, item.kicker, item.sub);
       const out = await rasterizeString(svg, item.name);
       created.push(path.basename(out));
       console.log(`  generated ${item.name}.png`);

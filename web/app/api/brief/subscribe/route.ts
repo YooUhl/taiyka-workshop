@@ -10,6 +10,7 @@ import {
 } from "@/lib/brief/content";
 import { BriefEmailNotConfigured, sendEmail } from "@/lib/brief/email";
 import { checkRateLimitDb } from "@/lib/brief/rate-limit";
+import { getClientIp } from "@/lib/http";
 import { SITE } from "@/lib/site";
 
 export const runtime = "nodejs";
@@ -78,7 +79,9 @@ async function upsertPending(
 }
 
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  // Hardened IP extraction (x-vercel-forwarded-for / last XFF entry) — the
+  // first x-forwarded-for entry is client-spoofable and bypassed rate limiting.
+  const ip = getClientIp(request);
 
   let body: Body;
   try {

@@ -1,11 +1,20 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { withLang } from "@/lib/lang-utils";
+import { SITE } from "@/lib/site";
 
 type Lang = "fr" | "en";
 
+// Own canonical + description so the page stops inheriting the root metadata
+// (which made it claim to be the homepage). No brand suffix in the title —
+// the root layout's title template appends "— L'Atelier".
 export const metadata: Metadata = {
-  title: "Politique de confidentialité · L'Atelier",
+  title: "Politique de confidentialité",
+  description:
+    "Comment Taiyka collecte et protège tes données pour la newsletter Le Brief : quelles données, pourquoi, combien de temps, et tes droits.",
+  alternates: {
+    canonical: `${SITE}/privacy`,
+  },
   robots: { index: true, follow: true },
 };
 

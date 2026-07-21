@@ -109,7 +109,7 @@ export const COPY: Record<Lang, Copy> = {
 
     ticker: [
       "Workflows n8n prêts à l'emploi",
-      "Fichiers .json à importer",
+      "Prêts à importer en 2 clics",
       "Guide de setup inclus",
       "Mises à jour offertes",
     ],
@@ -118,13 +118,13 @@ export const COPY: Record<Lang, Copy> = {
     heroTitleLead: "Des systèmes qui tournent",
     heroTitleAccent: "pendant que tu dors.",
     heroSubtitle:
-      "Des workflows n8n que j'ai construits pour mes clients, packagés pour que tu les importes chez toi. Tu remplis tes clés API, ça tourne.",
+      "Des workflows n8n que j'ai construits pour mes clients, packagés pour que tu les importes chez toi. Tu branches tes comptes, ça tourne.",
     heroCta: "Voir les packs",
     heroTrust: ["Accès immédiat", "Guide de setup", "Mises à jour offertes"],
     heroPanelKicker: "Première vague",
     heroPanelTitle: "Workflows",
     heroPanelNote:
-      "La première catégorie ouvre. Skills, agents et done-for-you arrivent après.",
+      "Les workflows arrivent en premier. Skills, agents et clé en main suivront.",
 
     tabsAriaLabel: "Catégories de la boutique",
     categories: [
@@ -132,7 +132,7 @@ export const COPY: Record<Lang, Copy> = {
         key: "workflows",
         label: "Workflows",
         live: true,
-        status: "En ligne",
+        status: "Bientôt",
         heading: "Workflows",
         emptyState: "",
       },
@@ -143,7 +143,7 @@ export const COPY: Record<Lang, Copy> = {
         status: "Bientôt",
         heading: "Skills",
         emptyState:
-          "Skills Claude Code et bibliothèques de prompts pour transformer ton IDE en équipe IA. Pas encore en ligne — mets-toi sur la liste plus bas.",
+          "Des skills Claude qui bossent dans tes outils — pas une formation. Pas encore en ligne — mets-toi sur la liste plus bas.",
       },
       {
         key: "agents",
@@ -156,12 +156,12 @@ export const COPY: Record<Lang, Copy> = {
       },
       {
         key: "dfy",
-        label: "Done-for-you",
+        label: "Clé en main",
         live: false,
         status: "Sur demande",
-        heading: "Done-for-you",
+        heading: "Clé en main",
         emptyState:
-          "Je construis le système, tu l'utilises. Pour les opérateurs qui préfèrent déléguer. Réserve un appel et on en parle.",
+          "Je construis le système, tu l'utilises. Pour ceux qui préfèrent déléguer. Réserve un appel et on en parle.",
       },
     ],
 
@@ -183,8 +183,8 @@ export const COPY: Record<Lang, Copy> = {
       },
       {
         key: "dfy",
-        display: "DFY",
-        label: "Done-for-you",
+        display: "CLÉ EN MAIN",
+        label: "Clé en main",
         blurb: "Je construis, tu utilises.",
         status: "Sur demande",
       },
@@ -193,7 +193,7 @@ export const COPY: Record<Lang, Copy> = {
     featureKicker: "Le plus demandé",
     featureTitle: "Pack Acquisition",
     featureBlurb:
-      "8 workflows pour scraper tes prospects, vérifier les emails, personnaliser chaque message avec Claude et suivre la pipeline dans un Sheet. Compte 30 minutes de setup si tu connais n8n, une heure sinon.",
+      "8 workflows pour scraper tes prospects, vérifier les emails, personnaliser chaque message avec Claude et suivre tes prospects dans un Google Sheet. Compte 30 minutes de setup si tu connais n8n, une heure sinon.",
     featureCta: "Voir le pack",
     featureSlug: "acquisition-pack",
 
@@ -243,10 +243,10 @@ export const COPY: Record<Lang, Copy> = {
     skoolKicker: "Communauté",
     skoolTitle: "Pionniers",
     skoolBlurb:
-      "L'accès permanent au playbook et à la communauté autour de l'automatisation IA.",
-    skoolCta: "Rejoindre Pionniers",
+      "Les systèmes que je construis, les coulisses, et des entrepreneurs qui avancent en même temps que toi.",
+    skoolCta: "Découvrir Pionniers",
 
-    footerNote: "Tous les contenus sont produits par Manu · Taiyka.",
+    footerNote: "Tout est fait maison. Manu · Taiyka.",
   },
   en: {
     title: "Shop — The Workshop",
@@ -260,7 +260,7 @@ export const COPY: Record<Lang, Copy> = {
 
     ticker: [
       "Ready-to-run n8n workflows",
-      ".json files you import",
+      "Ready to import in 2 clicks",
       "Setup guide included",
       "Free updates",
     ],
@@ -269,13 +269,13 @@ export const COPY: Record<Lang, Copy> = {
     heroTitleLead: "Systems that keep running",
     heroTitleAccent: "while you sleep.",
     heroSubtitle:
-      "n8n workflows I built for my clients, packaged so you can import them into your own stack. Drop in your API keys and they run.",
+      "n8n workflows I built for my clients, packaged so you can import them into your own stack. Plug in your accounts and they run.",
     heroCta: "See the packs",
     heroTrust: ["Instant access", "Setup guide", "Free updates"],
     heroPanelKicker: "First wave",
     heroPanelTitle: "Workflows",
     heroPanelNote:
-      "The first category is opening. Skills, agents, and done-for-you follow.",
+      "Workflows come first. Skills, agents, and done-for-you will follow.",
 
     tabsAriaLabel: "Shop categories",
     categories: [
@@ -283,7 +283,7 @@ export const COPY: Record<Lang, Copy> = {
         key: "workflows",
         label: "Workflows",
         live: true,
-        status: "Live",
+        status: "Soon",
         heading: "Workflows",
         emptyState: "",
       },
@@ -294,7 +294,7 @@ export const COPY: Record<Lang, Copy> = {
         status: "Soon",
         heading: "Skills",
         emptyState:
-          "Claude Code skills and prompt libraries that turn your IDE into an AI team. Not live yet — join the list below.",
+          "Claude skills that work inside your tools — not a course. Not live yet — join the list below.",
       },
       {
         key: "agents",
@@ -334,7 +334,7 @@ export const COPY: Record<Lang, Copy> = {
       },
       {
         key: "dfy",
-        display: "DFY",
+        display: "DONE-FOR-YOU",
         label: "Done-for-you",
         blurb: "I build it, you use it.",
         status: "On request",
@@ -344,7 +344,7 @@ export const COPY: Record<Lang, Copy> = {
     featureKicker: "Most asked for",
     featureTitle: "Acquisition Pack",
     featureBlurb:
-      "8 workflows to scrape your leads, verify emails, personalise every message with Claude, and track the pipeline in a Sheet. Around 30 minutes of setup if you know n8n, an hour if you don't.",
+      "8 workflows to scrape your leads, verify emails, personalise every message with Claude, and track your prospects in a Google Sheet. Around 30 minutes of setup if you know n8n, an hour if you don't.",
     featureCta: "See the pack",
     featureSlug: "acquisition-pack",
 
@@ -394,10 +394,10 @@ export const COPY: Record<Lang, Copy> = {
     skoolKicker: "Community",
     skoolTitle: "Pioneers",
     skoolBlurb:
-      "Permanent access to the playbook and the community around AI automation.",
-    skoolCta: "Join Pioneers",
+      "The systems I build, the behind-the-scenes, and entrepreneurs building alongside you.",
+    skoolCta: "Discover Pioneers",
 
-    footerNote: "All content built by Manu · Taiyka.",
+    footerNote: "Everything made in-house. Manu · Taiyka.",
   },
 };
 

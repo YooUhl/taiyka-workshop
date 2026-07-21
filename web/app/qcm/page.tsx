@@ -52,7 +52,7 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "EN",
     langSwitchHref: "/qcm?lang=en",
     ogLocale: "fr_FR",
-    metaTitle: "QCM — Quel type d’entrepreneur tu es vraiment ? · L'Atelier",
+    metaTitle: "QCM — Quel type d’entrepreneur tu es vraiment ?",
     metaDescription:
       "9 questions, 2 minutes. Découvre ton profil d’entrepreneur et la prochaine étape concrète pour faire bouger ton business avec l’IA.",
   },
@@ -80,7 +80,7 @@ const COPY: Record<Lang, Copy> = {
     langSwitch: "FR",
     langSwitchHref: "/qcm",
     ogLocale: "en_US",
-    metaTitle: "Quiz — What kind of entrepreneur are you really? · The Workshop",
+    metaTitle: "Quiz — What kind of entrepreneur are you really?",
     metaDescription:
       "9 questions, 2 minutes. Discover your entrepreneur profile and the concrete next step to move your business forward with AI.",
   },
@@ -107,6 +107,7 @@ export async function generateMetadata({
     },
     openGraph: {
       type: "website",
+      url: `${SITE}/qcm${lang === "en" ? "?lang=en" : ""}`,
       locale: c.ogLocale,
       title: c.metaTitle,
       description: c.metaDescription,
@@ -239,7 +240,7 @@ export default async function QcmLandingPage({
             {c.ctaMeta}
           </p>
           <Link
-            href={withLang("/products", lang)}
+            href={withLang("/shop", lang)}
             className="mt-8 md:mt-10 text-[10px] tracking-wide text-muted-foreground/60 hover:text-muted-foreground underline-offset-4 hover:underline"
           >
             {c.skipLink}
