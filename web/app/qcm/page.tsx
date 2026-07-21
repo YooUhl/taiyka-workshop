@@ -155,11 +155,6 @@ export default async function QcmLandingPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(qcmSchema) }}
       />
       <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
-      />
-
-      <div
         className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-8 md:py-12 text-center"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
@@ -167,30 +162,30 @@ export default async function QcmLandingPage({
         <div className="w-full flex items-center justify-between mb-10 md:mb-14 font-mono text-[10px] md:text-[11px] tracking-[0.22em] uppercase">
           <Link
             href={withLang("/", lang)}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {c.topLeftHome}
           </Link>
           <span className="inline-flex items-center gap-2 text-muted-foreground">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
             {c.metaPill}
           </span>
           <Link
             href={c.langSwitchHref}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {c.langSwitch} <span aria-hidden>→</span>
           </Link>
         </div>
 
         {/* Kicker */}
-        <span className="kicker">{c.kickerTest}</span>
+        <span className="kicker kicker-accent">{c.kickerTest}</span>
 
         {/* H1 — hook */}
-        <h1 className="mt-5 mb-10 md:mb-12 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.5rem,8.5vw,5rem)]">
+        <h1 className="display-xl mt-5 mb-10 md:mb-12 text-balance text-foreground">
           {c.h1Lead}{" "}
-          <span className="text-gradient-hero">{c.h1Accent}</span>{" "}
-          <span className="text-foreground/70">{c.h1Trail}</span>
+          <span className="text-primary">{c.h1Accent}</span>{" "}
+          <span className="text-muted-foreground">{c.h1Trail}</span>
         </h1>
 
         <div className="hairline mb-12 md:mb-16" />
@@ -201,9 +196,9 @@ export default async function QcmLandingPage({
           <blockquote className="relative pt-5 max-w-[58ch] mx-auto">
             <span
               aria-hidden
-              className="absolute left-1/2 -translate-x-1/2 top-0 h-px w-16 bg-cyan-400"
+              className="absolute left-1/2 -translate-x-1/2 top-0 h-px w-16 bg-primary"
             />
-            <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.65] text-[#e8f0fe] text-balance">
+            <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.65] text-foreground text-balance">
               {c.manifesto1}
             </p>
             <p className="mt-5 text-[1.0625rem] md:text-[1.125rem] leading-[1.65] text-muted-foreground text-balance">
@@ -218,7 +213,7 @@ export default async function QcmLandingPage({
         <div className="flex flex-col items-center gap-6">
           <Link
             href={withLang("/qcm/quiz", lang)}
-            className="hover-grow group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-base md:text-lg tracking-tight shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all"
+            className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
           >
             {c.ctaButton}
             <span aria-hidden className="transition-transform group-hover:translate-x-1">

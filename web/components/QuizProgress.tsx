@@ -9,8 +9,6 @@ export default function QuizProgress({ current, total }: Props) {
   // aria-valuenow must mirror what the user sees: count SEGMENTS filled, not
   // the question ordinal. Clamp at 0 to avoid -1 on initial mount.
   const segmentsFilled = Math.max(0, current - 1);
-  // Index of the leading-edge (most-recently-filled) segment, or -1 when none.
-  const leadingEdge = segmentsFilled - 1;
 
   return (
     <div
@@ -23,21 +21,13 @@ export default function QuizProgress({ current, total }: Props) {
     >
       {Array.from({ length: safeTotal }).map((_, i) => {
         const filled = i < segmentsFilled;
-        const isLeadingEdge = i === leadingEdge;
         return (
           <span
             key={i}
             aria-hidden
-            className={`h-0 flex-1 border-t border-dashed motion-safe:transition-colors duration-500 ease-out ${
-              filled ? "border-primary" : "border-border/40"
+            className={`h-[3px] flex-1 rounded-full motion-safe:transition-colors duration-500 ease-out ${
+              filled ? "bg-primary" : "bg-border"
             }`}
-            // Only the leading-edge segment gets a glow — stacking the shadow
-            // on every filled segment washed out the visual rhythm.
-            style={
-              isLeadingEdge
-                ? { boxShadow: "0 0 6px rgba(0,166,255,0.3)" }
-                : undefined
-            }
           />
         );
       })}

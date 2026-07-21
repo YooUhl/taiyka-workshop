@@ -174,130 +174,121 @@ export default async function BriefLandingPage({
     inLanguage: lang === "fr" ? "fr-FR" : "en-US",
   };
 
+  // Numbered format list — presentation only, copy strings unchanged.
+  const features = [
+    { n: "01", text: c.feature1, quiet: false },
+    { n: "02", text: c.feature2, quiet: false },
+    { n: "03", text: c.feature3, quiet: false },
+    { n: "—", text: c.featureMeta, quiet: true },
+  ];
+
   return (
-    <main className="relative flex-1 w-full flex flex-col z-10">
+    <main className="relative flex-1 w-full flex flex-col z-10 paper-grid">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(briefSchema) }}
       />
-      <div
-        aria-hidden
-        className="hidden md:block pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
-      />
 
       <div
-        className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1 text-center"
+        className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
         {/* Top bar */}
-        <div className="w-full flex items-center justify-between mb-14 md:mb-20 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase gap-3">
+        <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono-hud text-[10px] sm:text-[11px] tracking-[0.18em] uppercase gap-3">
           <Link
             href={withLang("/", lang)}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {c.topHome}
           </Link>
-          <span
-            className="inline-flex items-center gap-2 text-foreground/80 shrink-0"
-            style={{ textShadow: "0 0 8px rgba(10,22,40,0.9)" }}
-          >
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            {c.statusPill}
-          </span>
           <Link
             href={c.langSwitchHref}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm shrink-0"
+            className="inline-flex items-center justify-center min-h-[44px] px-2 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm shrink-0"
           >
             {c.langSwitchLabel} <span aria-hidden>→</span>
           </Link>
         </div>
 
-        {/* Kicker */}
-        <span className="kicker">{c.kickerHero}</span>
+        {/* Hero — editorial, left-aligned */}
+        <header className="mb-16 md:mb-24">
+          <span className="kicker kicker-accent">{c.kickerHero}</span>
+          <h1 className="mt-6 display-xl text-foreground text-balance">
+            {c.h1Lead} <span className="text-primary">{c.h1Accent}</span>
+          </h1>
+          <p className="mt-6 max-w-[46ch] text-balance text-[1.0625rem] md:text-[1.25rem] leading-[1.6] text-glacier-blue">
+            {c.h1Tail}
+          </p>
+          {/* Meta line — cadence + read time, moved out of the cramped top bar */}
+          <p className="mt-8 inline-flex items-center gap-2.5 font-mono-hud text-[10px] sm:text-[11px] tracking-[0.18em] uppercase text-muted-foreground">
+            <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+            {c.statusPill}
+          </p>
+        </header>
 
-        {/* H1 */}
-        <h1 className="mt-5 mb-4 md:mb-5 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.5rem,8.5vw,5rem)]">
-          {c.h1Lead}{" "}
-          <span className="text-gradient-hero">{c.h1Accent}</span>
-        </h1>
-        <p className="mb-12 md:mb-16 text-balance text-[0.95rem] md:text-base leading-relaxed text-muted-foreground">
-          {c.h1Tail}
-        </p>
+        <div className="hairline mb-16 md:mb-24" />
 
-        <div className="hairline mb-14 md:mb-20" />
-
-        {/* Manifesto — centered */}
-        <div className="flex flex-col items-center gap-5 mb-14 md:mb-20">
+        {/* Manifesto — blue-ruled pull quote */}
+        <section className="mb-16 md:mb-24">
           <span className="kicker">{c.kickerManifesto}</span>
-          <blockquote className="relative pt-5 max-w-[58ch] mx-auto">
-            <span
-              aria-hidden
-              className="absolute left-1/2 -translate-x-1/2 top-0 h-px w-12 bg-primary"
-            />
-            <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.65] text-[#e8f0fe] text-balance">
-              {c.manifestoLead}
-            </p>
-            <p className="mt-5 text-[1.0625rem] md:text-[1.125rem] leading-[1.65] text-muted-foreground text-balance">
+          <blockquote className="mt-6 border-l-2 border-primary pl-6 md:pl-8 max-w-[62ch]">
+            <p className="display-md text-foreground">{c.manifestoLead}</p>
+            <p className="mt-6 text-[1.0625rem] md:text-[1.125rem] leading-[1.65] text-muted-foreground">
               {c.manifestoTail}
             </p>
           </blockquote>
-        </div>
+        </section>
 
-        {/* What's inside — centered stack (no hairline above; merged with manifesto block) */}
-        <div className="flex flex-col items-center gap-6 mb-14 md:mb-20">
+        {/* What's inside — numbered editorial list */}
+        <section className="mb-16 md:mb-24">
           <span className="kicker">{c.kickerInside}</span>
-          <div className="flex flex-col items-center gap-4 max-w-[58ch]">
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/80">01</span>
-              <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
-                {c.feature1}
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/80">02</span>
-              <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
-                {c.feature2}
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/80">03</span>
-              <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
-                {c.feature3}
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <span className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70">—</span>
-              <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground">
-                {c.featureMeta}
-              </p>
-            </div>
-          </div>
-        </div>
+          <ul className="mt-6 max-w-[62ch] border-t border-border">
+            {features.map((f) => (
+              <li
+                key={f.n}
+                className="flex gap-5 md:gap-6 py-5 border-b border-border"
+              >
+                <span
+                  aria-hidden
+                  className={`font-mono-hud text-xs tabular-nums tracking-[0.18em] pt-1 shrink-0 ${
+                    f.quiet ? "text-steel-blue" : "text-primary"
+                  }`}
+                >
+                  {f.n}
+                </span>
+                <p
+                  className={`text-[1rem] md:text-[1.0625rem] leading-[1.6] ${
+                    f.quiet ? "text-muted-foreground" : "text-foreground"
+                  }`}
+                >
+                  {f.text}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-        {/* Sample issue preview — visual proof of format before sign up */}
-        <div className="flex flex-col items-center gap-6 mb-14 md:mb-20">
+        {/* Sample issue preview — the light email panel embedded in the dark page */}
+        <section className="mb-16 md:mb-24">
           <span className="kicker">{c.kickerSample}</span>
-          <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground max-w-[50ch]">
+          <p className="mt-6 mb-8 max-w-[52ch] text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground">
             {c.sampleLead}
           </p>
           <SampleIssuePreview lang={lang} />
-        </div>
+        </section>
 
-        <div className="hairline mb-14 md:mb-20" />
-
-        {/* CTA — centered. Form fields keep their own left text alignment via component. */}
-        <div className="flex flex-col items-center gap-6 mb-8">
-          <span className="kicker">{c.kickerSignup}</span>
-          <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground max-w-[50ch]">
+        {/* Signup — the conversion point, given the most visual weight */}
+        <section className="mb-16 md:mb-20 scroll-mt-8">
+          <span className="kicker kicker-accent">{c.kickerSignup}</span>
+          <p className="mt-6 mb-8 max-w-[46ch] display-md text-foreground">
             {c.signupLead}
           </p>
-          <div className="w-full max-w-md text-left">
+          <div className="w-full max-w-lg">
             <BriefSignupForm lang={lang} />
           </div>
-        </div>
+        </section>
 
         {/* Footer */}
-        <footer className="mt-auto pt-12 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
+        <footer className="mt-auto pt-10 border-t border-border font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground flex flex-wrap gap-y-2 gap-x-4">
           <span>© {new Date().getFullYear()} · @manu_ai.to</span>
           <span aria-hidden>·</span>
           <span>{c.footerRights}</span>

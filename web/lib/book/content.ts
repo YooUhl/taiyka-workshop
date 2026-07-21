@@ -6,7 +6,11 @@ export type Lang = "fr" | "en";
 // retain their original values; the CHECK constraint was relaxed in
 // sql/005_book_fixes.sql to accept both old + new during transition.
 export type RoleKey = "founder" | "freelance" | "early" | "other";
-export type ProjectTypeKey = "business" | "side_project" | "partnership";
+export type ProjectTypeKey =
+  | "business"
+  | "side_project"
+  | "partnership"
+  | "other";
 
 export const ROLE_KEYS: readonly RoleKey[] = [
   "founder",
@@ -19,19 +23,15 @@ export const PROJECT_TYPE_KEYS: readonly ProjectTypeKey[] = [
   "business",
   "side_project",
   "partnership",
+  "other",
 ] as const;
 
 type Choice<T extends string> = { key: T; label: string };
 
 type HeroCopy = {
   outcome: string;
-  deliverable: string;
+  purpose: string;
   logistics: string;
-  riskReversal: string;
-  authorName: string;
-  authorCredential: string;
-  agendaTitle: string;
-  agendaSteps: string[];
   notReadyLabel: string;
   notReadyHref: string;
 };
@@ -119,22 +119,10 @@ export const COPY: Record<Lang, Copy> = {
     homeLabel: "Accueil",
 
     hero: {
-      outcome:
-        "30 min avec Manu — on cadre ta première (ou prochaine) automatisation IA.",
-      deliverable:
-        "Tu repars avec un plan concret : quel workflow attaquer en premier, quels outils, et un ordre de grandeur de temps/budget.",
+      outcome: "Réserve 30 minutes avec Manu.",
+      purpose:
+        "On parle de ton projet, de tes besoins, et des problèmes que tu veux régler en ce moment.",
       logistics: "3 questions courtes (45 s), puis tu choisis ton créneau.",
-      riskReversal:
-        "Pas un appel de vente. Si je peux pas t'aider, je te pointe vers une ressource gratuite et on se sépare bons amis.",
-      authorName: "Manu",
-      authorCredential:
-        "J'ai construit l'automatisation concurrentielle de Polymaker, le SaaS gym UFC Wallis & Futuna, et le système d'outreach IA derrière @manu_ai.to.",
-      agendaTitle: "Au programme",
-      agendaSteps: [
-        "5 min : tu me racontes où tu en es",
-        "15 min : on mappe ton workflow ou agent prioritaire",
-        "10 min : tu repars avec un plan d'attaque (outils + ordre de grandeur)",
-      ],
       notReadyLabel: "Pas encore prêt ? Récupère mes 5 workflows n8n gratuits →",
       notReadyHref: "/resources",
     },
@@ -152,6 +140,7 @@ export const COPY: Record<Lang, Copy> = {
       { key: "business", label: "Pour mon entreprise" },
       { key: "side_project", label: "Pour un side-project" },
       { key: "partnership", label: "Un partenariat ou collab pro" },
+      { key: "other", label: "Autre" },
     ],
 
     q3Question: "Décris ton projet en quelques lignes",
@@ -250,22 +239,10 @@ export const COPY: Record<Lang, Copy> = {
     homeLabel: "Home",
 
     hero: {
-      outcome:
-        "30 min with Manu — let's scope your first (or next) AI automation.",
-      deliverable:
-        "You leave with a concrete plan: which workflow to tackle first, which tools, and a rough effort/budget estimate.",
+      outcome: "Book 30 minutes with Manu.",
+      purpose:
+        "We talk about your project, what you need, and the problems you want to solve right now.",
       logistics: "3 short questions (45 s), then pick your slot.",
-      riskReversal:
-        "Not a sales call. If I can't help, I'll point you to a free resource and we part ways friends.",
-      authorName: "Manu",
-      authorCredential:
-        "I built Polymaker's competitive intelligence system, the UFC Wallis & Futuna gym SaaS, and the AI outreach system behind @manu_ai.to.",
-      agendaTitle: "Agenda",
-      agendaSteps: [
-        "5 min: you tell me where you're at",
-        "15 min: we map your priority workflow or agent",
-        "10 min: you leave with an action plan (tools + ballpark estimate)",
-      ],
       notReadyLabel: "Not ready? Grab my 5 free n8n workflows →",
       notReadyHref: "/resources?lang=en",
     },
@@ -283,6 +260,7 @@ export const COPY: Record<Lang, Copy> = {
       { key: "business", label: "For my business" },
       { key: "side_project", label: "For a side project" },
       { key: "partnership", label: "Partnership or pro collab" },
+      { key: "other", label: "Other" },
     ],
 
     q3Question: "Describe your project in a few lines",

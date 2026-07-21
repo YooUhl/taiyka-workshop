@@ -5,6 +5,8 @@ import { withLang } from "@/lib/lang-utils";
 type Lang = "fr" | "en";
 type UnsubStatus = "done" | "invalid" | "error";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export const metadata: Metadata = {
   title: "Désinscription · Le Brief · L'Atelier",
   robots: { index: false, follow: false },
@@ -15,16 +17,20 @@ function normalizeStatus(raw: string | undefined): UnsubStatus {
   return "invalid";
 }
 
-// The one-click unsubscribe link in every issue hits /api/brief/unsubscribe,
-// which flips the row and redirects here with ?status=. This page only renders
-// the outcome — no form, no client fetch.
+// The footer link (GET) forwards here with ?token= and no status: we show a
+// confirm button that POSTs to /api/brief/unsubscribe (so mail scanners can't
+// unsubscribe people by prefetching the link). After the POST flip the route
+// redirects back here with ?status= and we render the outcome.
 export default async function UnsubscribePage({
   searchParams,
 }: {
-  searchParams: Promise<{ status?: string; lang?: string }>;
+  searchParams: Promise<{ status?: string; lang?: string; token?: string }>;
 }) {
   const sp = await searchParams;
   const lang: Lang = sp?.lang === "en" ? "en" : "fr";
+
+  const token = sp?.token ?? "";
+  const isConfirmMode = !sp?.status && UUID_RE.test(token);
   const status = normalizeStatus(sp?.status);
 
   const t =
@@ -34,6 +40,13 @@ export default async function UnsubscribePage({
           kicker: "DÉSINSCRIPTION · LE BRIEF",
           ctaHome: "Retour à l'accueil →",
           ctaBrief: "Voir la page du brief →",
+          confirm: {
+            badge: "Confirmer",
+            lead: "Te désinscrire",
+            accent: "de Le Brief ?",
+            sub: "Un clic et tu ne reçois plus rien. Tu pourras toujours revenir.",
+            button: "Confirmer la désinscription",
+          },
           copy: {
             done: {
               badge: "✓ TERMINÉ",
@@ -60,6 +73,13 @@ export default async function UnsubscribePage({
           kicker: "UNSUBSCRIBE · LE BRIEF",
           ctaHome: "Back to home →",
           ctaBrief: "See the brief page →",
+          confirm: {
+            badge: "Confirm",
+            lead: "Unsubscribe",
+            accent: "from Le Brief?",
+            sub: "One click and you stop receiving it. You can always come back.",
+            button: "Confirm unsubscribe",
+          },
           copy: {
             done: {
               badge: "✓ DONE",
@@ -82,24 +102,22 @@ export default async function UnsubscribePage({
           },
         };
 
-  const c = t.copy[status];
+  const c = isConfirmMode ? t.confirm : t.copy[status];
+  const unsubAction = `/api/brief/unsubscribe?token=${encodeURIComponent(token)}${
+    lang === "en" ? "&lang=en" : ""
+  }`;
 
   return (
-    <main className="relative flex-1 w-full flex flex-col z-10">
+    <main className="relative flex-1 w-full flex flex-col z-10 paper-grid">
       <div
-        aria-hidden
-        className="hidden md:block pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
-      />
-
-      <div
-        className="relative mx-auto w-full max-w-2xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1 text-center"
+        className="relative mx-auto w-full max-w-2xl px-6 md:px-10 py-12 md:py-20 flex flex-col flex-1"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
         {/* Top bar */}
-        <div className="w-full flex items-center justify-start mb-14 md:mb-20 font-mono text-[10px] sm:text-[11px] tracking-[0.22em] uppercase">
+        <div className="w-full flex items-center justify-start mb-16 md:mb-24 font-mono-hud text-[10px] sm:text-[11px] tracking-[0.18em] uppercase">
           <Link
             href={withLang("/", lang)}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {t.topHome}
           </Link>
@@ -107,36 +125,47 @@ export default async function UnsubscribePage({
 
         <span className="kicker">{t.kicker}</span>
 
-        <p className="mt-5 mb-3 font-mono text-[11px] tracking-[0.22em] uppercase text-primary">
-          {c.badge}
-        </p>
+        <p className="kicker kicker-bare mt-8 mb-4">{c.badge}</p>
 
-        <h1 className="mb-6 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2rem,7vw,3.75rem)]">
-          {c.lead} <span className="text-gradient-hero">{c.accent}</span>
+        <h1 className="mb-6 display-lg text-foreground text-balance">
+          {c.lead} <span className="text-glacier-blue">{c.accent}</span>
         </h1>
 
-        <p className="mb-12 md:mb-16 text-balance text-[1rem] md:text-[1.0625rem] leading-relaxed text-muted-foreground max-w-[54ch] mx-auto">
+        <p className="mb-12 md:mb-16 text-balance text-[1.0625rem] md:text-[1.125rem] leading-[1.6] text-muted-foreground max-w-[54ch]">
           {c.sub}
         </p>
 
-        <div className="hairline mb-14 md:mb-20" />
+        {isConfirmMode && (
+          <form method="post" action={unsubAction} className="mb-12 md:mb-16">
+            <button
+              type="submit"
+              className="card-line inline-flex h-14 items-center justify-center px-8 text-foreground font-semibold text-base md:text-lg tracking-tight focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
+            >
+              {t.confirm.button}
+            </button>
+          </form>
+        )}
 
-        <div className="flex flex-col items-center gap-2 text-sm">
-          <Link
-            href={withLang("/", lang)}
-            className="text-primary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
-          >
-            {t.ctaHome}
-          </Link>
-          <Link
-            href={withLang("/brief", lang)}
-            className="text-primary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
-          >
-            {t.ctaBrief}
-          </Link>
-        </div>
+        <div className="hairline mb-12 md:mb-16" />
 
-        <footer className="mt-auto pt-12 border-t border-border text-xs text-muted-foreground flex flex-wrap justify-center gap-y-2 gap-x-4">
+        {!isConfirmMode && (
+          <div className="flex flex-col items-start gap-1">
+            <Link
+              href={withLang("/", lang)}
+              className="inline-flex items-center min-h-[44px] text-[0.95rem] text-primary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
+            >
+              {t.ctaHome}
+            </Link>
+            <Link
+              href={withLang("/brief", lang)}
+              className="inline-flex items-center min-h-[44px] text-[0.95rem] text-primary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
+            >
+              {t.ctaBrief}
+            </Link>
+          </div>
+        )}
+
+        <footer className="mt-auto pt-10 border-t border-border font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground flex flex-wrap gap-y-2 gap-x-4">
           <span>© {new Date().getFullYear()} · @manu_ai.to</span>
         </footer>
       </div>

@@ -104,10 +104,10 @@ export default function EmailCaptureForm({
       <div
         role="status"
         aria-live="polite"
-        className="w-full rounded-xl border border-[#00a6ff]/40 bg-[#00a6ff]/10 px-5 py-6 text-center"
+        className="card-line card-line-accent w-full px-5 py-6 text-center"
       >
-        <p className="text-base font-semibold text-white">{t.successTitle}</p>
-        <p className="mt-1 text-sm text-[#e8f0fe]/80">{t.success}</p>
+        <p className="text-base font-semibold text-foreground">{t.successTitle}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{t.success}</p>
       </div>
     );
   }
@@ -134,7 +134,7 @@ export default function EmailCaptureForm({
           disabled={isBusy}
           aria-describedby="email-error"
           aria-invalid={isError}
-          className="h-14 w-full rounded-lg border border-border bg-card/60 px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
+          className="h-14 w-full rounded-md border border-input bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/35"
         />
       </div>
 
@@ -152,7 +152,7 @@ export default function EmailCaptureForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={isBusy}
-            className="h-14 w-full rounded-lg border border-border bg-card/60 px-4 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
+            className="h-14 w-full rounded-md border border-input bg-card px-4 text-sm text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/35"
           />
         </div>
       )}
@@ -162,9 +162,9 @@ export default function EmailCaptureForm({
         disabled={isBusy}
         aria-busy={isBusy}
         className={cn(
-          "mt-1 h-14 w-full rounded-lg bg-gradient-hero text-base font-semibold text-[#0a1628] shadow-glow transition-all",
-          "hover:opacity-95 hover:shadow-[0_0_60px_rgba(0,166,255,0.45)]",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
+          "mt-1 h-14 w-full rounded-md bg-primary text-base font-semibold text-primary-foreground transition-colors",
+          "hover:bg-primary/90",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
           "disabled:cursor-not-allowed disabled:opacity-60"
         )}
       >

@@ -1,0 +1,163 @@
+{
+  "name": "Le Brief — Dead-man Switch",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "dm-001",
+      "name": "Cron — 08:00 daily",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select (current_date - coalesce(max(issue_date), current_date - 99)) as days_since from brief.issues where status = 'sent'",
+        "options": {}
+      },
+      "id": "dm-002",
+      "name": "Days Since Last Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        520,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "5IARxYGmdsAM5Adm",
+          "name": "Supabase — Le Brief"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dm-003-c",
+              "leftValue": "={{ Number($json.days_since) > 2 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dm-003",
+      "name": "Stale? (> 2 days)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RESEND_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": {{ JSON.stringify($env.BRIEF_FROM_EMAIL || 'Le Brief <brief@send.taiyka.com>') }},\n  \"to\": \"manu.uhila@taiyka.com\",\n  \"subject\": \"[Le Brief] Aucun numero envoye depuis plus de 2 jours\",\n  \"text\": {{ JSON.stringify('Dead-man switch: aucun numero Le Brief avec le statut sent depuis ' + $json.days_since + ' jours. Le pipeline ne tourne peut-etre plus (cron non enregistre, execution bloquee, DB). Verifie n8n.') }}\n}",
+        "options": {}
+      },
+      "id": "dm-004",
+      "name": "Email Manu — Stale",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        220
+      ]
+    }
+  ],
+  "connections": {
+    "Cron — 08:00 daily": {
+      "main": [
+        [
+          {
+            "node": "Days Since Last Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Days Since Last Sent": {
+      "main": [
+        [
+          {
+            "node": "Stale? (> 2 days)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stale? (> 2 days)": {
+      "main": [
+        [
+          {
+            "node": "Email Manu — Stale",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris"
+  },
+  "tags": [
+    {
+      "name": "le-brief"
+    },
+    {
+      "name": "taiyka"
+    }
+  ]
+}

@@ -4,27 +4,42 @@ import { BriefDbNotConfigured, query } from "@/lib/brief/db";
 
 export const runtime = "nodejs";
 
-// Double-opt-in confirmation landing. The email's button hits this route with
-// ?token=<uuid>. We flip pending -> active, then redirect to the friendly
-// /brief/confirmed page with a status the page renders.
+// Double-opt-in confirmation. The email's button is a GET link to this route.
+// GET no longer mutates — mail-security scanners prefetch GET links and would
+// silently confirm subscribers who never clicked, breaking the consent proof
+// (P1-1). Instead GET forwards to /brief/confirmed which renders a button that
+// POSTs back here; POST performs the pending -> active flip.
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 type Row = { status: string };
 
-function redirect(request: Request, status: string, lang: string) {
+function toConfirmed(request: Request, params: Record<string, string>) {
   const url = new URL("/brief/confirmed", request.url);
-  url.searchParams.set("status", status);
-  if (lang === "en") url.searchParams.set("lang", "en");
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
   return NextResponse.redirect(url);
 }
 
+// GET = land the user on the confirm page with a button (no mutation).
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token") ?? "";
   const lang = searchParams.get("lang") === "en" ? "en" : "fr";
 
   if (!UUID_RE.test(token)) {
-    return redirect(request, "invalid", lang);
+    return toConfirmed(request, { status: "invalid", lang });
+  }
+  // Carry the token to the page; the page's button POSTs it back.
+  return toConfirmed(request, { token, lang });
+}
+
+// POST = perform the actual confirmation (from the page button).
+export async function POST(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const token = searchParams.get("token") ?? "";
+  const lang = searchParams.get("lang") === "en" ? "en" : "fr";
+
+  if (!UUID_RE.test(token)) {
+    return toConfirmed(request, { status: "invalid", lang });
   }
 
   try {
@@ -36,7 +51,7 @@ export async function GET(request: Request) {
       [token],
     );
     if (updated.length > 0) {
-      return redirect(request, "confirmed", lang);
+      return toConfirmed(request, { status: "confirmed", lang });
     }
     // Nothing flipped — either already active or unknown token.
     const existing = await query<Row>(
@@ -44,16 +59,16 @@ export async function GET(request: Request) {
       [token],
     );
     if (existing[0]?.status === "active") {
-      return redirect(request, "already", lang);
+      return toConfirmed(request, { status: "already", lang });
     }
-    return redirect(request, "invalid", lang);
+    return toConfirmed(request, { status: "invalid", lang });
   } catch (err) {
     if (err instanceof BriefDbNotConfigured) {
-      return redirect(request, "error", lang);
+      return toConfirmed(request, { status: "error", lang });
     }
     console.error("[/api/brief/confirm] update failed", {
       message: err instanceof Error ? err.message : String(err),
     });
-    return redirect(request, "error", lang);
+    return toConfirmed(request, { status: "error", lang });
   }
 }

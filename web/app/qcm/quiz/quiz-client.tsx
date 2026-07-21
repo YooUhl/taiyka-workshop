@@ -190,11 +190,6 @@ export default function QuizClient({ lang }: Props) {
   return (
     <main className="relative flex-1 w-full min-h-screen z-10">
       <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[40vh] bg-gradient-glow opacity-40 blur-2xl"
-      />
-
-      <div
         className="relative mx-auto w-full max-w-2xl px-6 md:px-10 py-10 md:py-16"
         style={{ opacity: 0, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
@@ -208,14 +203,14 @@ export default function QuizClient({ lang }: Props) {
               {index > 0 ? (
                 <button
                   onClick={handleBack}
-                  className="text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+                  className="text-muted-foreground hover:text-foreground transition-colors underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
                 >
                   {t.backStep}
                 </button>
               ) : (
                 <Link
                   href={withLang("/", lang)}
-                  className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+                  className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
                 >
                   {t.backHome}
                 </Link>
@@ -223,7 +218,7 @@ export default function QuizClient({ lang }: Props) {
               <div className="flex items-center gap-4">
                 <Link
                   href={t.langOtherHref}
-                  className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+                  className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
                   aria-label={`Switch language to ${t.langOther}`}
                 >
                   {t.langOther}

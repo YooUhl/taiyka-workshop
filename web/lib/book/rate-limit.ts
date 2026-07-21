@@ -16,24 +16,30 @@ function sweep(now: number) {
   }
 }
 
-export function checkRateLimit(ip: string): { ok: boolean; retryAfter?: number } {
+export function checkRateLimit(
+  ip: string,
+  namespace?: string,
+): { ok: boolean; retryAfter?: number } {
   const now = Date.now();
   callCount = (callCount + 1) % SWEEP_EVERY;
   if (callCount === 0) sweep(now);
 
+  // Namespace the key per route so /book, /shop, and others don't share one
+  // 5/min budget for the same IP (P3-7).
+  const key = namespace ? `${namespace}:${ip}` : ip;
   const windowStart = now - WINDOW_MS;
-  const recent = (store.get(ip) ?? []).filter((t) => t > windowStart);
+  const recent = (store.get(key) ?? []).filter((t) => t > windowStart);
 
   if (recent.length >= MAX_REQUESTS) {
     // Math.min guards against clock skew/NTP correction that could leave
     // recent[] out of monotonic order.
     const oldest = Math.min(...recent);
     const retryAfter = Math.max(1, Math.ceil((oldest + WINDOW_MS - now) / 1000));
-    store.set(ip, recent);
+    store.set(key, recent);
     return { ok: false, retryAfter };
   }
 
   recent.push(now);
-  store.set(ip, recent);
+  store.set(key, recent);
   return { ok: true };
 }

@@ -146,65 +146,59 @@ export default async function PortfolioPage({
         // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
-      <div className="w-full flex items-center justify-between mb-12 font-mono text-[11px] tracking-[0.22em] uppercase">
+      <div className="w-full flex items-center justify-between mb-16 font-mono text-[11px] tracking-[0.22em] uppercase">
         <Link
           href={withLang("/", lang)}
-          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+          className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
         >
           {copy.home}
         </Link>
         <Link
           href={`/portfolio?lang=${otherLang}`}
-          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+          className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
         >
           {copy.toggleLabel} →
         </Link>
       </div>
-      <header className="mb-12 text-center flex flex-col items-center gap-4">
-        <span className="kicker">{copy.kicker}</span>
-        <h1 className="text-[clamp(2rem,5vw,3.75rem)] font-bold tracking-tight uppercase">
-          <span className="text-gradient-hero">{copy.title}</span>
-        </h1>
-        <p className="text-muted-foreground max-w-xl mx-auto">
+      <header className="mb-16 text-center flex flex-col items-center gap-5">
+        <span className="kicker kicker-accent">{copy.kicker}</span>
+        <h1 className="display-xl text-foreground">{copy.title}</h1>
+        <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
           {copy.tagline}
         </p>
         {stripEntries.length > 0 && (
-          <p
-            className="mt-2 font-mono text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-muted-foreground/90 max-w-3xl mx-auto leading-relaxed"
-            aria-label={lang === "fr" ? "Indicateurs clés du portfolio" : "Portfolio key metrics"}
-          >
-            {stripEntries.map((entry, i) => (
-              <span key={entry.codename}>
-                {entry.codename} · {entry.metric}
-                {i < stripEntries.length - 1 && (
-                  <span aria-hidden className="mx-2 text-muted-foreground/40">·</span>
-                )}
-              </span>
-            ))}
-          </p>
+          <div className="w-full max-w-3xl mx-auto mt-4">
+            <div className="hairline-strong" />
+            <p
+              className="py-4 font-mono text-[10px] md:text-[11px] tracking-[0.22em] uppercase text-muted-foreground leading-relaxed"
+              aria-label={lang === "fr" ? "Indicateurs clés du portfolio" : "Portfolio key metrics"}
+            >
+              {stripEntries.map((entry, i) => (
+                <span key={entry.codename}>
+                  <span className="text-foreground">{entry.codename}</span> · {entry.metric}
+                  {i < stripEntries.length - 1 && (
+                    <span aria-hidden className="mx-2 text-primary/50">·</span>
+                  )}
+                </span>
+              ))}
+            </p>
+            <div className="hairline" />
+          </div>
         )}
       </header>
 
       <PortfolioClient projects={projects} lang={lang} />
 
-      <hr className="hairline mb-8 mt-20" />
-      <footer className="relative text-center rounded-2xl border border-border bg-card/40 p-10">
-        {/* HUD bracket frame — matches the Tier-3 Skool card treatment on /products */}
-        <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-4 w-4 border-l border-t border-[var(--hud-bracket-dim)]" />
-        <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-4 w-4 border-r border-t border-[var(--hud-bracket-dim)]" />
-        <span aria-hidden className="pointer-events-none absolute left-3 bottom-3 h-4 w-4 border-l border-b border-[var(--hud-bracket-dim)]" />
-        <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-4 w-4 border-r border-b border-[var(--hud-bracket-dim)]" />
-
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">
-          <span className="text-gradient-hero">{copy.ctaTitle}</span>
-        </h2>
-        <p className="text-muted-foreground max-w-md mx-auto mb-6">
+      <hr className="hairline mb-16 mt-24 border-0" />
+      <footer className="card-line card-line-accent text-center p-10 md:p-14">
+        <h2 className="display-md text-foreground mb-3">{copy.ctaTitle}</h2>
+        <p className="text-muted-foreground max-w-md mx-auto mb-8 leading-relaxed">
           {copy.ctaBody}
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-5">
           <MailtoButton
             href="mailto:manu.uhila@taiyka.com?subject=Call%20portfolio"
-            className="hover-grow group inline-flex items-center justify-center gap-3 min-h-14 py-3 px-7 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-[0.9375rem] md:text-base tracking-tight shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+            className="group inline-flex items-center justify-center gap-3 min-h-14 py-3 px-7 rounded-md bg-primary text-primary-foreground font-bold text-[0.9375rem] md:text-base tracking-tight hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             feedbackLabel={copy.ctaOpening}
           >
             {copy.ctaPrimary}
@@ -212,18 +206,18 @@ export default async function PortfolioPage({
           </MailtoButton>
           <Link
             href={withLang("/products", lang)}
-            className="inline-flex items-center justify-center gap-2 min-h-14 py-3 px-6 rounded-md border border-primary/40 text-foreground hover:border-primary hover:bg-card/60 transition-all font-medium text-[0.9375rem] md:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+            className="inline-flex items-center justify-center gap-2 min-h-14 py-3 px-6 rounded-md border border-border text-foreground hover:border-primary hover:text-primary transition-colors font-medium text-[0.9375rem] md:text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
           >
             {copy.ctaSecondary}
           </Link>
         </div>
         <Link
           href={withLang("/skool", lang)}
-          className="inline-block text-sm text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+          className="inline-block text-sm text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
         >
           {copy.ctaTertiary}
         </Link>
-        <p className="mt-4 font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
+        <p className="mt-6 font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
           manu.uhila@taiyka.com
         </p>
       </footer>

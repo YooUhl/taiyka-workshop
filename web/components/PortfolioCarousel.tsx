@@ -254,7 +254,7 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
           "py-12 md:py-20",
           "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
           "[perspective:1500px]",
-          "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-md"
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-md"
         )}
       >
         <ul
@@ -301,23 +301,23 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
           onClick={() => scrollToActual(actualIndex + 1)}
           aria-label={labels.next}
           className={cn(
-            "pointer-events-auto grid h-11 w-11 place-items-center rounded-md border bg-card/70 backdrop-blur-sm transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
+            "pointer-events-auto grid h-11 w-11 place-items-center rounded-md border transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
             chevronPulsing
-              ? "border-primary text-primary animate-hud-bracket-pulse"
-              : "border-primary/40 text-primary/70 hover:border-primary hover:text-primary"
+              ? "border-primary bg-primary text-primary-foreground"
+              : "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary"
           )}
         >
           <ChevronRight size={18} strokeWidth={1.5} aria-hidden />
         </button>
       </div>
 
-      {/* Position dots — proper tablist structure + bigger active dot with glow */}
-      <div className="mt-4 flex items-center justify-center gap-2 font-mono-hud text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
-        <span>
+      {/* Position dots — proper tablist structure + wider active dot */}
+      <div className="mt-6 flex items-center justify-center gap-2 font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
+        <span className="tabular-nums">
           {String(displayIndex + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}
         </span>
-        <span aria-hidden className="text-muted-foreground/40">·</span>
+        <span aria-hidden className="text-primary/50">·</span>
         <div role="tablist" aria-label={labels.tablist} className="flex items-center">
           {projects.map((p, i) => {
             const isActiveDot = i === displayIndex;
@@ -331,7 +331,7 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
                 aria-label={`${i + 1} / ${projects.length}`}
                 onClick={() => onDotClick(i)}
                 className={cn(
-                  "p-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+                  "p-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
                 )}
               >
                 <span
@@ -340,13 +340,8 @@ export default function PortfolioCarousel({ projects, lang }: Props) {
                     "block h-1.5 rounded-full transition-all duration-300",
                     isActiveDot
                       ? "w-8 bg-primary"
-                      : "w-1 bg-muted-foreground/40 group-hover:bg-muted-foreground/70"
+                      : "w-1.5 bg-muted-foreground/40 group-hover:bg-muted-foreground/70"
                   )}
-                  style={
-                    isActiveDot
-                      ? { boxShadow: "0 0 12px rgba(0,166,255,0.45)" }
-                      : undefined
-                  }
                 />
               </button>
             );

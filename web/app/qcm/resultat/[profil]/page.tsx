@@ -174,65 +174,54 @@ export default async function ResultPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
 
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
-      />
-
       <div className="relative mx-auto w-full max-w-3xl px-6 md:px-10 py-12 md:py-20 text-center">
         {/* Top bar */}
         <div className="w-full flex items-center justify-between mb-16 md:mb-20 font-mono text-[11px] tracking-[0.22em] uppercase">
           <Link
             href={withLang("/", lang)}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {t.home}
           </Link>
           <span className="inline-flex items-center gap-2 text-muted-foreground">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
             {t.resultBadge}
           </span>
         </div>
 
         {/* Kicker */}
-        <span className="kicker">
+        <span className="kicker kicker-accent">
           {t.kickerProfil} · {r.label.toUpperCase()}
         </span>
 
-        {/* Hero — finding 10: removed "Ton profil" mono micro-label */}
+        {/* Hero — finding 10: removed "Ton profil" mono micro-label.
+            `useGradient` now selects the blue accent treatment rather than a
+            gradient fill — the gradient look is gone from the design system. */}
         <div className="mt-5 mb-12">
-          <h1 className="text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.25rem,7.5vw,4.75rem)]">
-            {r.useGradient ? (
-              <span
-                className="text-gradient-hero"
-                style={{
-                  backgroundSize: "200% 100%",
-                  animation: "qcm-gradient-sweep 900ms ease-out forwards",
-                }}
-              >
-                {r.name}
-              </span>
-            ) : (
-              <span className="text-foreground">{r.name}</span>
-            )}
+          <h1 className="display-xl text-balance">
+            <span className={r.useGradient ? "text-primary" : "text-foreground"}>
+              {r.name}
+            </span>
           </h1>
-          <p className="mt-6 text-[1.0625rem] md:text-[1.25rem] leading-[1.4] text-[#e8f0fe] text-balance max-w-[40ch] mx-auto">
+          <p className="mt-6 text-[1.0625rem] md:text-[1.25rem] leading-[1.4] text-foreground text-balance max-w-[40ch] mx-auto">
             {r.tagline}
           </p>
         </div>
 
         <div className="hairline mb-12" />
 
-        {/* Body — centered. Finding 1: h2.kicker for SR heading nav. */}
+        {/* Body — left-aligned prose. Centring multi-paragraph copy wrecks
+            readability (ragged left edge forces the eye to hunt each line start),
+            so only the page chrome stays centred. */}
         <div className="flex flex-col items-center gap-6">
           <h2 className="kicker">{t.kickerMeaning}</h2>
-          <div className="w-full max-w-[58ch] mx-auto space-y-5">
+          <div className="w-full max-w-[58ch] mx-auto space-y-5 text-left">
             {r.body.map((p, i) => (
               <p
                 key={i}
                 className={
                   p.tone === "ink"
-                    ? "text-[1.0625rem] md:text-[1.1875rem] leading-[1.65] text-[#e8f0fe] text-balance"
+                    ? "text-[1.0625rem] md:text-[1.1875rem] leading-[1.65] text-foreground"
                     : "text-[1rem] md:text-[1.0625rem] leading-[1.65] text-muted-foreground"
                 }
               >
@@ -252,7 +241,7 @@ export default async function ResultPage({
               href={r.cta.external ? r.cta.href : withLang(r.cta.href, lang)}
               target={r.cta.external ? "_blank" : undefined}
               rel={r.cta.external ? "noopener noreferrer" : undefined}
-              className="hover-grow group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-base md:text-lg tracking-tight shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all"
+              className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-[#33b8ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {r.cta.label}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">
@@ -268,7 +257,7 @@ export default async function ResultPage({
         )}
 
         {/* PS section — round-2 findings 4 + 9: h2.kicker for visual consistency + contrast. */}
-        <div className="mt-12 max-w-[60ch] mx-auto">
+        <div className="mt-12 max-w-[60ch] mx-auto text-left">
           <h2 className="kicker mb-2">{t.kickerPs}</h2>
           <p className="text-sm md:text-base leading-[1.65] text-muted-foreground italic">
             {r.ps}
@@ -325,7 +314,7 @@ export default async function ResultPage({
             <span key={p.slug}>
               <Link
                 href={withLang(`/qcm/resultat/${p.slug}`, lang)}
-                className="hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+                className="hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
               >
                 {p.label}
               </Link>
@@ -342,7 +331,7 @@ export default async function ResultPage({
               href="https://www.skool.com/taiyka"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+              className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
             >
               Skool
             </a>
@@ -350,13 +339,13 @@ export default async function ResultPage({
               href="https://instagram.com/manu_ai.to"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+              className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
             >
               Instagram
             </a>
             <a
               href="mailto:manu.uhila@taiyka.com"
-              className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+              className="text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
             >
               {t.contactDirect}
             </a>

@@ -32,7 +32,7 @@ function validate(body: Body): { ok: true; data: ValidatedBody } | { ok: false; 
 
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const limit = checkRateLimit(ip);
+  const limit = checkRateLimit(ip, "shop");
   if (!limit.ok) {
     return NextResponse.json(
       { ok: false, status: "rate_limited" },

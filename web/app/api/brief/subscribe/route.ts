@@ -9,12 +9,16 @@ import {
   type Lang,
 } from "@/lib/brief/content";
 import { BriefEmailNotConfigured, sendEmail } from "@/lib/brief/email";
-import { checkRateLimit } from "@/lib/book/rate-limit";
+import { checkRateLimitDb } from "@/lib/brief/rate-limit";
 import { SITE } from "@/lib/site";
 
 export const runtime = "nodejs";
 
-type Body = { email?: string; lang?: string; source?: string };
+// Which consent wording the subscriber agreed to (stamped for CNIL proof, P3-8).
+// Bump when the privacy notice / consent copy materially changes.
+const CONSENT_VERSION = "2026-07-15-brief-v1";
+
+type Body = { email?: string; lang?: string; source?: string; company_website?: string };
 type ValidatedBody = { email: string; lang: Lang; source: string };
 
 function validate(body: Body): { ok: true; data: ValidatedBody } | { ok: false; error: string } {
@@ -38,11 +42,11 @@ async function upsertPending(
 ): Promise<{ token: string } | null> {
   // New signup wins the insert.
   const inserted = await query<SubRow>(
-    `insert into brief.subscribers (email, lang, source, ip, user_agent)
-     values ($1, $2, $3, $4, $5)
+    `insert into brief.subscribers (email, lang, source, ip, user_agent, consent_version)
+     values ($1, $2, $3, $4, $5, $6)
      on conflict (email) do nothing
      returning token, status`,
-    [data.email, data.lang, data.source, ip, ua],
+    [data.email, data.lang, data.source, ip, ua, CONSENT_VERSION],
   );
   if (inserted.length > 0) return { token: inserted[0].token };
 
@@ -60,10 +64,11 @@ async function upsertPending(
     const reactivated = await query<SubRow>(
       `update brief.subscribers
          set status = 'pending', token = gen_random_uuid(),
-             unsubscribed_at = null, lang = $2, source = $3
+             unsubscribed_at = null, lang = $2, source = $3,
+             consent_version = $4
        where email = $1
        returning token, status`,
-      [data.email, data.lang, data.source],
+      [data.email, data.lang, data.source, CONSENT_VERSION],
     );
     return reactivated[0] ? { token: reactivated[0].token } : null;
   }
@@ -74,19 +79,28 @@ async function upsertPending(
 
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const limit = checkRateLimit(ip);
-  if (!limit.ok) {
-    return NextResponse.json(
-      { ok: false, status: "rate_limited" },
-      { status: 429, headers: { "Retry-After": String(limit.retryAfter ?? 60) } },
-    );
-  }
 
   let body: Body;
   try {
     body = (await request.json()) as Body;
   } catch {
     return NextResponse.json({ ok: false, status: "invalid_body" }, { status: 400 });
+  }
+
+  // Honeypot: real users never fill company_website. Bots that do get a fake
+  // success — no row written, no email sent (mirrors the /book pattern). (P1-6)
+  if (typeof body.company_website === "string" && body.company_website.length > 0) {
+    return NextResponse.json({ ok: true, status: "pending_confirmation" });
+  }
+
+  // Durable, cross-instance rate limit — replaces the per-instance in-memory
+  // limiter that barely applied on Vercel serverless (P1-6).
+  const limit = await checkRateLimitDb(`brief:${ip}`);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { ok: false, status: "rate_limited" },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfter ?? 60) } },
+    );
   }
 
   const result = validate(body);
@@ -111,9 +125,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, status: "server_error" }, { status: 500 });
   }
 
-  // Already active — idempotent success, no email sent.
+  // Already active — return the SAME response as a fresh pending signup so the
+  // endpoint can't be probed to tell which addresses are on the list (P2-9).
+  // No email is sent in this case.
   if (pending === null) {
-    return NextResponse.json({ ok: true, status: "already_subscribed" });
+    return NextResponse.json({ ok: true, status: "pending_confirmation" });
   }
 
   // Send the double-opt-in confirmation email.

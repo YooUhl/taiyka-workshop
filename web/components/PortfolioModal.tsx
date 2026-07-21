@@ -224,9 +224,9 @@ export default function PortfolioModal({
               onClick={onPrev}
               aria-label={labels.prev}
               className={cn(
-                "grid h-11 w-11 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
+                "grid h-11 w-11 place-items-center rounded-md border border-border bg-card text-muted-foreground",
                 "hover:border-primary hover:text-primary transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
               )}
             >
               <ChevronLeft size={16} strokeWidth={1.5} aria-hidden />
@@ -238,9 +238,9 @@ export default function PortfolioModal({
               onClick={onNext}
               aria-label={labels.next}
               className={cn(
-                "grid h-11 w-11 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
+                "grid h-11 w-11 place-items-center rounded-md border border-border bg-card text-muted-foreground",
                 "hover:border-primary hover:text-primary transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
               )}
             >
               <ChevronRight size={16} strokeWidth={1.5} aria-hidden />
@@ -252,9 +252,9 @@ export default function PortfolioModal({
             onClick={requestClose}
             aria-label={labels.close}
             className={cn(
-              "grid h-11 w-11 place-items-center rounded-md border border-border/60 bg-card/70 text-muted-foreground",
+              "grid h-11 w-11 place-items-center rounded-md border border-border bg-card text-muted-foreground",
               "hover:border-primary hover:text-primary transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             )}
           >
             <X size={16} strokeWidth={1.5} aria-hidden />
@@ -271,16 +271,16 @@ export default function PortfolioModal({
           <a
             href={ctaHref}
             className={cn(
-              "hover-grow group inline-flex items-center justify-center gap-3 min-h-12 py-2.5 px-5 rounded-md",
-              "bg-gradient-hero text-[#0a1628] font-bold text-[0.875rem] md:text-[0.9375rem] tracking-tight",
-              "shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+              "group inline-flex items-center justify-center gap-3 min-h-12 py-2.5 px-5 rounded-md",
+              "bg-primary text-primary-foreground font-bold text-[0.875rem] md:text-[0.9375rem] tracking-tight",
+              "hover:bg-primary/90 transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             )}
           >
             {labels.cta}
             <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
           </a>
-          <p className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
+          <p className="font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
             manu.uhila@taiyka.com
           </p>
           <a
@@ -288,7 +288,7 @@ export default function PortfolioModal({
             className={cn(
               "mt-1 inline-flex items-center justify-center text-[0.8125rem] md:text-[0.875rem]",
               "text-muted-foreground hover:text-primary transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
             )}
           >
             {secondaryLabel}

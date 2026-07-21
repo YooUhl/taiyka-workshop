@@ -315,7 +315,7 @@ export default async function ProspectAuditFunnelPage({
       />
       <div
         aria-hidden
-        className="hidden md:block pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl"
+        className="hidden md:block pointer-events-none absolute inset-x-0 top-0 h-[70vh] paper-grid"
       />
 
       <div
@@ -326,18 +326,18 @@ export default async function ProspectAuditFunnelPage({
         <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[11px] tracking-[0.22em] uppercase">
           <Link
             href={withLang("/products", lang)}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {t.topbarBack}
           </Link>
           <div className="flex items-center gap-3">
             <span className="inline-flex items-center gap-2 text-muted-foreground text-[10px] sm:text-[11px]">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
               {t.pricePill}
             </span>
             <Link
               href={t.langSwitchHref}
-              className="rounded-md border border-border px-2.5 py-1 hover:border-[#00a6ff] hover:text-foreground transition-colors text-muted-foreground"
+              className="inline-flex items-center min-h-[44px] rounded-md border border-border px-3 hover:border-primary hover:text-foreground transition-colors text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {t.langSwitch}
             </Link>
@@ -345,15 +345,14 @@ export default async function ProspectAuditFunnelPage({
         </div>
 
         {/* Kicker */}
-        <span className="kicker">{t.kickerProduct}</span>
+        <span className="kicker kicker-accent self-center">{t.kickerProduct}</span>
 
         {/* H1 */}
-        <h1 className="mt-5 mb-8 md:mb-10 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.25rem,7.5vw,4.75rem)]">
-          {t.h1Line1}{" "}
-          <span className="text-gradient-hero">{t.h1Highlight}</span>
+        <h1 className="display-xl mt-5 mb-8 md:mb-10 text-balance">
+          {t.h1Line1} <span className="text-primary">{t.h1Highlight}</span>
         </h1>
 
-        <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.5] text-[#e8f0fe] text-balance max-w-[55ch] mx-auto mb-10 md:mb-12">
+        <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.55] text-foreground text-balance max-w-[55ch] mx-auto mb-10 md:mb-12">
           {t.hero}
         </p>
 
@@ -371,7 +370,7 @@ export default async function ProspectAuditFunnelPage({
               <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-primary mb-3">
                 {t.forYouHeading}
               </p>
-              <ul className="space-y-3 text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
+              <ul className="space-y-3 text-[1rem] md:text-[1.0625rem] leading-[1.6] text-foreground">
                 {t.forYou.map((line, i) => (
                   <li key={i}>{line}</li>
                 ))}
@@ -401,7 +400,7 @@ export default async function ProspectAuditFunnelPage({
                 <span className="font-mono text-[10px] tabular-nums tracking-[0.22em] uppercase text-muted-foreground/70 shrink-0 w-6">
                   {b.index}
                 </span>
-                <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]">
+                <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-foreground">
                   <strong className="text-foreground">{b.lead}</strong> {b.body}
                 </p>
               </li>
@@ -411,22 +410,22 @@ export default async function ProspectAuditFunnelPage({
 
         <div className="hairline mb-12 md:mb-16" />
 
-        {/* CTA */}
-        <div className="flex flex-col items-center gap-6">
+        {/* CTA — blue-edged panel so the conversion point owns the page */}
+        <div className="card-line card-line-accent flex flex-col items-center gap-6 px-6 py-10 md:px-10 md:py-12">
           <span className="kicker kicker-accent">{t.kickerCTA}</span>
           {GUMROAD_URL ? (
             <a
               href={GUMROAD_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover-grow group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-gradient-hero text-[#0a1628] font-bold text-base md:text-lg tracking-tight shadow-glow hover:shadow-[0_0_60px_rgba(0,166,255,0.55)] transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+              className="group inline-flex items-center gap-3 h-14 md:h-16 px-7 md:px-9 rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]"
             >
               {t.ctaButton}
               <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
             </a>
           ) : (
             <div className="w-full max-w-md flex flex-col items-center gap-3">
-              <p className="text-[0.9375rem] md:text-[1rem] leading-[1.55] text-[#e8f0fe] text-balance">
+              <p className="text-[0.9375rem] md:text-[1rem] leading-[1.55] text-foreground text-balance">
                 {t.waitlistCopy}
               </p>
               <EmailCaptureForm
@@ -440,7 +439,7 @@ export default async function ProspectAuditFunnelPage({
           <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
             {t.ctaNote}
           </p>
-          <p className="text-foreground/90 font-medium text-sm mt-3 max-w-[55ch] border-l-2 border-primary/40 pl-3 text-left">
+          <p className="text-foreground font-medium text-sm mt-3 max-w-[55ch] border-l-2 border-primary pl-4 text-left">
             {t.riskReversal}
           </p>
         </div>
@@ -461,7 +460,7 @@ export default async function ProspectAuditFunnelPage({
             <span key={f.href} className="inline-flex items-center gap-3">
               <Link
                 href={withLang(f.href, lang)}
-                className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+                className="inline-flex items-center min-h-[44px] hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
               >
                 {f.label}
               </Link>

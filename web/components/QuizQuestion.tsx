@@ -123,7 +123,7 @@ export default function QuizQuestion({
           parent (Wave 3-C3) — re-mounting it here on every question swap
           prevented NVDA/JAWS from announcing the update. */}
 
-      <span className="kicker inline-flex mb-5">
+      <span className="kicker kicker-accent inline-flex mb-5">
         Q{String(current).padStart(2, "0")} / {String(total).padStart(2, "0")}
       </span>
 
@@ -132,10 +132,8 @@ export default function QuizQuestion({
         ref={headingRef}
         tabIndex={-1}
         className={cn(
-          "mt-2 mb-10 md:mb-14 text-balance font-bold tracking-[-0.03em] leading-[1.05] text-foreground outline-none",
-          isMotivation
-            ? "text-[clamp(1.85rem,4.8vw,3rem)]"
-            : "text-[clamp(1.6rem,4.2vw,2.6rem)]"
+          "mt-2 mb-10 md:mb-14 text-balance text-foreground outline-none",
+          isMotivation ? "display-lg" : "display-md"
         )}
       >
         {questionText}
@@ -158,30 +156,20 @@ export default function QuizQuestion({
                 disabled={!!selectedId && !isSelected}
                 aria-pressed={isSelected}
                 className={cn(
-                  "group relative w-full text-left flex items-center gap-4 sm:gap-5 px-5 md:px-6 py-5 md:py-6 min-h-[64px] rounded-md border motion-safe:transition-all overflow-hidden",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
-                  isSelected
-                    ? "border-primary bg-primary/10"
-                    : "border-border bg-card/40 hover:bg-card/70 hover:border-primary/50",
+                  "card-line group relative w-full text-left flex items-center gap-4 sm:gap-5 px-5 md:px-6 py-5 md:py-6 min-h-[64px] overflow-hidden",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
+                  isSelected && "card-line-accent",
                   selectedId && !isSelected && "opacity-50"
                 )}
               >
-                {/* Slim left-edge color bar replaces the old hairline between letter and label. */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "absolute left-0 top-0 bottom-0 w-px motion-safe:transition-colors",
-                    isSelected
-                      ? "bg-primary"
-                      : "bg-primary/20 group-hover:bg-primary/60"
-                  )}
-                />
+                {/* Letter badge — fills solid blue on selection so the chosen
+                    option reads at a glance, not just by border color. */}
                 <span
                   className={cn(
-                    "font-bold text-sm md:text-base tabular-nums motion-safe:transition-colors",
+                    "shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm tabular-nums motion-safe:transition-colors",
                     isSelected
-                      ? "text-primary"
-                      : "text-primary/80 group-hover:text-primary"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border text-muted-foreground group-hover:border-primary/60 group-hover:text-primary"
                   )}
                 >
                   {letter}
@@ -195,7 +183,7 @@ export default function QuizQuestion({
                     "shrink-0 motion-safe:transition-all",
                     isSelected
                       ? "text-primary translate-x-1"
-                      : "text-muted-foreground group-hover:text-primary group-hover:translate-x-1"
+                      : "text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-1"
                   )}
                 >
                   →

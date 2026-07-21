@@ -1,0 +1,76 @@
+{
+  "name": "Le Brief — Error Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "eh-001",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.RESEND_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"from\": {{ JSON.stringify($env.BRIEF_FROM_EMAIL || 'Le Brief <brief@send.taiyka.com>') }},\n  \"to\": \"manu.uhila@taiyka.com\",\n  \"subject\": {{ JSON.stringify('[n8n] Echec: ' + ($json.workflow && $json.workflow.name ? $json.workflow.name : 'Le Brief')) }},\n  \"text\": {{ JSON.stringify('Un workflow Le Brief a echoue.\\n\\nWorkflow: ' + (($json.workflow && $json.workflow.name) || '?') + '\\nNode: ' + (($json.execution && $json.execution.lastNodeExecuted) || '?') + '\\nErreur: ' + (($json.execution && $json.execution.error && $json.execution.error.message) || 'voir execution n8n') + '\\n\\nOuvre n8n pour les details.') }}\n}",
+        "options": {}
+      },
+      "id": "eh-002",
+      "name": "Email Manu — Failure",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Manu — Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris"
+  },
+  "tags": [
+    {
+      "name": "le-brief"
+    },
+    {
+      "name": "taiyka"
+    }
+  ]
+}

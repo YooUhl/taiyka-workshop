@@ -192,29 +192,27 @@ export default async function ProductsPage({
       <div className="w-full flex items-center justify-between mb-12 font-mono text-[11px] tracking-[0.22em] uppercase">
         <Link
           href={withLang("/", lang)}
-          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+          className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
         >
           ← TAIYKA · Accueil
         </Link>
         <Link
           href={`/products?lang=${otherLang}`}
-          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+          className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
         >
           {t.langSwitch} →
         </Link>
       </div>
 
-      <header className="mb-12 text-center flex flex-col items-center gap-4">
-        <span className="kicker">{t.kicker}</span>
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight uppercase">
-          {t.title}
-        </h1>
-        <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base">
+      <header className="mb-16 md:mb-20 text-center flex flex-col items-center gap-5">
+        <span className="kicker kicker-accent">{t.kicker}</span>
+        <h1 className="display-lg max-w-[16ch]">{t.title}</h1>
+        <p className="text-muted-foreground max-w-xl mx-auto text-base md:text-lg leading-[1.6]">
           {t.tagline}
         </p>
         <Link
           href={withLang("/qcm", lang)}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center min-h-[44px] text-sm font-medium text-primary hover:underline underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
         >
           {t.qcmLink}
         </Link>
@@ -233,11 +231,9 @@ export default async function ProductsPage({
             >
               <div className="flex flex-col items-center gap-3">
                 <span className="kicker">{meta.kicker}</span>
-                <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight">
-                  {meta.label}
-                </h2>
-                <p className="text-xs text-muted-foreground">{meta.sub}</p>
-                <hr className="hairline" />
+                <h2 className="display-md">{meta.label}</h2>
+                <p className="text-sm text-muted-foreground">{meta.sub}</p>
+                <hr className="hairline mt-2" />
               </div>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((p) => (
@@ -251,25 +247,17 @@ export default async function ProductsPage({
         {/* Tier 3 — Skool community */}
         <section id="skool" className="flex flex-col gap-6 scroll-mt-24">
           <div className="flex flex-col items-center gap-3">
-            <span className="kicker">{t.skoolKicker}</span>
-            <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-tight">
-              {t.skoolHeading}
-            </h2>
-            <p className="text-xs text-muted-foreground">{t.skoolSub}</p>
-            <hr className="hairline" />
+            <span className="kicker kicker-accent">{t.skoolKicker}</span>
+            <h2 className="display-md">{t.skoolHeading}</h2>
+            <p className="text-sm text-muted-foreground">{t.skoolSub}</p>
+            <hr className="hairline mt-2" />
           </div>
-          <div className="relative rounded-2xl border border-border bg-card/60 p-8 md:p-12 flex flex-col items-center gap-6 text-center">
-            {/* HUD bracket frame — demotes from the previous gradient-glow */}
-            <span aria-hidden className="pointer-events-none absolute left-3 top-3 h-4 w-4 border-l border-t border-[var(--hud-bracket-dim)]" />
-            <span aria-hidden className="pointer-events-none absolute right-3 top-3 h-4 w-4 border-r border-t border-[var(--hud-bracket-dim)]" />
-            <span aria-hidden className="pointer-events-none absolute left-3 bottom-3 h-4 w-4 border-l border-b border-[var(--hud-bracket-dim)]" />
-            <span aria-hidden className="pointer-events-none absolute right-3 bottom-3 h-4 w-4 border-r border-b border-[var(--hud-bracket-dim)]" />
-
-            <div className="flex flex-col items-center gap-2 max-w-xl">
-              <h3 className="font-heading text-2xl font-bold tracking-tight text-foreground">
-                {t.skoolTitle}
-              </h3>
-              <p className="text-sm text-muted-foreground">{t.skoolBody}</p>
+          <div className="card-line card-line-accent p-8 md:p-12 flex flex-col items-center gap-6 text-center">
+            <div className="flex flex-col items-center gap-3 max-w-xl">
+              <h3 className="display-md text-foreground">{t.skoolTitle}</h3>
+              <p className="text-base text-muted-foreground leading-[1.6]">
+                {t.skoolBody}
+              </p>
             </div>
             <Link
               href={withLang("/skool", lang)}

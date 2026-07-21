@@ -1,0 +1,105 @@
+{
+  "name": "Le Brief — Maintenance",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 4 * * *"
+            }
+          ]
+        }
+      },
+      "id": "mt-001",
+      "name": "Cron — 04:00 daily",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select 1 as ok",
+        "options": {}
+      },
+      "id": "mt-002",
+      "name": "Keep-alive Ping",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        520,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "5IARxYGmdsAM5Adm",
+          "name": "Supabase — Le Brief"
+        }
+      },
+      "notes": "Daily query so the shared Supabase project never idle-pauses (P2-7)."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "delete from brief.subscribers where status = 'pending' and created_at < now() - interval '30 days'",
+        "options": {}
+      },
+      "id": "mt-003",
+      "name": "Purge Stale Pending",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        740,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "5IARxYGmdsAM5Adm",
+          "name": "Supabase — Le Brief"
+        }
+      },
+      "notes": "Delete never-confirmed signups older than 30 days (CNIL retention, P2-10)."
+    }
+  ],
+  "connections": {
+    "Cron — 04:00 daily": {
+      "main": [
+        [
+          {
+            "node": "Keep-alive Ping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep-alive Ping": {
+      "main": [
+        [
+          {
+            "node": "Purge Stale Pending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Paris"
+  },
+  "tags": [
+    {
+      "name": "le-brief"
+    },
+    {
+      "name": "taiyka"
+    }
+  ]
+}

@@ -95,20 +95,14 @@ export default function SampleIssuePreview({ lang }: { lang: Lang }) {
   return (
     <article
       className={cn(
-        "relative w-full max-w-md mx-auto rounded-lg border border-border bg-card/40 p-5 md:p-6 text-left shadow-glow",
-        "shadow-hud-inset"
+        "panel-light w-full max-w-lg rounded-lg border border-border text-left",
+        "p-6 md:p-8 shadow-[0_18px_50px_-24px_rgba(0,0,0,0.75)]"
       )}
       aria-label={lang === "fr" ? "Aperçu d'un numéro" : "Sample issue preview"}
     >
-      {/* HUD brackets — match featured tile aesthetic */}
-      <span aria-hidden className="pointer-events-none absolute left-1.5 top-1.5 h-2.5 w-2.5 border-l border-t border-[var(--hud-bracket-dim)]" />
-      <span aria-hidden className="pointer-events-none absolute right-1.5 top-1.5 h-2.5 w-2.5 border-r border-t border-[var(--hud-bracket-dim)]" />
-      <span aria-hidden className="pointer-events-none absolute left-1.5 bottom-1.5 h-2.5 w-2.5 border-l border-b border-[var(--hud-bracket-dim)]" />
-      <span aria-hidden className="pointer-events-none absolute right-1.5 bottom-1.5 h-2.5 w-2.5 border-r border-b border-[var(--hud-bracket-dim)]" />
-
-      {/* Card header — mimics email subject + date */}
-      <header className="mb-4 flex items-center justify-between gap-3 pb-3 border-b border-border/60">
-        <span className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-primary">
+      {/* Card header — mimics the email subject line + issue label */}
+      <header className="mb-6 flex items-center justify-between gap-3 pb-4 border-b border-border">
+        <span className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-accent font-semibold">
           {c.cardKicker}
         </span>
         <span className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground">
@@ -117,26 +111,29 @@ export default function SampleIssuePreview({ lang }: { lang: Lang }) {
       </header>
 
       {/* À la une — featured stories with a short take */}
-      <p className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-primary/80 mb-3">
+      <p className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-4">
         {c.featuredLabel}
       </p>
-      <ol className="flex flex-col gap-3.5">
+      <ol className="flex flex-col">
         {c.featured.map((item, idx) => (
-          <li key={item.title} className="flex gap-3">
+          <li
+            key={item.title}
+            className="flex gap-4 py-3.5 first:pt-0 border-b border-border last:border-b-0"
+          >
             <span
               aria-hidden
-              className="font-mono-hud text-[10px] tabular-nums tracking-[0.22em] uppercase text-primary/70 pt-0.5 shrink-0"
+              className="font-mono-hud text-[10px] tabular-nums tracking-[0.18em] text-accent pt-1 shrink-0"
             >
               {String(idx + 1).padStart(2, "0")}
             </span>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-[0.9rem] md:text-[0.95rem] font-semibold leading-snug text-[#e8f0fe]">
+            <div className="flex flex-col gap-1 min-w-0">
+              <p className="text-[0.95rem] font-semibold leading-snug text-foreground">
                 {item.title}
               </p>
-              <p className="text-[0.8rem] leading-snug text-muted-foreground">
+              <p className="text-[0.85rem] leading-relaxed text-muted-foreground">
                 {item.take}
               </p>
-              <span className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-primary/60">
+              <span className="font-mono-hud text-[10px] tracking-[0.14em] uppercase text-steel-blue">
                 {item.source}
               </span>
             </div>
@@ -145,18 +142,19 @@ export default function SampleIssuePreview({ lang }: { lang: Lang }) {
       </ol>
 
       {/* En bref — quick hits */}
-      <p className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-primary/80 mt-5 mb-3 pt-4 border-t border-border/60">
+      <p className="font-mono-hud text-[10px] tracking-[0.18em] uppercase text-muted-foreground mt-6 mb-3 pt-5 border-t border-border">
         {c.briefLabel}
       </p>
       <ul className="flex flex-col gap-2.5">
         {c.quick.map((item) => (
-          <li key={item.text} className="flex gap-2.5">
-            <span aria-hidden className="text-primary/70 text-[0.85rem] leading-snug shrink-0">
-              •
-            </span>
-            <p className="text-[0.82rem] leading-snug text-[#cdd8ea] min-w-0">
+          <li key={item.text} className="flex gap-3">
+            <span
+              aria-hidden
+              className="mt-[0.55rem] h-1 w-1 rounded-full bg-accent shrink-0"
+            />
+            <p className="text-[0.85rem] leading-relaxed text-foreground min-w-0">
               {item.text}{" "}
-              <span className="font-mono-hud text-[10px] tracking-[0.14em] uppercase text-muted-foreground/70">
+              <span className="font-mono-hud text-[10px] tracking-[0.14em] uppercase text-steel-blue">
                 — {item.source}
               </span>
             </p>
@@ -165,7 +163,7 @@ export default function SampleIssuePreview({ lang }: { lang: Lang }) {
       </ul>
 
       {/* Footer meta */}
-      <p className="mt-5 pt-4 border-t border-border/60 text-[11px] text-muted-foreground/70 text-center">
+      <p className="mt-6 pt-4 border-t border-border font-mono-hud text-[10px] tracking-[0.14em] uppercase text-steel-blue">
         {c.footerLine}
       </p>
     </article>

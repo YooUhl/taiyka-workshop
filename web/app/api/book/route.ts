@@ -191,7 +191,7 @@ export async function POST(request: Request) {
   }
 
   const ip = getClientIp(request);
-  const limit = checkRateLimit(ip);
+  const limit = checkRateLimit(ip, "book");
   if (!limit.ok) {
     return NextResponse.json(
       { ok: false, error: "rate_limited" },

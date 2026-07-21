@@ -25,7 +25,13 @@ type CalendlyAPI = {
   initInlineWidget: (opts: {
     url: string;
     parentElement: HTMLElement;
-    prefill?: { name?: string; email?: string };
+    prefill?: {
+      name?: string;
+      email?: string;
+      // a1 = the event's only custom question ("Veuillez partager tout ce qui
+      // pourra être utile à la préparation de notre réunion.")
+      customAnswers?: Record<string, string>;
+    };
     utm?: Record<string, string>;
     locale?: string;
   }) => void;
@@ -74,6 +80,17 @@ const PHASES: Phase[] = ["q1", "q2", "q3", "contact", "calendly"];
 const TOTAL_STEPS = 4;
 const PERSIST_DEBOUNCE_MS = 300;
 const CALENDLY_FALLBACK_MS = 8000;
+
+// Shared style fragments — keeps the arctic tokens consistent across every
+// interactive element on this route.
+const FOCUS_RING =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]";
+const CTA_BASE =
+  "rounded-md font-semibold tracking-tight transition-colors duration-200 ease-out";
+const CTA_ACTIVE = "bg-primary text-primary-foreground hover:bg-[#33b8ff]";
+const CTA_DISABLED = "bg-muted text-muted-foreground/70 cursor-not-allowed";
+const NOTICE =
+  "mb-4 rounded-md border border-amber-400/30 bg-amber-400/[0.06] px-4 py-3 text-xs leading-relaxed text-amber-200/90";
 
 function stepIndex(phase: Phase): number {
   if (phase === "q1") return 1;
@@ -131,6 +148,42 @@ function detectInAppBrowser(ua: string): boolean {
 }
 
 type FieldErrors = Partial<Record<"name" | "email" | "location", string>>;
+
+// Calendly caps a prefilled answer, and the whole prefill rides in the widget
+// URL — keep the payload short so the booking never breaks on a long answer.
+const CALENDLY_ANSWER_MAX = 900;
+
+// Turn the qualification answers into the note that lands in the Calendly
+// booking form, so the invitee doesn't retype what they already told us and
+// Manu sees the context on the invite.
+function buildCalendlyNote(
+  answers: StoredAnswers,
+  roleChoices: { key: RoleKey; label: string }[],
+  projectChoices: { key: ProjectTypeKey; label: string }[],
+  lang: Lang,
+): string {
+  const roleLabel = roleChoices.find((x) => x.key === answers.role)?.label ?? "";
+  const projectLabel =
+    projectChoices.find((x) => x.key === answers.projectType)?.label ?? "";
+
+  const labels =
+    lang === "fr"
+      ? { role: "Profil", project: "Projet", city: "Ville" }
+      : { role: "Profile", project: "Project", city: "City" };
+
+  const lines = [
+    roleLabel && `${labels.role} : ${roleLabel}`,
+    projectLabel && `${labels.project} : ${projectLabel}`,
+    answers.location.trim() && `${labels.city} : ${answers.location.trim()}`,
+  ].filter(Boolean);
+
+  const description = answers.projectDescription.trim();
+  const note = [lines.join("\n"), description].filter(Boolean).join("\n\n");
+
+  return note.length > CALENDLY_ANSWER_MAX
+    ? `${note.slice(0, CALENDLY_ANSWER_MAX - 1)}…`
+    : note;
+}
 
 export default function BookClient({ lang }: { lang: Lang }) {
   const c = COPY[lang];
@@ -309,19 +362,34 @@ export default function BookClient({ lang }: { lang: Lang }) {
     if (!window.Calendly) return;
     // Wipe any prior children before init — defensive against StrictMode re-runs.
     calendlyMountRef.current.replaceChildren();
+    const note = buildCalendlyNote(
+      answersRef.current,
+      c.q1Choices,
+      c.q2Choices,
+      lang,
+    );
     window.Calendly.initInlineWidget({
       url: calendlyUrl,
       parentElement: calendlyMountRef.current,
-      // Only name + email passed — projectDescription + location stay in our
-      // DB only, never leak into Calendly URL params (P0-22).
       prefill: {
         name: answersRef.current.name,
         email: answersRef.current.email,
+        // The answers ride in the widget URL, so only what the invitee is
+        // about to hand Calendly anyway goes in — never the raw DB record.
+        ...(note ? { customAnswers: { a1: note } } : {}),
       },
       locale: lang === "fr" ? "fr_FR" : "en_US",
     });
     calendlyInitialized.current = true;
-  }, [phase, calendlyUrl, calendlyScriptReady, calendlyScriptFailed, lang]);
+  }, [
+    phase,
+    calendlyUrl,
+    calendlyScriptReady,
+    calendlyScriptFailed,
+    lang,
+    c.q1Choices,
+    c.q2Choices,
+  ]);
 
   useEffect(() => {
     if (phase !== "calendly") {
@@ -465,40 +533,35 @@ export default function BookClient({ lang }: { lang: Lang }) {
   const showHero = phase === "q1" && !booked;
 
   return (
-    <main className="relative flex-1 w-full flex flex-col z-10 min-h-screen">
+    <main className="paper-grid relative flex-1 w-full flex flex-col z-10 min-h-screen">
       <div
-        className="relative mx-auto w-full max-w-xl px-6 pt-6 pb-12 flex flex-col flex-1"
+        className="relative mx-auto w-full max-w-xl px-6 pt-8 pb-16 flex flex-col flex-1"
         style={{ opacity: 1, animation: "qcm-fade-in 400ms ease-out forwards" }}
       >
         {/* Top bar — home link + step indicator (lang switch demoted to footer per P2-23) */}
-        <div className="w-full flex items-center justify-between mb-6 md:mb-8 font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
+        <div className="w-full flex items-center justify-between gap-4 mb-10 md:mb-14">
           <Link
             href={lang === "en" ? "/?lang=en" : "/"}
-            className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm px-1"
+            className={cn(
+              "kicker kicker-bare inline-flex items-center min-h-[44px] -mx-1 px-1 rounded-sm hover:text-foreground transition-colors",
+              FOCUS_RING,
+            )}
           >
-            <span aria-hidden>← </span>
+            <span aria-hidden>←</span>
             {c.homeLabel}
           </Link>
           {phase !== "calendly" && (
-            <span className="text-foreground/70">
+            <span className="kicker kicker-bare kicker-accent">
               {c.step(stepIndex(phase), TOTAL_STEPS)}
             </span>
           )}
           <span aria-hidden className="w-12" />
         </div>
 
-        {!storageAvailable && (
-          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/5 px-4 py-2 text-xs text-amber-200">
-            {c.storageDisabled}
-          </div>
-        )}
-        {draftRestoreFailed && (
-          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/5 px-4 py-2 text-xs text-amber-200">
-            {c.draftRestoreFailed}
-          </div>
-        )}
+        {!storageAvailable && <div className={NOTICE}>{c.storageDisabled}</div>}
+        {draftRestoreFailed && <div className={NOTICE}>{c.draftRestoreFailed}</div>}
         {inAppBrowser && phase === "calendly" && (
-          <div className="mb-4 rounded-md border border-amber-500/40 bg-amber-500/5 px-4 py-2 text-xs text-amber-200">
+          <div className={NOTICE}>
             {lang === "fr"
               ? "Pour une meilleure expérience, ouvre ce lien dans ton navigateur (Safari / Chrome) plutôt que dans l'app."
               : "For the best experience, open this link in your browser (Safari / Chrome) rather than the app."}
@@ -506,54 +569,16 @@ export default function BookClient({ lang }: { lang: Lang }) {
         )}
 
         {showHero && (
-          <section aria-label={c.hero.outcome} className="mb-10 md:mb-14">
-            <h2 className="text-balance font-bold tracking-[-0.02em] leading-tight text-[clamp(1.6rem,4.5vw,2.25rem)] mb-4">
-              {c.hero.outcome}
-            </h2>
-            <p className="text-[0.95rem] md:text-base text-foreground/80 leading-relaxed mb-3">
-              {c.hero.deliverable}
+          <section aria-label={c.hero.outcome} className="mb-12 md:mb-16">
+            <h2 className="display-md text-balance mb-5">{c.hero.outcome}</h2>
+            <p className="text-base md:text-lg text-foreground/85 leading-relaxed mb-4">
+              {c.hero.purpose}
             </p>
-            <p className="text-sm text-foreground/65 leading-relaxed mb-5">
+            <p className="text-sm md:text-[0.95rem] text-muted-foreground leading-relaxed mb-8">
               {c.hero.logistics}
             </p>
-            <p className="text-sm text-primary/90 leading-relaxed mb-6">
-              {c.hero.riskReversal}
-            </p>
 
-            {/* Author strip */}
-            <div className="flex items-start gap-3 rounded-md border border-white/10 bg-white/[0.02] px-4 py-3 mb-5">
-              <div
-                aria-hidden
-                className="shrink-0 mt-0.5 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-hero text-[#0a1628] font-bold text-sm"
-              >
-                M
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-primary mb-1">
-                  {c.hero.authorName}
-                </p>
-                <p className="text-xs text-foreground/70 leading-relaxed">
-                  {c.hero.authorCredential}
-                </p>
-              </div>
-            </div>
-
-            {/* Agenda */}
-            <details className="rounded-md border border-white/10 bg-white/[0.02] px-4 py-2 mb-6">
-              <summary className="cursor-pointer font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground hover:text-foreground transition-colors py-1">
-                {c.hero.agendaTitle}
-              </summary>
-              <ul className="mt-3 mb-2 flex flex-col gap-2 text-sm text-foreground/75">
-                {c.hero.agendaSteps.map((step) => (
-                  <li key={step} className="flex items-start gap-2">
-                    <span aria-hidden className="mt-1 inline-block w-1 h-1 rounded-full bg-primary shrink-0" />
-                    <span>{step}</span>
-                  </li>
-                ))}
-              </ul>
-            </details>
-
-            <div className="hairline opacity-50" />
+            <div className="hairline" />
           </section>
         )}
 
@@ -570,10 +595,13 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 setPhase("q2");
               }}
             />
-            <p className="mt-6 text-xs text-muted-foreground">
+            <p className="mt-8 text-xs text-muted-foreground">
               <Link
                 href={c.hero.notReadyHref}
-                className="text-primary/80 hover:text-primary underline-offset-4 hover:underline transition-colors"
+                className={cn(
+                  "text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors rounded-sm",
+                  FOCUS_RING,
+                )}
               >
                 {c.hero.notReadyLabel}
               </Link>
@@ -608,13 +636,16 @@ export default function BookClient({ lang }: { lang: Lang }) {
           >
             <div className="flex flex-col gap-3">
               {/* Example pills — tap to prefill */}
-              <div className="flex flex-wrap gap-2 mb-1">
+              <div className="flex flex-wrap gap-2 mb-2">
                 {c.q3Examples.map((ex) => (
                   <button
                     type="button"
                     key={ex}
                     onClick={() => applyExample(ex)}
-                    className="text-xs px-3 py-1.5 rounded-full border border-white/15 bg-white/[0.02] text-foreground/75 hover:border-primary/50 hover:text-foreground transition-colors"
+                    className={cn(
+                      "inline-flex items-center min-h-[44px] px-4 rounded-md text-xs border border-border bg-card text-muted-foreground hover:border-primary/60 hover:text-foreground transition-colors",
+                      FOCUS_RING,
+                    )}
                   >
                     {ex}
                   </button>
@@ -628,10 +659,10 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 placeholder={c.q3Placeholder}
                 rows={6}
                 aria-describedby="q3-counter"
-                className="w-full rounded-md border border-white/15 bg-white/[0.02] px-4 py-3 text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary/60 focus:bg-white/[0.05] transition-colors resize-y min-h-[160px]"
+                className="w-full rounded-md border border-border bg-card px-4 py-3.5 text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary transition-colors resize-y min-h-[180px]"
               />
-              <div className="flex items-center justify-between font-mono text-[11px] tracking-[0.15em] uppercase">
-                <span className={cn(isQ3Valid ? "text-muted-foreground" : "text-muted-foreground/80")}>{c.q3Hint}</span>
+              <div className="flex items-center justify-between gap-4 font-mono text-[11px] tracking-[0.15em] uppercase">
+                <span className={cn(isQ3Valid ? "text-muted-foreground" : "text-steel-blue")}>{c.q3Hint}</span>
                 <span
                   id="q3-counter"
                   aria-live="polite"
@@ -640,7 +671,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                       ? q3Length > PROJECT_DESCRIPTION_MAX * 0.9
                         ? "text-amber-400"
                         : "text-primary"
-                      : "text-muted-foreground/60",
+                      : "text-steel-blue",
                   )}
                 >
                   {q3Length} / {PROJECT_DESCRIPTION_MAX}
@@ -658,10 +689,10 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 disabled={!isQ3Valid}
                 onClick={() => setPhase("contact")}
                 className={cn(
-                  "self-end mt-2 rounded-full py-3 px-6 text-[0.95rem] font-semibold tracking-tight transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
-                  isQ3Valid
-                    ? "bg-gradient-hero text-[#0a1628] shadow-glow hover:scale-[1.02]"
-                    : "bg-white/[0.05] text-muted-foreground cursor-not-allowed",
+                  "self-end mt-3 py-3.5 px-7 min-h-[44px] text-[0.95rem]",
+                  CTA_BASE,
+                  FOCUS_RING,
+                  isQ3Valid ? CTA_ACTIVE : CTA_DISABLED,
                 )}
               >
                 {c.next}
@@ -677,7 +708,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
             backLabel={c.back}
             headingRef={headingRef}
           >
-            <p className="text-[0.95rem] text-foreground/70 mb-6 leading-relaxed">
+            <p className="text-[0.95rem] md:text-base text-muted-foreground mb-8 leading-relaxed">
               {c.contactBlurb}
             </p>
             <form
@@ -746,7 +777,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 role="alert"
                 aria-live="assertive"
                 className={cn(
-                  "text-sm text-[#ff7a7a] min-h-[1.25rem]",
+                  "text-sm text-destructive min-h-[1.25rem]",
                   !error && "sr-only",
                 )}
               >
@@ -757,10 +788,10 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 type="submit"
                 disabled={!isContactValid || submitting}
                 className={cn(
-                  "mt-2 rounded-full py-4 px-6 text-[0.95rem] md:text-base font-semibold tracking-tight transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
-                  isContactValid && !submitting
-                    ? "bg-gradient-hero text-[#0a1628] shadow-glow hover:scale-[1.02]"
-                    : "bg-white/[0.05] text-muted-foreground cursor-not-allowed",
+                  "mt-3 w-full py-4 px-6 min-h-[52px] text-[0.95rem] md:text-base",
+                  CTA_BASE,
+                  FOCUS_RING,
+                  isContactValid && !submitting ? CTA_ACTIVE : CTA_DISABLED,
                   submitting && "opacity-70",
                 )}
               >
@@ -771,18 +802,17 @@ export default function BookClient({ lang }: { lang: Lang }) {
         )}
 
         {phase === "calendly" && booked && (
-          <div className="flex flex-col items-center text-center py-8">
+          <div className="flex flex-col items-center text-center py-6">
             <div
               aria-hidden
-              className="flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full border border-[#10b981]/40 bg-[#10b981]/10 mb-8"
-              style={{ boxShadow: "0 0 48px rgba(16,185,129,0.25)" }}
+              className="flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full border border-primary/40 bg-primary/10 text-primary mb-8"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#10b981"
-                strokeWidth={3}
+                stroke="currentColor"
+                strokeWidth={2.5}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="w-10 h-10 md:w-12 md:h-12"
@@ -790,42 +820,62 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <p className="kicker mb-4">{c.bookedKicker}</p>
-            <h1 className="text-balance font-bold tracking-[-0.02em] leading-tight text-[clamp(1.75rem,5vw,2.5rem)] mb-3">
-              {c.bookedTitle}
-            </h1>
-            <p className="text-[0.95rem] text-foreground/75 mb-10 leading-relaxed max-w-md">
+            <p className="kicker kicker-accent mb-5">{c.bookedKicker}</p>
+            <h1 className="display-lg text-balance mb-4">{c.bookedTitle}</h1>
+            <p className="text-[0.95rem] md:text-base text-muted-foreground mb-10 leading-relaxed max-w-md">
               {c.bookedBlurb}
             </p>
             <Link
               href={lang === "en" ? "/?lang=en" : "/"}
-              className="inline-block rounded-full py-4 px-8 text-[0.95rem] md:text-base font-semibold tracking-tight bg-gradient-hero text-[#0a1628] shadow-glow hover:scale-[1.02] transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+              className={cn(
+                "inline-flex items-center gap-2 py-4 px-8 min-h-[52px] text-[0.95rem] md:text-base",
+                CTA_BASE,
+                CTA_ACTIVE,
+                FOCUS_RING,
+              )}
             >
               {c.backHomeCta} <span aria-hidden>→</span>
             </Link>
 
-            <div className="mt-12 w-full max-w-md text-left">
-              <p className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground mb-4">
-                {c.bookedUpsellTitle}
-              </p>
-              <ul className="flex flex-col gap-3">
+            <div className="mt-16 w-full max-w-md text-left">
+              <p className="kicker mb-4">{c.bookedUpsellTitle}</p>
+              <div className="hairline" />
+              <ul className="flex flex-col">
                 {c.bookedUpsells.map((up) => (
-                  <li key={up.href}>
+                  <li key={up.href} className="border-b border-border">
                     {up.external ? (
                       <a
                         href={up.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block text-sm text-foreground/85 hover:text-primary transition-colors leading-snug"
+                        className={cn(
+                          "group flex items-center justify-between gap-4 py-4 min-h-[44px] text-sm text-foreground/85 hover:text-primary transition-colors leading-snug rounded-sm",
+                          FOCUS_RING,
+                        )}
                       >
-                        {up.label} <span aria-hidden>→</span>
+                        <span>{up.label}</span>
+                        <span
+                          aria-hidden
+                          className="shrink-0 text-steel-blue group-hover:text-primary transition-colors"
+                        >
+                          →
+                        </span>
                       </a>
                     ) : (
                       <Link
                         href={up.href}
-                        className="block text-sm text-foreground/85 hover:text-primary transition-colors leading-snug"
+                        className={cn(
+                          "group flex items-center justify-between gap-4 py-4 min-h-[44px] text-sm text-foreground/85 hover:text-primary transition-colors leading-snug rounded-sm",
+                          FOCUS_RING,
+                        )}
                       >
-                        {up.label} <span aria-hidden>→</span>
+                        <span>{up.label}</span>
+                        <span
+                          aria-hidden
+                          className="shrink-0 text-steel-blue group-hover:text-primary transition-colors"
+                        >
+                          →
+                        </span>
                       </Link>
                     )}
                   </li>
@@ -837,11 +887,11 @@ export default function BookClient({ lang }: { lang: Lang }) {
 
         {phase === "calendly" && !booked && (
           <div>
-            <p className="kicker mb-4">{c.calendlyKicker}</p>
+            <p className="kicker kicker-accent mb-5">{c.calendlyKicker}</p>
             <h1
               ref={headingRef}
               tabIndex={-1}
-              className="text-balance font-bold tracking-[-0.02em] leading-tight text-[clamp(1.75rem,5vw,2.5rem)] mb-3 focus:outline-none"
+              className="display-md text-balance mb-4 focus:outline-none"
             >
               {calendlyScriptFailed
                 ? c.calendlyScriptFailedTitle
@@ -849,7 +899,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                   ? c.calendlyTitle
                   : c.calendlyMissingTitle}
             </h1>
-            <p className="text-[0.95rem] text-foreground/75 mb-3 leading-relaxed">
+            <p className="text-[0.95rem] md:text-base text-muted-foreground mb-3 leading-relaxed">
               {calendlyScriptFailed
                 ? c.calendlyScriptFailedBlurb
                 : calendlyUrl
@@ -857,7 +907,7 @@ export default function BookClient({ lang }: { lang: Lang }) {
                   : c.calendlyMissingBlurb}
             </p>
             {calendlyUrl && !calendlyScriptFailed && (
-              <p className="text-xs text-muted-foreground mb-6">{c.calendlyTimezoneHint}</p>
+              <p className="text-xs text-steel-blue mb-8">{c.calendlyTimezoneHint}</p>
             )}
             {calendlyUrl ? (
               <>
@@ -876,14 +926,14 @@ export default function BookClient({ lang }: { lang: Lang }) {
                 <div className="w-full overflow-x-hidden">
                   <div
                     ref={calendlyMountRef}
-                    className="w-full rounded-md overflow-hidden border border-white/10 bg-white"
+                    className="w-full rounded-md overflow-hidden border border-border bg-white"
                     style={{ minHeight: 600, height: "min(85vh, 820px)" }}
                   />
                 </div>
                 {/* Fallback link — always visible after timeout, immediately on script error */}
                 {(calendlyFallback || calendlyScriptFailed) && (
-                  <div className="mt-4 p-4 rounded-md border border-white/10 bg-white/[0.02]">
-                    <p className="text-sm text-foreground/80 mb-3">
+                  <div className="card-line mt-4 p-4">
+                    <p className="text-sm text-muted-foreground mb-3">
                       {calendlyScriptFailed
                         ? c.calendlyScriptFailedBlurb
                         : c.calendlyFallbackBlurb}
@@ -892,7 +942,10 @@ export default function BookClient({ lang }: { lang: Lang }) {
                       href={calendlyUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 underline-offset-4 hover:underline transition-colors"
+                      className={cn(
+                        "inline-flex items-center gap-2 min-h-[44px] rounded-sm text-sm text-primary underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors",
+                        FOCUS_RING,
+                      )}
                     >
                       {c.calendlyOpenInNewTab} <span aria-hidden>↗</span>
                     </a>
@@ -904,14 +957,20 @@ export default function BookClient({ lang }: { lang: Lang }) {
         )}
 
         {/* Demoted lang toggle at footer — won't compete with primary CTA */}
-        <div className="mt-auto pt-10 text-center">
-          <Link
-            href={c.langSwitchHref}
-            className="inline-block font-mono text-[10px] tracking-[0.22em] uppercase text-muted-foreground/60 hover:text-muted-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm px-1"
-          >
-            <span aria-hidden>🌐 </span>
-            {c.langSwitch}
-          </Link>
+        <div className="mt-auto pt-16">
+          <div className="hairline mb-6" />
+          <div className="text-center">
+            <Link
+              href={c.langSwitchHref}
+              className={cn(
+                "inline-flex items-center min-h-[44px] px-2 rounded-sm font-mono text-[10px] tracking-[0.22em] uppercase text-steel-blue hover:text-primary transition-colors",
+                FOCUS_RING,
+              )}
+            >
+              <span aria-hidden>🌐 </span>
+              {c.langSwitch}
+            </Link>
+          </div>
         </div>
       </div>
     </main>
@@ -936,14 +995,14 @@ function Step({
   return (
     <div>
       {stepLabel && (
-        <p className="kicker mb-4" aria-hidden>
+        <p className="kicker kicker-accent mb-5" aria-hidden>
           {stepLabel}
         </p>
       )}
       <h1
         ref={headingRef}
         tabIndex={-1}
-        className="text-balance font-bold tracking-[-0.02em] leading-tight text-[clamp(1.75rem,5vw,2.5rem)] mb-8 md:mb-10 focus:outline-none"
+        className="display-md text-balance mb-8 md:mb-10 focus:outline-none"
       >
         {question}
       </h1>
@@ -952,7 +1011,10 @@ function Step({
         <button
           type="button"
           onClick={onBack}
-          className="mt-6 inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm px-1"
+          className={cn(
+            "mt-8 inline-flex items-center min-h-[44px] -mx-1 px-1 rounded-sm kicker kicker-bare hover:text-foreground transition-colors",
+            FOCUS_RING,
+          )}
         >
           <span aria-hidden>←</span> {backLabel}
         </button>
@@ -981,14 +1043,22 @@ function ChoiceList<T extends string>({
               aria-label={choice.label}
               onClick={() => onSelect(choice.key)}
               className={cn(
-                "block w-full text-left rounded-full py-4 px-6 text-[0.95rem] md:text-base font-medium tracking-tight transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
-                "border bg-white/[0.02] hover:scale-[1.01]",
-                isSelected
-                  ? "border-primary/60 bg-primary/[0.08] text-foreground"
-                  : "border-white/15 text-foreground hover:border-primary/60 hover:bg-white/[0.05]",
+                "group flex w-full items-center justify-between gap-4 text-left py-4 px-5 min-h-[44px] text-[0.95rem] md:text-base font-medium tracking-tight text-foreground",
+                "card-line",
+                isSelected && "card-line-accent",
+                FOCUS_RING,
               )}
             >
-              {choice.label}
+              <span>{choice.label}</span>
+              <span
+                aria-hidden
+                className={cn(
+                  "shrink-0 text-lg leading-none transition-colors",
+                  isSelected ? "text-primary" : "text-steel-blue group-hover:text-primary",
+                )}
+              >
+                →
+              </span>
             </button>
           </li>
         );
@@ -1035,7 +1105,7 @@ function Field({
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground">
+      <label htmlFor={id} className="kicker kicker-bare">
         {label}
       </label>
       <input
@@ -1054,19 +1124,19 @@ function Field({
         aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
         className={cn(
-          "w-full rounded-md border bg-white/[0.02] px-4 py-3 text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:bg-white/[0.05] transition-colors",
+          "w-full rounded-md border bg-card px-4 py-3.5 min-h-[48px] text-[0.95rem] md:text-base text-foreground placeholder:text-muted-foreground/50 focus:outline-none transition-colors",
           error
-            ? "border-[#ff7a7a]/70 focus:border-[#ff7a7a]"
-            : "border-white/15 focus:border-primary/60",
+            ? "border-destructive focus:border-destructive"
+            : "border-border focus:border-primary",
         )}
       />
       {hint && !error && (
-        <span id={hintId} className="text-xs text-muted-foreground/80">
+        <span id={hintId} className="text-xs text-steel-blue leading-relaxed">
           {hint}
         </span>
       )}
       {error && (
-        <span id={errorId} className="text-xs text-[#ff7a7a]" role="alert">
+        <span id={errorId} className="text-xs text-destructive" role="alert">
           {error}
         </span>
       )}

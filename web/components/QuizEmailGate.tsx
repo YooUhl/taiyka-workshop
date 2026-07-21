@@ -169,7 +169,7 @@ export default function QuizEmailGate({
     >
       <div className="w-full flex items-center justify-between mb-10 font-mono text-[11px] tracking-[0.22em] uppercase">
         <span className="inline-flex items-center gap-2 text-muted-foreground">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+          <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
           {t.statusLabel}
         </span>
         <span className="inline-flex items-center gap-2 text-primary">
@@ -177,17 +177,17 @@ export default function QuizEmailGate({
         </span>
       </div>
 
-      <span className="kicker">{t.kicker}</span>
+      <span className="kicker kicker-accent">{t.kicker}</span>
 
-      <h2 className="mt-5 mb-8 text-balance font-bold tracking-[-0.04em] leading-[0.98] text-[clamp(2.25rem,7vw,4rem)]">
+      <h2 className="display-xl mt-5 mb-8 text-balance text-foreground">
         {t.headlineLine1}
         <br />
-        <span className="text-gradient-hero">{t.headlineLine2}</span>
+        <span className="text-primary">{t.headlineLine2}</span>
       </h2>
 
-      <blockquote className="relative pl-6 border-l border-[rgba(141,162,192,0.36)] mb-10">
+      <blockquote className="relative pl-6 border-l border-border mb-10">
         <span aria-hidden className="absolute -left-px top-0 h-12 w-px bg-primary" />
-        <p className="text-[1.0625rem] md:text-[1.125rem] leading-[1.65] text-[#e8f0fe] text-balance">
+        <p className="text-[1.0625rem] md:text-[1.125rem] leading-[1.65] text-foreground text-balance">
           {t.blockquoteMain}
         </p>
         <p className="mt-3 text-[0.9375rem] md:text-[1rem] leading-[1.65] text-muted-foreground italic">
@@ -195,7 +195,10 @@ export default function QuizEmailGate({
         </p>
       </blockquote>
 
-      <section className="w-full rounded-2xl border border-border bg-card/40 p-6 md:p-8">
+      {/* Conversion panel — blue edge marks it as the focal block. Static
+          (not .card-line-accent) so a stray hover doesn't animate a non-
+          interactive container. */}
+      <section className="w-full rounded-xl border border-primary/40 bg-card p-6 md:p-8">
         {status === "analyzing" ? (
           <div className="flex flex-col items-center justify-center py-10 gap-4">
             <div className="relative w-10 h-10">
@@ -230,7 +233,7 @@ export default function QuizEmailGate({
                 disabled={isBusy}
                 aria-describedby="qcm-email-error"
                 aria-invalid={status === "error"}
-                className="h-14 w-full rounded-lg border border-border bg-card/60 px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30"
+                className="h-14 w-full rounded-md border border-input bg-obsidian px-4 text-base text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
 
@@ -238,8 +241,9 @@ export default function QuizEmailGate({
               type="submit"
               disabled={isBusy}
               className={cn(
-                "mt-1 h-14 w-full rounded-lg bg-gradient-hero text-[#0a1628] font-bold text-base md:text-lg tracking-tight shadow-glow transition-all",
-                "hover:opacity-95 hover:shadow-[0_0_60px_rgba(0,166,255,0.55)]",
+                "mt-1 h-14 w-full rounded-md bg-primary text-primary-foreground font-bold text-base md:text-lg tracking-tight transition-colors",
+                "hover:bg-[#33b8ff]",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
                 "disabled:cursor-not-allowed disabled:opacity-60"
               )}
             >
@@ -265,7 +269,7 @@ export default function QuizEmailGate({
                 type="button"
                 onClick={handleSkip}
                 disabled={isBusy}
-                className="mt-1 text-center text-xs text-muted-foreground hover:text-foreground underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-1 min-h-11 text-center text-xs text-muted-foreground hover:text-foreground underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {t.skipLink}
               </button>

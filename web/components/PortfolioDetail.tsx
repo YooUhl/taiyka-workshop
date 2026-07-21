@@ -143,51 +143,41 @@ export default function PortfolioDetail({ project, lang }: Props) {
   const HeroIcon = meta.icon;
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-primary/50 bg-card/60 shadow-[0_0_36px_rgba(0,166,255,0.22)]">
-      {/* HUD corner brackets */}
-      <span aria-hidden className="pointer-events-none absolute left-2 top-2 z-10 h-3 w-3 border-l border-t border-primary animate-hud-bracket-pulse" />
-      <span aria-hidden className="pointer-events-none absolute right-2 top-2 z-10 h-3 w-3 border-r border-t border-primary animate-hud-bracket-pulse" />
-      <span aria-hidden className="pointer-events-none absolute left-2 bottom-2 z-10 h-3 w-3 border-l border-b border-primary animate-hud-bracket-pulse" />
-      <span aria-hidden className="pointer-events-none absolute right-2 bottom-2 z-10 h-3 w-3 border-r border-b border-primary animate-hud-bracket-pulse" />
+    <article className="relative overflow-hidden rounded-md border border-border bg-card shadow-[0_24px_60px_rgba(0,0,0,0.6)]">
+      {/* Accent edge — single blue rule across the top of the sheet */}
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-10 h-px bg-primary" />
 
-      {/* Ambient diagram SVG — faded background */}
+      {/* Ambient diagram SVG — quiet blueprint texture behind the sheet */}
       {project.diagramSvg && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 z-0 opacity-[0.07] grayscale [&_svg]:w-full [&_svg]:h-full [&_svg]:object-cover"
-          style={{
-            maskImage: "radial-gradient(ellipse at center, #000 30%, transparent 80%)",
-            WebkitMaskImage: "radial-gradient(ellipse at center, #000 30%, transparent 80%)",
-          }}
+          className="pointer-events-none absolute inset-0 z-0 opacity-[0.06] [&_svg]:w-full [&_svg]:h-full [&_svg]:object-cover"
           dangerouslySetInnerHTML={{ __html: project.diagramSvg }}
         />
       )}
 
-      {/* Top console bar */}
-      <div className="relative z-10 flex items-center justify-between gap-3 border-b border-border/60 px-5 py-3 font-mono-hud text-[10px] tracking-[0.22em] uppercase">
+      {/* Top meta bar */}
+      <div className="relative z-10 flex items-center justify-between gap-3 border-b border-border bg-arctic-navy/50 px-5 py-3 font-mono text-[10px] tracking-[0.22em] uppercase">
         <span className="inline-flex items-center gap-2 text-primary">
-          <span
-            aria-hidden
-            className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-hud-bracket-pulse"
-          />
+          <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
           {meta.statusPill}
         </span>
-        <span className="text-muted-foreground/80">{meta.codename}</span>
+        <span className="text-muted-foreground">{meta.codename}</span>
       </div>
 
-      <div className="relative z-10 flex flex-col gap-5 px-5 md:px-6 py-5 md:py-6">
+      <div className="relative z-10 flex flex-col gap-6 px-5 md:px-7 py-6 md:py-8">
         <header className="flex items-start gap-4">
           <div
             aria-hidden
-            className="shrink-0 grid place-items-center rounded-md border border-primary/30 bg-primary/[0.06] w-14 h-14"
+            className="shrink-0 grid place-items-center rounded-md border border-primary/40 bg-arctic-navy w-14 h-14"
           >
             <HeroIcon className="text-primary" strokeWidth={1.4} size={32} />
           </div>
-          <div className="flex flex-col gap-1 min-w-0">
+          <div className="flex flex-col gap-1.5 min-w-0">
             <h2
               id="portfolio-detail-title"
               tabIndex={-1}
-              className="text-lg md:text-xl font-bold leading-tight tracking-tight text-foreground focus:outline-none"
+              className="display-md text-foreground focus:outline-none"
             >
               {content.title}
             </h2>
@@ -200,16 +190,13 @@ export default function PortfolioDetail({ project, lang }: Props) {
         </header>
 
         {meta.metrics.length > 0 && (
-          <div className="grid grid-cols-3 gap-2 border-y border-border/40 py-3">
+          <div className="grid grid-cols-3 gap-2 border-y border-border py-5">
             {meta.metrics.map((m) => (
-              <div key={m.label} className="flex flex-col items-center text-center gap-1">
-                <span
-                  className="font-display-hud text-2xl md:text-3xl leading-none text-primary tabular-nums"
-                  style={{ textShadow: "0 0 16px rgba(0,166,255,0.35)" }}
-                >
+              <div key={m.label} className="flex flex-col items-center text-center gap-1.5">
+                <span className="text-2xl md:text-3xl font-bold leading-none tracking-tight text-primary tabular-nums">
                   {m.value}
                 </span>
-                <span className="font-mono-hud text-[9px] tracking-[0.22em] uppercase text-muted-foreground/80">
+                <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-muted-foreground">
                   {m.label}
                 </span>
               </div>
@@ -217,23 +204,23 @@ export default function PortfolioDetail({ project, lang }: Props) {
           </div>
         )}
 
-        <div className="flex flex-col gap-3 text-sm">
+        <div className="flex flex-col gap-5 text-sm">
           {content.problem && (
-            <div className="flex gap-2">
-              <span aria-hidden className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-primary/80 shrink-0 mt-0.5">
-                ▸ {labels.problem}
+            <div className="flex flex-col gap-2">
+              <span aria-hidden className="kicker kicker-accent">
+                {labels.problem}
               </span>
-              <p className="text-card-foreground/90 leading-snug">
+              <p className="text-card-foreground leading-relaxed">
                 {content.problem}
               </p>
             </div>
           )}
           {content.solution && (
-            <div className="flex gap-2">
-              <span aria-hidden className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-primary/80 shrink-0 mt-0.5">
-                ▸ {labels.solution}
+            <div className="flex flex-col gap-2">
+              <span aria-hidden className="kicker kicker-accent">
+                {labels.solution}
               </span>
-              <p className="text-card-foreground/90 leading-snug">
+              <p className="text-card-foreground leading-relaxed">
                 {content.solution}
               </p>
             </div>
@@ -241,20 +228,18 @@ export default function PortfolioDetail({ project, lang }: Props) {
         </div>
 
         {content.stack.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <span className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-muted-foreground">
-              ▸ {labels.stack}
-            </span>
+          <div className="flex flex-col gap-3">
+            <span className="kicker">{labels.stack}</span>
             <div className="flex flex-wrap gap-2">
               {content.stack.map((tech) => {
                 const Icon = resolveTechIcon(tech);
                 return (
                   <span
                     key={tech}
-                    className="inline-flex items-center gap-1.5 rounded border border-border/60 bg-card/40 px-2 py-1 font-mono-hud text-[10px] tracking-[0.1em] uppercase text-muted-foreground"
+                    className="inline-flex items-center gap-1.5 rounded-sm border border-border bg-arctic-navy/60 px-2.5 py-1.5 font-mono text-[10px] tracking-[0.1em] uppercase text-muted-foreground"
                     title={tech}
                   >
-                    <Icon size={12} strokeWidth={1.5} aria-hidden />
+                    <Icon size={12} strokeWidth={1.5} aria-hidden className="text-glacier-blue" />
                     {splitTechLabel(tech)}
                   </span>
                 );
@@ -264,15 +249,13 @@ export default function PortfolioDetail({ project, lang }: Props) {
         )}
 
         {content.outcome.length > 0 && (
-          <div className="flex flex-col gap-2 border-t border-border/40 pt-3">
-            <span className="font-mono-hud text-[10px] tracking-[0.22em] uppercase text-[var(--hud-tick)]">
-              ─── {labels.telemetry}
-            </span>
-            <ul className="flex flex-col gap-1.5 text-sm text-card-foreground/90">
+          <div className="flex flex-col gap-3 border-t border-border pt-5">
+            <span className="kicker">{labels.telemetry}</span>
+            <ul className="flex flex-col gap-2 text-sm text-card-foreground">
               {content.outcome.map((item, i) => (
-                <li key={i} className="flex gap-2 leading-snug">
-                  <span aria-hidden className="text-primary/80 shrink-0 mt-0.5 font-mono-hud text-xs">
-                    ▸
+                <li key={i} className="flex gap-3 leading-relaxed">
+                  <span aria-hidden className="text-primary shrink-0 select-none">
+                    —
                   </span>
                   <span>{item}</span>
                 </li>

@@ -83,6 +83,21 @@ export function buildConfirmEmail(
           signoff: "À très vite dans ta boîte,",
         };
 
+  // Postal address + privacy link footer (CNIL transparency + deliverability).
+  // Derive the origin from confirmUrl so this stays a pure function.
+  const origin = (() => {
+    try {
+      return new URL(confirmUrl).origin;
+    } catch {
+      return "";
+    }
+  })();
+  const privacyUrl = origin ? `${origin}/privacy?lang=${lang}` : "#";
+  const footer =
+    lang === "en"
+      ? { addr: "Taiyka · 180 Montée de Bellevue, 83210 Solliès-Pont, France", privacy: "Privacy" }
+      : { addr: "Taiyka · 180 Montée de Bellevue, 83210 Solliès-Pont, France", privacy: "Confidentialité" };
+
   const expectHtml = copy.expect
     .map(
       (item) =>
@@ -108,6 +123,7 @@ export function buildConfirmEmail(
         <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${TEXT};font-size:13px;line-height:1.6;padding-bottom:16px;">${copy.nudge}</td></tr>
         <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${MUTED};font-size:12px;line-height:1.6;padding-bottom:8px;">${copy.ignore}</td></tr>
         <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${MUTED};font-size:13px;line-height:1.6;padding-top:20px;">${copy.signoff}<br>Manu · @manu_ai.to</td></tr>
+        <tr><td style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:${MUTED};font-size:11px;line-height:1.6;padding-top:24px;border-top:1px solid rgba(143,163,189,0.2);">${footer.addr}<br><a href="${privacyUrl}" style="color:${MUTED};text-decoration:underline;">${footer.privacy}</a></td></tr>
       </table>
     </td></tr>
   </table>
@@ -118,7 +134,7 @@ export function buildConfirmEmail(
     .map((item) => `${item.label} — ${item.text}`)
     .join("\n");
 
-  const text = `${copy.heading}\n\n${copy.body}\n\n${expectText}\n\n${confirmUrl}\n\n${copy.nudge}\n\n${copy.ignore}\n\n${copy.signoff}\nManu · @manu_ai.to`;
+  const text = `${copy.heading}\n\n${copy.body}\n\n${expectText}\n\n${confirmUrl}\n\n${copy.nudge}\n\n${copy.ignore}\n\n${copy.signoff}\nManu · @manu_ai.to\n\n—\n${footer.addr}\n${footer.privacy}: ${privacyUrl}`;
 
   return { subject: copy.subject, html, text };
 }

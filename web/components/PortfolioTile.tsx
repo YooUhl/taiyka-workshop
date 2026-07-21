@@ -96,20 +96,12 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
     transform = hoverActive ? "scale(0.96)" : "scale(0.92)";
   }
 
-  // Hero icon halo — always present, brighter when active, slight tint always (fixes flicker)
-  const iconShadow = isActive
-    ? "0 0 32px rgba(0,166,255,0.32)"
-    : hoverActive
-      ? "0 0 18px rgba(0,166,255,0.22)"
-      : "0 0 12px rgba(0,166,255,0.10)";
-
+  // Neutral elevation — depth comes from shadow + border, not from glow
   const shadow = isActive
-    ? hoverActive
-      ? "0 0 60px rgba(0,166,255,0.5)"
-      : "0 0 44px rgba(0,166,255,0.35)"
+    ? "0 18px 44px rgba(0,0,0,0.55)"
     : hoverActive
-      ? "0 0 24px rgba(0,166,255,0.18)"
-      : "none";
+      ? "0 10px 28px rgba(0,0,0,0.4)"
+      : "0 4px 16px rgba(0,0,0,0.3)";
 
   return (
     <button
@@ -124,14 +116,14 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
       aria-label={`${meta.codename} — ${content.title}`}
       aria-current={isActive ? "true" : undefined}
       className={cn(
-        "group relative block shrink-0 cursor-pointer rounded-xl border bg-card/40 text-left",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
+        "group relative block shrink-0 cursor-pointer overflow-hidden rounded-md border bg-card text-left",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
         "motion-safe:transition-[transform,opacity,box-shadow,border-color] motion-safe:duration-[350ms] motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]",
         isActive
-          ? "z-10 border-primary/70"
+          ? "z-10 border-primary"
           : hoverActive
-            ? "border-primary/50 opacity-85"
-            : "border-border/40 opacity-65"
+            ? "border-primary/40 opacity-90"
+            : "border-border opacity-70"
       )}
       style={{
         width: "min(72vw, 280px)",
@@ -139,77 +131,26 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         transform,
         transformOrigin,
         boxShadow: shadow,
-        WebkitBoxReflect: "below 8px linear-gradient(transparent 40%, rgba(0,166,255,0.18))",
       }}
     >
-      {/* HUD corner brackets */}
+      {/* Accent edge — the one blue mark on the tile, strongest when active */}
       <span
         aria-hidden
         className={cn(
-          "pointer-events-none absolute left-2 top-2 h-3 w-3 border-l border-t transition-colors",
-          isActive
-            ? "border-primary motion-safe:animate-hud-bracket-pulse"
-            : hoverActive
-              ? "border-[var(--hud-bracket)]"
-              : "border-[var(--hud-bracket-dim)]"
-        )}
-      />
-      <span
-        aria-hidden
-        className={cn(
-          "pointer-events-none absolute right-2 top-2 h-3 w-3 border-r border-t transition-colors",
-          isActive
-            ? "border-primary motion-safe:animate-hud-bracket-pulse"
-            : hoverActive
-              ? "border-[var(--hud-bracket)]"
-              : "border-[var(--hud-bracket-dim)]"
-        )}
-      />
-      <span
-        aria-hidden
-        className={cn(
-          "pointer-events-none absolute left-2 bottom-2 h-3 w-3 border-l border-b transition-colors",
-          isActive
-            ? "border-primary motion-safe:animate-hud-bracket-pulse"
-            : hoverActive
-              ? "border-[var(--hud-bracket)]"
-              : "border-[var(--hud-bracket-dim)]"
-        )}
-      />
-      <span
-        aria-hidden
-        className={cn(
-          "pointer-events-none absolute right-2 bottom-2 h-3 w-3 border-r border-b transition-colors",
-          isActive
-            ? "border-primary motion-safe:animate-hud-bracket-pulse"
-            : hoverActive
-              ? "border-[var(--hud-bracket)]"
-              : "border-[var(--hud-bracket-dim)]"
+          "pointer-events-none absolute inset-x-0 top-0 h-px transition-colors",
+          isActive ? "bg-primary" : hoverActive ? "bg-primary/50" : "bg-transparent"
         )}
       />
 
-      {/* Ambient gradient + diagram trace */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl">
-        <div
-          className="absolute inset-0 opacity-[0.55]"
-          style={{
-            background:
-              "radial-gradient(ellipse at 50% 35%, rgba(0,166,255,0.18), transparent 60%), linear-gradient(180deg, rgba(15,26,46,0.6) 0%, rgba(10,22,40,0.85) 100%)",
-          }}
-        />
-        {project.diagramSvg && (
+      {/* Diagram trace — quiet blueprint texture, no gradient blob */}
+      {project.diagramSvg && (
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
-            className="absolute inset-0 opacity-[0.05] [&_svg]:w-full [&_svg]:h-full [&_svg]:object-cover"
-            style={{
-              maskImage:
-                "radial-gradient(ellipse at center 40%, #000 30%, transparent 75%)",
-              WebkitMaskImage:
-                "radial-gradient(ellipse at center 40%, #000 30%, transparent 75%)",
-            }}
+            className="absolute inset-0 opacity-[0.06] [&_svg]:w-full [&_svg]:h-full [&_svg]:object-cover"
             dangerouslySetInnerHTML={{ __html: project.diagramSvg }}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Card content — keep pointer-events on so the outer button receives clicks
           (Wave 2-B applied pointer-events:none here for iOS phantom-tap protection,
@@ -217,7 +158,7 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
           individually — disabling the entire content div blocked hover affordances). */}
       <div className="relative z-10 flex h-full flex-col gap-4 p-4 md:p-5">
         {/* Top row: status + codename (dimmed/smaller per v3 hierarchy) */}
-        <div className="flex items-start justify-between gap-2 font-mono-hud text-[9px] tracking-[0.22em] uppercase">
+        <div className="flex items-start justify-between gap-2 font-mono text-[9px] tracking-[0.22em] uppercase">
           <span
             className={cn(
               "inline-flex items-center gap-1.5",
@@ -228,39 +169,34 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
               aria-hidden
               className={cn(
                 "inline-block w-1 h-1 rounded-full",
-                isActive
-                  ? "bg-primary motion-safe:animate-hud-bracket-pulse"
-                  : "bg-muted-foreground/60"
+                isActive ? "bg-primary" : "bg-muted-foreground/60"
               )}
             />
             {meta.statusPill}
           </span>
           <span
-            className="text-muted-foreground/60 text-right text-[8px] overflow-hidden text-ellipsis whitespace-nowrap max-w-[55%]"
+            className="text-muted-foreground/70 text-right text-[8px] overflow-hidden text-ellipsis whitespace-nowrap max-w-[55%]"
             title={meta.codename}
           >
             {meta.codename}
           </span>
         </div>
 
-        {/* Hero icon — halo always present, brighter on active/hover */}
+        {/* Hero icon — seated on a flat arctic-navy plate, no halo */}
         <div className="grow flex items-center justify-center py-2">
           <div
             aria-hidden
             className={cn(
-              "relative grid place-items-center rounded-md border w-20 h-20 md:w-24 md:h-24 transition-[border-color,background-color,box-shadow] duration-300",
+              "relative grid place-items-center rounded-md border w-20 h-20 md:w-24 md:h-24 transition-[border-color,background-color] duration-300",
               isActive
-                ? "border-primary/60 bg-primary/[0.08]"
-                : hoverActive
-                  ? "border-primary/40 bg-primary/[0.04]"
-                  : "border-border/40 bg-card/30"
+                ? "border-primary/50 bg-arctic-navy"
+                : "border-border bg-arctic-navy/60"
             )}
-            style={{ boxShadow: iconShadow }}
           >
             <HeroIcon
               className={cn(
                 "transition-colors",
-                isActive ? "text-primary" : hoverActive ? "text-primary/90" : "text-primary/70"
+                isActive ? "text-primary" : hoverActive ? "text-primary/80" : "text-glacier-blue"
               )}
               strokeWidth={1.4}
               size={48}
@@ -272,39 +208,29 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         <div className="flex flex-col gap-2 text-center">
           <h3
             className={cn(
-              "text-sm md:text-base font-bold uppercase tracking-tight leading-tight text-balance",
+              "text-base md:text-lg font-bold tracking-tight leading-tight text-balance",
               isActive ? "text-foreground" : "text-foreground/85"
             )}
           >
             {content.title}
           </h3>
-          <div className="flex flex-col items-center gap-0.5">
+          <div className="flex flex-col items-center gap-1">
             {primary ? (
               <>
                 <span
                   className={cn(
-                    "font-display-hud text-3xl md:text-4xl leading-none text-primary tabular-nums",
-                    isActive && "motion-safe:animate-hud-bracket-pulse"
+                    "text-3xl md:text-4xl font-bold leading-none tabular-nums tracking-tight",
+                    isActive ? "text-primary" : "text-foreground"
                   )}
-                  style={{
-                    textShadow: isActive
-                      ? "0 0 22px rgba(0,166,255,0.6)"
-                      : hoverActive
-                        ? "0 0 14px rgba(0,166,255,0.35)"
-                        : "0 0 8px rgba(0,166,255,0.2)",
-                  }}
                 >
                   {primary.value}
                 </span>
-                <span className="font-mono-hud text-[9px] tracking-[0.22em] uppercase text-muted-foreground/80">
+                <span className="font-mono text-[9px] tracking-[0.22em] uppercase text-muted-foreground">
                   {primary.label}
                 </span>
               </>
             ) : (
-              <span
-                aria-hidden
-                className="font-display-hud text-2xl text-muted-foreground/40 leading-none"
-              >
+              <span aria-hidden className="text-2xl text-muted-foreground/40 leading-none">
                 —
               </span>
             )}
@@ -312,7 +238,12 @@ const PortfolioTileImpl = forwardRef<HTMLButtonElement, Props>(function Portfoli
         </div>
 
         {/* Bottom hint — debounced */}
-        <div className="font-mono-hud text-[9px] tracking-[0.22em] uppercase text-center text-muted-foreground/70 min-h-3">
+        <div
+          className={cn(
+            "font-mono text-[9px] tracking-[0.22em] uppercase text-center min-h-3 transition-colors",
+            isActive ? "text-primary" : "text-muted-foreground/70"
+          )}
+        >
           {displayedHint}
         </div>
       </div>

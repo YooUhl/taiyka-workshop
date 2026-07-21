@@ -5,8 +5,18 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ---------------------------------------------------------------
-   Taiyka brand tokens — mirrored from brand/tokens.json
-   Source of truth: ../brand/tokens.json
+   Taiyka brand tokens — "Arctic Prestige" editorial system
+
+   Palette (source: luxury palette ref, 2026-07-20)
+     01 Ice White    #F5F8FA   page base — never pure white
+     02 Silver Mist  #D6DEE6   borders, dividers, quiet fills
+     03 Glacier Blue #9DB4C6   tertiary text, decoration
+     04 Steel Blue   #5C7386   secondary text / muted
+     05 Arctic Navy  #1E2A39   dark panels, primary buttons
+     06 Obsidian     #0B0F14   ink (headlines, body)
+
+   Electric blue #00A6FF survives as a restrained detail accent only
+   (kickers, focus rings, small marks) — not as CTA fill.
 --------------------------------------------------------------- */
 @theme inline {
   --color-background: var(--background);
@@ -17,18 +27,26 @@
   --font-mono-hud: var(--font-mono-hud);
   --font-display-hud: var(--font-display-hud);
 
+  /* Arctic Prestige ramp */
+  --color-ice-white: #f5f8fa;
+  --color-silver-mist: #d6dee6;
+  --color-glacier-blue: #9db4c6;
+  --color-steel-blue: #5c7386;
+  --color-arctic-navy: #1e2a39;
+  --color-obsidian: #0b0f14;
+
   /* Brand primary */
   --color-electric-blue: #00a6ff;
   --color-cyan: #00e5ff;
-  --color-navy: #0a1628;
+  --color-navy: #1e2a39;
   --color-white: #ffffff;
 
   /* Brand neutrals */
-  --color-black: #000000;
-  --color-charcoal: #0f1a2e;
-  --color-slate: #1a2a4a;
-  --color-ink: #e8f0fe;
-  --color-muted-brand: #8da2c0;
+  --color-black: #0b0f14;
+  --color-charcoal: #16202c;
+  --color-slate: #2a3a4d;
+  --color-ink: #0b0f14;
+  --color-muted-brand: #5c7386;
 
   /* shadcn tokens (kept) */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -64,52 +82,88 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* Dark-first Taiyka defaults */
+/* Dark-first tokens — ice-white type on obsidian */
 :root {
-  --background: #0a1628;         /* navy */
-  --foreground: #ffffff;         /* white */
-  --card: #0f1a2e;               /* charcoal */
-  --card-foreground: #e8f0fe;    /* ink */
-  --popover: #0f1a2e;
-  --popover-foreground: #e8f0fe;
-  --primary: #00a6ff;            /* electric blue */
-  --primary-foreground: #0a1628;
-  --secondary: #1a2a4a;          /* slate */
-  --secondary-foreground: #e8f0fe;
-  --muted: #1a2a4a;
-  --muted-foreground: #8da2c0;
-  --accent: #00e5ff;             /* cyan */
-  --accent-foreground: #0a1628;
-  --destructive: #c92a2a;
-  --border: rgba(141, 162, 192, 0.2);
-  --input: rgba(141, 162, 192, 0.2);
+  --background: #0b0f14;         /* obsidian */
+  --foreground: #f5f8fa;         /* ice white is the type */
+  --card: #141f2e;               /* cards lift off obsidian, blue-leaning */
+  --card-foreground: #f5f8fa;
+  --popover: #141f2e;
+  --popover-foreground: #f5f8fa;
+  --primary: #00a6ff;            /* electric blue — the CTA fill, brand-forward */
+  --primary-foreground: #06131f;
+  --secondary: #1e2a39;          /* arctic navy */
+  --secondary-foreground: #f5f8fa;
+  --muted: #1e2a39;
+  --muted-foreground: #a8c0d4;   /* glacier blue, lifted for readability */
+  --accent: #00a6ff;             /* electric blue */
+  --accent-foreground: #06131f;
+  --destructive: #e05252;
+  --border: rgba(157, 180, 198, 0.2);
+  --input: rgba(157, 180, 198, 0.28);
   --ring: #00a6ff;
-  --chart-1: #00a6ff;
-  --chart-2: #00e5ff;
-  --chart-3: #1a2a4a;
-  --chart-4: #8da2c0;
-  --chart-5: #e8f0fe;
-  --radius: 0.75rem;
-  --sidebar: #0a1628;
-  --sidebar-foreground: #e8f0fe;
-  --sidebar-primary: #00a6ff;
-  --sidebar-primary-foreground: #0a1628;
-  --sidebar-accent: #1a2a4a;
-  --sidebar-accent-foreground: #e8f0fe;
-  --sidebar-border: rgba(141, 162, 192, 0.2);
-  --sidebar-ring: #00a6ff;
+  --chart-1: #9db4c6;
+  --chart-2: #5c7386;
+  --chart-3: #d6dee6;
+  --chart-4: #1e2a39;
+  --chart-5: #00a6ff;
+  --radius: 0.5rem;
+  --sidebar: #0b0f14;
+  --sidebar-foreground: #f5f8fa;
+  --sidebar-primary: #f5f8fa;
+  --sidebar-primary-foreground: #0b0f14;
+  --sidebar-accent: #1e2a39;
+  --sidebar-accent-foreground: #f5f8fa;
+  --sidebar-border: rgba(157, 180, 198, 0.18);
+  --sidebar-ring: #9db4c6;
 
-  /* HUD broadcast tokens */
-  --hud-grid: rgba(141, 162, 192, 0.045);
-  --hud-grid-strong: rgba(0, 166, 255, 0.06);
-  --hud-scan: rgba(0, 229, 255, 0.04);
-  --hud-bracket: rgba(0, 229, 255, 0.5);
-  --hud-bracket-dim: rgba(141, 162, 192, 0.4);
-  --hud-gauge-track: rgba(141, 162, 192, 0.18);
-  --hud-gauge-arc: #00a6ff;
-  --hud-gauge-arc-glow: rgba(0, 166, 255, 0.55);
-  --hud-tick: rgba(0, 229, 255, 0.7);
-  --hud-ticker-bg: rgba(15, 26, 46, 0.6);
+  /* Paper grid — faint blue-tinted ruling, so the field isn't neutral gray */
+  --paper-grid: rgba(0, 166, 255, 0.07);
+
+  /* Legacy HUD token aliases — kept so unmigrated pages don't break.
+     Remapped to quiet arctic values; removed once all routes migrate. */
+  --hud-grid: rgba(157, 180, 198, 0.05);
+  --hud-grid-strong: rgba(157, 180, 198, 0.08);
+  --hud-scan: transparent;
+  --hud-bracket: rgba(157, 180, 198, 0.45);
+  --hud-bracket-dim: rgba(157, 180, 198, 0.22);
+  --hud-gauge-track: rgba(157, 180, 198, 0.2);
+  --hud-gauge-arc: #9db4c6;
+  --hud-gauge-arc-glow: rgba(157, 180, 198, 0.25);
+  --hud-tick: #9db4c6;
+  --hud-ticker-bg: rgba(30, 42, 57, 0.85);
+}
+
+/* Light panel scope — ice-white blocks embedded in the dark page
+   (pricing tables, forms, docs). Wrap a subtree in .panel-light. */
+.panel-light {
+  --background: #f5f8fa;
+  --foreground: #0b0f14;
+  --card: #ffffff;
+  --card-foreground: #0b0f14;
+  --popover: #ffffff;
+  --popover-foreground: #0b0f14;
+  --primary: #1e2a39;            /* inverted: navy button on ice panel */
+  --primary-foreground: #f5f8fa;
+  --secondary: #d6dee6;
+  --secondary-foreground: #1e2a39;
+  --muted: #e8edf2;
+  --muted-foreground: #5c7386;
+  --accent: #00a6ff;
+  --accent-foreground: #ffffff;
+  --border: #d6dee6;
+  --input: #c3cfda;
+  --ring: #5c7386;
+  --paper-grid: rgba(30, 42, 57, 0.055);
+  background-color: #f5f8fa;
+  color: #0b0f14;
+}
+
+/* Deeper-than-background panel — for showcase wells inside the dark page. */
+.panel-well {
+  --card: #1e2a39;
+  background-color: #080b0f;
+  color: #f5f8fa;
 }
 
 @layer base {
@@ -118,48 +172,11 @@
   }
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(180deg, #0a1628 0%, #000000 100%);
-    background-attachment: fixed;
-    background-color: #000000;
+    background-color: #0b0f14;
     min-height: 100vh;
-  }
-  /* Global HUD grid + scanline — ambient layer, sits behind all content.
-     Gated to >=768px: removes full-viewport composited layer on mobile for LCP / CPU. */
-  @media (min-width: 768px) {
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(var(--hud-grid) 1px, transparent 1px),
-        linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
-      background-size: 32px 32px;
-      -webkit-mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
-      mask-image: radial-gradient(ellipse at center, #000 35%, transparent 85%);
-    }
-    /* Faint scanline tint */
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background-image: repeating-linear-gradient(
-        to bottom,
-        transparent 0,
-        transparent 3px,
-        var(--hud-scan) 3px,
-        var(--hud-scan) 4px
-      );
-      opacity: 0.35;
-      mix-blend-mode: screen;
-    }
   }
   html {
     @apply font-sans;
-    /* Bigger comfortable base size — scales all rem-based type + spacing uniformly */
     font-size: 17px;
   }
   @media (min-width: 768px) {
@@ -167,76 +184,155 @@
       font-size: 18px;
     }
   }
+  /* Editorial headline default — tight, heavy, navy */
+  h1, h2, h3 {
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    text-wrap: balance;
+  }
 }
 
 /* Brand utilities */
 @layer utilities {
-  .bg-gradient-hero {
-    background: linear-gradient(135deg, #00a6ff 0%, #00e5ff 100%);
+  /* --- Editorial system --- */
+
+  /* Display headline scale (hero) */
+  .display-xl {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    font-size: clamp(2.5rem, 7.5vw, 4.5rem);
   }
-  .bg-gradient-navy {
-    background: linear-gradient(180deg, #0a1628 0%, #000000 100%);
+  .display-lg {
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.06;
+    font-size: clamp(2rem, 5.5vw, 3.25rem);
   }
-  .bg-gradient-glow {
-    background: radial-gradient(circle, rgba(0, 166, 255, 0.35) 0%, rgba(10, 22, 40, 0) 70%);
-  }
-  .text-gradient-hero {
-    background: linear-gradient(135deg, #00a6ff 0%, #00e5ff 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .shadow-glow {
-    box-shadow: 0 0 40px rgba(0, 166, 255, 0.35);
+  .display-md {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    font-size: clamp(1.5rem, 3.5vw, 2.125rem);
   }
 
-  /* QCM editorial utilities */
+  /* Mono kicker — quiet gray label, FounderOS style: "> SECTION NAME" */
   .kicker {
     font-family: var(--font-mono);
-    font-size: 0.9375rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--primary);
+    color: var(--muted-foreground);
     display: inline-flex;
     align-items: center;
     gap: 0.625rem;
-    text-shadow: 0 0 12px rgba(0, 166, 255, 0.35);
+  }
+  .kicker::before {
+    content: "›";
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .kicker-bare::before {
+    content: none;
   }
   .kicker-accent { color: var(--accent); }
+
+  /* Paper grid — faint ruled background for sections */
+  .paper-grid {
+    background-image:
+      linear-gradient(var(--paper-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* Editorial card — thin border, white fill, quiet hover */
+  .card-line {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+  }
+  .card-line:hover {
+    border-color: rgba(0, 166, 255, 0.5);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+  }
+  /* Primary card — electric blue edge + wash. The one the eye lands on. */
+  .card-line-accent {
+    background-color: rgba(0, 166, 255, 0.08);
+    border-color: rgba(0, 166, 255, 0.55);
+  }
+  .card-line-accent:hover {
+    border-color: #00a6ff;
+    background-color: rgba(0, 166, 255, 0.12);
+    box-shadow: 0 2px 28px rgba(0, 166, 255, 0.18);
+  }
+  /* Light-panel overrides — card-line must invert inside .panel-light */
+  .panel-light .card-line:hover {
+    border-color: #9db4c6;
+    box-shadow: 0 2px 16px rgba(30, 42, 57, 0.07);
+  }
+  .panel-light .card-line-accent {
+    background-color: rgba(214, 222, 230, 0.45);
+    border-color: #9db4c6;
+  }
+  .panel-light .card-line-accent:hover {
+    border-color: #5c7386;
+    box-shadow: 0 2px 20px rgba(30, 42, 57, 0.12);
+  }
+
   .hairline {
-    background-color: rgba(141, 162, 192, 0.2);
+    background-color: var(--border);
     height: 1px;
     width: 100%;
   }
   .hairline-strong {
-    background-color: rgba(141, 162, 192, 0.55);
+    background-color: rgba(0, 166, 255, 0.55);
     height: 1px;
     width: 100%;
   }
+  .panel-light .hairline-strong {
+    background-color: #9db4c6;
+  }
 
-  /* Hover-grow — smooth scale + lift on interactive blocks */
+  /* Legacy gradient utilities — remapped quiet. Removed once all routes migrate. */
+  .bg-gradient-hero {
+    background: #f5f8fa;
+  }
+  .bg-gradient-navy {
+    background: #0b0f14;
+  }
+  .bg-gradient-glow {
+    background: none;
+  }
+  .text-gradient-hero {
+    background: none;
+    color: var(--foreground);
+  }
+  .shadow-glow {
+    box-shadow: 0 2px 24px rgba(30, 42, 57, 0.08);
+  }
+
+  /* Hover-grow — kept, shadow neutralized */
   .hover-grow,
   .hover-grow-sm,
   .hover-grow-lg {
     transition:
-      transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 480ms cubic-bezier(0.22, 1, 0.36, 1),
-      filter 480ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 320ms cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: center;
-    will-change: transform;
   }
   .hover-grow:hover {
-    transform: scale(1.06);
-    filter: drop-shadow(0 8px 24px rgba(0, 166, 255, 0.18));
+    transform: scale(1.03);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
   }
   .hover-grow-sm:hover {
-    transform: scale(1.035);
-    filter: drop-shadow(0 6px 18px rgba(0, 166, 255, 0.14));
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.32);
   }
   .hover-grow-lg:hover {
-    transform: scale(1.08);
-    filter: drop-shadow(0 10px 28px rgba(0, 166, 255, 0.22));
+    transform: scale(1.04);
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
   }
   @media (prefers-reduced-motion: reduce) {
     .hover-grow,
@@ -248,27 +344,28 @@
     .hover-grow-sm:hover,
     .hover-grow-lg:hover {
       transform: none;
-      filter: none;
+      box-shadow: none;
     }
   }
 
-  /* HUD broadcast utilities */
+  /* Legacy HUD utilities — neutralized to paper-grid equivalents.
+     Kept so unmigrated routes render; removed once all routes migrate. */
   .hud-grid-bg {
     background-image:
-      linear-gradient(var(--hud-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
-    background-size: 32px 32px;
+      linear-gradient(var(--paper-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+    background-size: 48px 48px;
   }
   .hud-grid-bg-tight {
     background-image:
-      linear-gradient(var(--hud-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
-    background-size: 16px 16px;
+      linear-gradient(var(--paper-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
   .hud-grid-bg-loose {
     background-image:
-      linear-gradient(var(--hud-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--hud-grid) 1px, transparent 1px);
+      linear-gradient(var(--paper-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
     background-size: 64px 64px;
   }
   .hud-fade-mask {
@@ -282,22 +379,16 @@
     font-family: var(--font-display-hud), ui-monospace, monospace;
   }
   .shadow-hud-ring {
-    box-shadow: 0 0 0 1px rgba(0, 166, 255, 0.25), 0 0 24px rgba(0, 166, 255, 0.18);
+    box-shadow: 0 0 0 1px var(--border);
   }
   .shadow-hud-inset {
-    box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.2);
+    box-shadow: inset 0 0 0 1px var(--border);
   }
-  .animate-hud-scan {
-    animation: hud-scan 7s linear infinite;
-  }
-  .animate-hud-ticker {
-    animation: hud-ticker 28s linear infinite;
-  }
-  .animate-hud-bracket-pulse {
-    animation: hud-bracket-pulse 4s ease-in-out infinite;
-  }
+  .animate-hud-scan,
+  .animate-hud-ticker,
+  .animate-hud-bracket-pulse,
   .animate-hud-dot-pulse {
-    animation: hud-dot-pulse 1.8s ease-in-out infinite;
+    animation: none;
   }
 
   /* Opt-in: skip layout/paint for offscreen sections (heavy carousels, lists). */
@@ -307,7 +398,7 @@
   }
 }
 
-/* QCM keyframes */
+/* Fade keyframes (shared) */
 @keyframes qcm-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -317,8 +408,8 @@
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes qcm-glow-pulse-once {
-  0%, 100% { box-shadow: 0 0 40px rgba(0, 166, 255, 0.35); }
-  50% { box-shadow: 0 0 60px rgba(0, 166, 255, 0.55); }
+  0%, 100% { box-shadow: 0 2px 24px rgba(30, 42, 57, 0.08); }
+  50% { box-shadow: 0 2px 32px rgba(30, 42, 57, 0.14); }
 }
 @keyframes qcm-gradient-sweep {
   from { background-position: 100% 50%; }
@@ -328,27 +419,11 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.45; }
 }
-
-/* HUD broadcast keyframes */
-@keyframes hud-scan {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(100vh); }
-}
-@keyframes hud-ticker {
+/* Announcement ticker — the track holds two identical runs of the list, so
+   travelling exactly -50% loops seamlessly. Reduced-motion rule below parks it. */
+@keyframes ticker-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
-}
-@keyframes hud-gauge-fill {
-  from { stroke-dashoffset: var(--gauge-circumference, 0); }
-  to { stroke-dashoffset: var(--gauge-target, 0); }
-}
-@keyframes hud-bracket-pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-@keyframes hud-dot-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.55; transform: scale(0.85); }
 }
 
 /* Respect users with vestibular sensitivity */
@@ -363,33 +438,12 @@
   }
 }
 
-/* High-contrast users: drop ambient HUD overlay (scanline reduces effective contrast). */
+/* High-contrast users: drop decorative ruling */
 @media (prefers-contrast: more) {
-  body::before,
-  body::after {
-    display: none;
-  }
+  .paper-grid,
   .hud-grid-bg,
   .hud-grid-bg-tight,
-  .hud-grid-bg-loose,
-  .bg-gradient-glow {
-    display: none;
-    background: none;
-  }
-  /* Gradient text can wash out at high contrast — restore a solid brand color. */
-  .text-gradient-hero {
-    background: none;
-    -webkit-text-fill-color: currentColor;
-    color: var(--primary);
-  }
-}
-
-/* Forced-colors (Windows High Contrast): the background image is dropped but
-   color:transparent would remain, making gradient text vanish. Force it visible. */
-@media (forced-colors: active) {
-  .text-gradient-hero {
-    color: CanvasText;
-    -webkit-text-fill-color: currentColor;
-    background: none;
+  .hud-grid-bg-loose {
+    background-image: none;
   }
 }

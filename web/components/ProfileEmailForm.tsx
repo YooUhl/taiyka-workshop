@@ -103,16 +103,16 @@ export default function ProfileEmailForm({ profile, lang = "fr" }: Props) {
         disabled={isBusy}
         aria-describedby="profile-email-error"
         aria-invalid={isError}
-        className="flex-1 h-14 rounded-lg border border-border bg-card/40 px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-[#00a6ff] focus:outline-none focus:ring-2 focus:ring-[#00a6ff]/30 disabled:opacity-60"
+        className="flex-1 h-14 rounded-md border border-input bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60"
       />
       <button
         type="submit"
         disabled={isBusy}
         aria-busy={isBusy}
         className={cn(
-          "h-14 px-5 rounded-lg border border-primary/40 bg-primary/10 text-primary text-sm font-medium transition-colors",
-          "hover:bg-primary/20 hover:border-primary/60",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]",
+          "h-14 px-5 rounded-md bg-primary text-primary-foreground text-sm font-bold transition-colors",
+          "hover:bg-[#33b8ff]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14]",
           "disabled:cursor-not-allowed disabled:opacity-60"
         )}
       >

@@ -93,7 +93,7 @@ export default async function FreeN8nPackPage({
       />
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-x-0 top-0 h-[60vh] bg-gradient-glow opacity-60 blur-2xl hidden md:block"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[70vh] paper-grid hidden md:block"
       />
 
       <div
@@ -104,34 +104,34 @@ export default async function FreeN8nPackPage({
         <div className="w-full flex items-center justify-between mb-16 md:mb-24 font-mono text-[11px] tracking-[0.22em] uppercase">
           <Link
             href={backHref}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {backLabel}
           </Link>
           <span className="hidden sm:inline-flex items-center gap-2 text-muted-foreground">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
             {copy.statusPill}
           </span>
           <Link
             href={copy.langSwitchHref}
-            className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00a6ff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628] rounded-sm"
+            className="inline-flex items-center min-h-[44px] text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] rounded-sm"
           >
             {copy.langSwitchLabel}
           </Link>
         </div>
 
         {/* Kicker */}
-        <span className="kicker">{heroKicker}</span>
+        <span className="kicker kicker-accent self-center">{heroKicker}</span>
 
         {/* H1 */}
-        <h1 className="mt-5 mb-10 md:mb-12 text-balance font-bold tracking-[-0.04em] leading-[0.96] text-[clamp(2.5rem,8.5vw,5rem)]">
+        <h1 className="display-xl mt-5 mb-10 md:mb-12 text-balance">
           {copy.h1Line1}{" "}
-          <span className="text-gradient-hero">{copy.h1Line1Gradient}</span>{" "}
+          <span className="text-primary">{copy.h1Line1Gradient}</span>{" "}
           <span className="text-muted-foreground">{copy.h1Line2}</span>
         </h1>
 
         {/* Sub-hero */}
-        <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.65] text-[#e8f0fe] text-balance max-w-[58ch] mx-auto mb-12 md:mb-16">
+        <p className="text-[1.0625rem] md:text-[1.25rem] leading-[1.65] text-foreground text-balance max-w-[58ch] mx-auto mb-12 md:mb-16">
           {copy.subHero}
         </p>
 
@@ -144,7 +144,7 @@ export default async function FreeN8nPackPage({
             {copy.bullets.map((b, i) => (
               <li
                 key={i}
-                className="flex flex-row items-start gap-3 text-[1rem] md:text-[1.0625rem] leading-[1.6] text-[#e8f0fe]"
+                className="flex flex-row items-start gap-3 text-[1rem] md:text-[1.0625rem] leading-[1.6] text-foreground"
               >
                 <span
                   aria-hidden
@@ -154,7 +154,7 @@ export default async function FreeN8nPackPage({
                 </span>
                 <span
                   aria-hidden
-                  className="text-[#00e5ff] pt-[0.05rem]"
+                  className="text-primary pt-[0.05rem]"
                 >
                   ›
                 </span>
@@ -166,10 +166,10 @@ export default async function FreeN8nPackPage({
 
         <div className="hairline mb-12 md:mb-16" />
 
-        {/* CTA — flat layout, no nested card */}
-        <div className="flex flex-col items-center gap-6 mb-8">
-          <span className="kicker">{copy.formKicker}</span>
-          <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-muted-foreground max-w-[50ch]">
+        {/* CTA — the conversion point. Blue-edged panel so the eye lands here. */}
+        <div className="card-line card-line-accent flex flex-col items-center gap-6 px-6 py-10 md:px-10 md:py-12 mb-8">
+          <span className="kicker kicker-accent">{copy.formKicker}</span>
+          <p className="text-[1rem] md:text-[1.0625rem] leading-[1.6] text-foreground max-w-[50ch]">
             {copy.formIntro}
           </p>
           <div className="w-full max-w-md text-left">
@@ -191,13 +191,13 @@ export default async function FreeN8nPackPage({
           <div className="flex flex-col items-center gap-3 max-w-[50ch]">
             <Link
               href={withLang(copy.upsellPrimaryHref, lang)}
-              className="text-[1rem] md:text-[1.0625rem] text-foreground hover:text-[#00e5ff] transition-colors"
+              className="inline-flex items-center min-h-[44px] text-[1rem] md:text-[1.0625rem] text-foreground hover:text-primary transition-colors"
             >
               {copy.upsellPrimary}
             </Link>
             <Link
               href={withLang(copy.upsellSecondaryHref, lang)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center min-h-[44px] text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {copy.upsellSecondary}
             </Link>
